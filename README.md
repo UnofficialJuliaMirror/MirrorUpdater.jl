@@ -1,6 +1,21 @@
 # MirrorUpdater - Provides functionality for automatically mirroring Julia package repositories
-
-<a href="https://www.repostatus.org/#active"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed." /></a>
+![GitHub]()
+<table>
+    <tbody>
+        <tr>
+            <td>Travis CI</td>
+            <td><a href="https://travis-ci.com/UnofficialJuliaMirror/MirrorUpdater.jl/branches"><img src="https://travis-ci.com/UnofficialJuliaMirror/MirrorUpdater.jl.svg?branch=master"></a></td>
+        </tr>
+        <tr>
+            <td>Project Status</td>
+            <td><a href="https://www.repostatus.org/#active"><img src="https://www.repostatus.org/badges/latest/active.svg" alt="Project Status: Active – The project has reached a stable, usable state and is being actively developed." /></a></td>
+        </tr>
+        <tr>
+            <td>License</td>
+            <td><a href="https://github.com/UnofficialJuliaMirror/MirrorUpdater.jl/blob/master/LICENSE"><img title="MIT License" alt="MIT License" src="https://img.shields.io/github/license/mashape/apistatus.svg"></a></td>
+        </tr>
+    </tbody>
+</table>
 
 MirrorUpdater is a Julia module that provides functionality for automatically
 mirroring Julia package repositories. It is used to maintain the Julia package
