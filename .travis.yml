@@ -1,0 +1,42 @@
+env:
+  global:
+    - JULIA_DEBUG="all"
+git:
+  depth: 99999999
+jobs:
+  include:
+    -
+      name: make-list
+      script: "./ci/travis/script.sh \"make-list\""
+      stage: stage-1
+    -
+      name: "[0,F)"
+      script: "./ci/travis/script.sh \"[0,F)\""
+      stage: stage-2
+    -
+      name: "[F,L)"
+      script: "./ci/travis/script.sh \"[F,L)\""
+    -
+      name: "[L,R)"
+      script: "./ci/travis/script.sh \"[L,R)\""
+    -
+      name: "[R,X)"
+      script: "./ci/travis/script.sh \"[R,X)\""
+    -
+      name: "[X,)"
+      script: "./ci/travis/script.sh \"[X,)\""
+    -
+      name: clean-up
+      script: "./ci/travis/script.sh \"clean-up\""
+      stage: stage-3
+julia:
+  - "1.0"
+language: julia
+matrix:
+  fast_finish: true
+notifications:
+  email:
+    on_failure: always
+    on_success: never
+os:
+  - linux
