@@ -1,10 +1,114 @@
 env:
   global:
-  - JULIA_DEBUG="all"
+    - JULIA_DEBUG="all"
   matrix:
     secure: M5qyRY7f8xRmmxL88RRq74QXmnPiBJ2XdmdeUwXgHNoWAdaZ0+pr8BL2SEZN5nh1W/b6jWamToDX8I8VeXt4NvySk56Co6teeusWYeIoetc6TnghjoCsFyNV0XRFLpLLn+52v4jrg5wxVd36wnpJ1yPRy5xaYjgxjGBZYTT0f15VdYqMEWAH5m7dk6n66kfIq3BOSn9GJoRHNqadg7m+nYQ2Xump5LJ4TYB/Eg9r0vAzEmPJtWwARuZEU9KHVD/HdB3vByk2Zpx24ycNHwXPatz4Ky7gjm/DpOd5RlUWXXTIpSaprT9gGdn9DWwcUfDBfmlN8//2IvE1KiHivGUlRKZY3KsTanfyV+H476+xCxJOO7aA7UOS5TxxS6XVnrCASmlIRQqN4ZvyrwjRascx5FoucL/wesigxcmUwchu1KykxOVqC6HLP0VNNFoJnLLhgfYaOkh5+Gqu6N90M2kf44YiQzYnxDFYFSQ8O8Rj26XT7fO14F77Z9YqFSvENNZxstJKvHIaMygaRSEgdGxZM9ZCFJYf4Kj3LDoA5ECjdBQyaab7SPt4X8rcpiQl12OXeCX6K9pCwcHhMqkkEIMDLxFNDho8bwEGgQaN/UXlJltCWdYh2gir0TbAqrOdw7RxSUi5Ya9esiTE0mmjEqFzsNvZB3ylCliMcmo05XkAIt8=
 git:
   depth: 99999999
+jobs:
+  include:
+    -
+      name: make-list
+      script: "./travis/script.sh \"make-list\""
+      stage: stage-1
+    -
+      name: "[0,A)"
+      script: "./travis/script.sh \"[0,A)\""
+      stage: stage-2
+    -
+      name: "[A,B)"
+      script: "./travis/script.sh \"[A,B)\""
+    -
+      name: "[B,C)"
+      script: "./travis/script.sh \"[B,C)\""
+    -
+      name: "[C,D)"
+      script: "./travis/script.sh \"[C,D)\""
+    -
+      name: "[D,E)"
+      script: "./travis/script.sh \"[D,E)\""
+    -
+      name: "[E,F)"
+      script: "./travis/script.sh \"[E,F)\""
+    -
+      name: "[F,G)"
+      script: "./travis/script.sh \"[F,G)\""
+    -
+      name: "[G,H)"
+      script: "./travis/script.sh \"[G,H)\""
+    -
+      name: "[H,I)"
+      script: "./travis/script.sh \"[H,I)\""
+    -
+      name: "[I,J)"
+      script: "./travis/script.sh \"[I,J)\""
+    -
+      name: "[J,K)"
+      script: "./travis/script.sh \"[J,K)\""
+    -
+      name: "[K,L)"
+      script: "./travis/script.sh \"[K,L)\""
+    -
+      name: "[L,M)"
+      script: "./travis/script.sh \"[L,M)\""
+    -
+      name: "[M,N)"
+      script: "./travis/script.sh \"[M,N)\""
+    -
+      name: "[N,O)"
+      script: "./travis/script.sh \"[N,O)\""
+    -
+      name: "[O,P)"
+      script: "./travis/script.sh \"[O,P)\""
+    -
+      name: "[P,Q)"
+      script: "./travis/script.sh \"[P,Q)\""
+    -
+      name: "[Q,R)"
+      script: "./travis/script.sh \"[Q,R)\""
+    -
+      name: "[R,S)"
+      script: "./travis/script.sh \"[R,S)\""
+    -
+      name: "[S,T)"
+      script: "./travis/script.sh \"[S,T)\""
+    -
+      name: "[T,U)"
+      script: "./travis/script.sh \"[T,U)\""
+    -
+      name: "[U,V)"
+      script: "./travis/script.sh \"[U,V)\""
+    -
+      name: "[V,W)"
+      script: "./travis/script.sh \"[V,W)\""
+    -
+      name: "[W,X)"
+      script: "./travis/script.sh \"[W,X)\""
+    -
+      name: "[X,Y)"
+      script: "./travis/script.sh \"[X,Y)\""
+    -
+      name: "[Y,Z)"
+      script: "./travis/script.sh \"[Y,Z)\""
+    -
+      name: "[Z,a)"
+      script: "./travis/script.sh \"[Z,a)\""
+    -
+      name: "[a,h)"
+      script: "./travis/script.sh \"[a,h)\""
+    -
+      name: "[h,n)"
+      script: "./travis/script.sh \"[h,n)\""
+    -
+      name: "[n,t)"
+      script: "./travis/script.sh \"[n,t)\""
+    -
+      name: "[t,)"
+      script: "./travis/script.sh \"[t,)\""
+    -
+      name: clean-up
+      script: "./travis/script.sh \"clean-up\""
+      stage: stage-3
 julia:
   - "1.0"
 language: julia
@@ -12,111 +116,7 @@ matrix:
   fast_finish: true
 notifications:
   email:
-    on_success: never
     on_failure: always
+    on_success: never
 os:
-- linux
-jobs:
-  include:
-    -
-      name: "make-list"
-      script: "./travis/script.sh \"make-list\""
-      stage: "stage-1"
-    -
-      name: ""
-      script: "./travis/script.sh \"[0,A)\""
-      stage: stage-2
-    -
-      name: ""
-      script: "./travis/script.sh \"[A,B)\""
-
-    -
-      name: ""
-      script: ./travis/script.sh "[B,C)"
-
-    -
-      script: ./travis/script.sh "[C,D)"
-      name: ""
-    -
-      script: ./travis/script.sh "[D,E)"
-      name: ""
-    -
-      script: ./travis/script.sh "[E,F)"
-      name: ""
-    -
-      script: ./travis/script.sh "[F,G)"
-      name: ""
-    -
-      script: ./travis/script.sh "[G,H)"
-    -
-      script: ./travis/script.sh "[H,I)"
-    -
-      script: ./travis/script.sh "[I,J)"
-      name: ""
-    -
-      script: ./travis/script.sh "[J,K)"
-      name: ""
-    -
-      script: ./travis/script.sh "[K,L)"
-      name: ""
-    -
-      script: ./travis/script.sh "[L,M)"
-      name: ""
-    -
-      script: ./travis/script.sh "[M,N)"
-      name: ""
-    -
-      script: ./travis/script.sh "[N,O)"
-      name: ""
-    -
-      script: ./travis/script.sh "[O,P)"
-      name: ""
-    -
-      script: ./travis/script.sh "[P,Q)"
-      name: ""
-    -
-      script: ./travis/script.sh "[Q,R)"
-      name: ""
-    -
-      script: ./travis/script.sh "[R,S)"
-      name: ""
-    -
-      script: ./travis/script.sh "[S,T)"
-      name: ""
-    -
-      script: ./travis/script.sh "[T,U)"
-      name: ""
-    -
-      script: ./travis/script.sh "[U,V)"
-      name: ""
-    -
-      script: ./travis/script.sh "[V,W)"
-      name: ""
-    -
-      script: ./travis/script.sh "[W,X)"
-      name: ""
-    -
-      script: ./travis/script.sh "[X,Y)"
-      name: ""
-    -
-      script: ./travis/script.sh "[Y,Z)"
-      name: ""
-    -
-      script: ./travis/script.sh "[Z,a)"
-      name: ""
-    -
-      script: ./travis/script.sh "[a,h)"
-      name: ""
-    -
-      script: ./travis/script.sh "[h,n)"
-      name: ""
-    -
-      script: ./travis/script.sh "[n,t)"
-      name: ""
-    -
-      script: ./travis/script.sh "[t,)"
-
-    -
-      name: "clean-up"
-      script: "./travis/script.sh \"clean-up\""
-      stage: "stage-3"
+  - linux
