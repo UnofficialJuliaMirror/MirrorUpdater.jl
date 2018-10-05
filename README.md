@@ -1,5 +1,5 @@
 # MirrorUpdater - Provides functionality for automatically mirroring Julia package repositories
-![GitHub]()
+
 <table>
     <tbody>
         <tr>
