@@ -237,6 +237,7 @@ function _make_list(
                     "Command did not run successfully",
                     cmd_git_clone_registry_regular,
                     pwd(),
+                    ENV["PATH"],
                     )
                 if registry_source_url in try_but_allow_failures_url_list ||
                         _name_with_git(registry_source_url) in
@@ -251,6 +252,7 @@ function _make_list(
                             ),
                         cmd_git_clone_registry_regular,
                         pwd(),
+                        ENV["PATH"],
                         )
                 else
                     error(
@@ -258,6 +260,7 @@ function _make_list(
                             "Encountered error when running command: ",
                             cmd_git_clone_registry_regular,
                             pwd(),
+                            ENV["PATH"],
                             )
                         )
                 end
@@ -430,7 +433,6 @@ function _push_mirrors(
             )
         )
     git = _get_git_binary_path()
-    grin = _get_grin_binary_path()
     for pair in src_dest_pairs_sorted_unique
         src_url = pair.source_url
         destination_repo_name = pair.destination_repo_name
@@ -480,6 +482,7 @@ function _push_mirrors(
                     "Attempting to run command",
                     cmd_git_clone_repo_regular,
                     pwd(),
+                    ENV["PATH"],
                     )
                 repo_regular_clone_was_success =
                     Utils.command_ran_successfully(
@@ -493,17 +496,19 @@ function _push_mirrors(
                             "GITCLONEREPOREGULAR",
                             )
                         )
-                    grin_results::String = try
-                        strip(read(`$(grin) Builder`, String))
+                    git_grep_results::String = try
+                        strip(read(`$(git) grep Builder`, String))
                     catch exception
                         @info("ignoring exception: ", exception)
                         ""
                     end
                     list_of_new_src_dest_pairs::Vector{SrcDestPair} =
                         SrcDestPair[]
-                    if length(grin_results) > 0
+                    if length(git_grep_results) > 0
                         bin_bldr_pair_list::Vector{SrcDestPair} =
-                            _get_list_of_binary_builder_repos(grin_results)
+                            _get_list_of_binary_builder_repos(
+                                git_grep_results
+                                )
                         for bin_bldr_pair in bin_bldr_pair_list
                             if bin_bldr_pair in src_dest_pairs
                             else
@@ -514,7 +519,7 @@ function _push_mirrors(
                             end
                         end
                     end
-                    if (length(grin_results) > 0) &&
+                    if (length(git_grep_results) > 0) &&
                             (length(list_of_new_src_dest_pairs) > 0)
                         if length(list_of_new_src_dest_pairs) == 1
                             @info(
@@ -576,6 +581,7 @@ function _push_mirrors(
                                 ),
                             cmd_git_clone_repo_regular,
                             pwd(),
+                            ENV["PATH"],
                             )
                     else
                         error(
@@ -583,6 +589,7 @@ function _push_mirrors(
                                 "Encountered error when running command: ",
                                 cmd_git_clone_repo_regular,
                                 pwd(),
+                                ENV["PATH"],
                                 )
                             )
                     end
@@ -595,6 +602,7 @@ function _push_mirrors(
                 "Attempting to run command",
                 cmd_git_repo_clone_mirror,
                 pwd(),
+                ENV["PATH"],
                 )
             repo_mirror_clone_was_success =
                 Utils.command_ran_successfully(
@@ -645,8 +653,6 @@ function _push_mirrors(
                     if is_dry_run
                         @info(
                             string(
-                                # "If this were not a dry run, I would now ",
-                                # "run the following command: ",
                                 "If this were not a dry run, ",
                                 "I would now do the following 2 things: ",
                                 "(1) I would make sure that the ",
@@ -660,6 +666,7 @@ function _push_mirrors(
                             destination_repo_name,
                             mirrorpush_cmd_withredactedauth,
                             pwd(),
+                            ENV["PATH"],
                             )
                     else
                         @info(
@@ -680,6 +687,7 @@ function _push_mirrors(
                             "Attempting to run command",
                             mirrorpush_cmd_withredactedauth,
                             pwd(),
+                            ENV["PATH"],
                             )
                         mirrorpush_was_success =
                             Utils.command_ran_successfully(
@@ -693,6 +701,7 @@ function _push_mirrors(
                                     "Command did not run successfully",
                                     cmd_withredactedauth,
                                     pwd(),
+                                    ENV["PATH"],
                                     )
                                 )
                         end
@@ -712,6 +721,7 @@ function _push_mirrors(
                             ),
                         cmd_git_repo_clone_mirror,
                         pwd(),
+                        ENV["PATH"],
                         )
                 else
                     error(
@@ -719,6 +729,7 @@ function _push_mirrors(
                             "Encountered error when running command: ",
                             cmd_git_repo_clone_mirror,
                             pwd(),
+                            ENV["PATH"],
                             )
                         )
                 end
@@ -843,25 +854,58 @@ function _interval_contains_x(
 end
 
 function _get_git_binary_path(
-        environment::Union{AbstractString,Symbol} =
-            :unofficialjuliamirror_mirror_updater,
+        environment::Union{AbstractString,Symbol} = :MirrorUpdater,
         )::String
-    result::String = joinpath(
-        Conda.bin_dir(environment),
-        "git",
-        )
+    path_git_conda_specified_env::String = try
+        joinpath(Conda.bin_dir(environment), "git",)
+    catch
+        ""
+    end
+    success_git_conda_specified_env::Bool = try
+        if length(path_git_conda_specified_env) > 0
+            success(`$(path_git_conda_specified_env) --version`)
+        else
+            false
+        end
+    catch
+        false
+    end
+    path_git_conda_root_env::String = try
+        joinpath(Conda.bin_dir(Conda.ROOTENV), "git",)
+    catch
+        ""
+    end
+    success_git_conda_root_env::Bool = try
+        if length(path_git_conda_root_env) > 0
+            success(`$(path_git_conda_root_env) --version`)
+        else
+            false
+        end
+    catch
+        false
+    end
+    path_git_default::String = "git"
+    success_git_default::Bool = try
+        success(`$(path_git_default) --version`)
+    catch
+        false
+    end
+    if success_git_conda_specified_env
+        git_path_to_use = path_git_conda_specified_env
+    elseif success_git_conda_root_env
+        git_path_to_use = path_git_conda_root_env
+    elseif success_git_default
+        git_path_to_use = path_git_default
+    else
+        error(
+            string(
+                "I could not find a usable Git."
+                )
+            )
+    end
+    result::String = strip(git_path_to_use)
     return result
 end
 
-function _get_grin_binary_path(
-        environment::Union{AbstractString,Symbol} =
-            :unofficialjuliamirror_mirror_updater,
-        )::String
-    result::String = joinpath(
-        Conda.bin_dir(environment),
-        "grin",
-        )
-    return result
-end
 
 ##### End of file
