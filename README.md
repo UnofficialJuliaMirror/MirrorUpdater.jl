@@ -55,7 +55,7 @@ const GITHUB_ORGANIZATION = "MY_GITHUB_ORG"
 const GITHUB_USER = "MY_GITHUB_BOT"
 ```
 
-Leave line 3 unchanged. Please do not stored your personal access token in the file.
+Leave the rest of `config/github.jl` unchanged. Please do not stored your personal access token in the file.
 
 ### Step 6 (optional)
 
@@ -88,23 +88,24 @@ Update the dependencies of the project:
 julia --project -e 'import Pkg; Pkg.resolve();'
 ```
 
-### Step 6
+### Step 4
 
 Build the project:
 ```bash
 julia --project deps/build.jl
 ```
 
-### Step 7
+### Step 5
 
-Set the environment variable `GITHUB_TOKEN` to your GitHub personal access token:
+Set the `GITHUB_TOKEN` environment variable equal to your GitHub personal access token:
 
 ```bash
 export GITHUB_TOKEN="your-github-personal-access-token-goes-here"
 ```
 
+### Step 6
+
 Run the updater:
-### Step 8
 
 ```bash
 julia --project run-github-mirror-updater.jl
@@ -114,16 +115,16 @@ julia --project run-github-mirror-updater.jl
 
 ### Step 1
 
-Enable Travis for your fork.
+Enable Travis for your fork: [https://travis-ci.com/profile/MY_GITHUB_ORG](https://travis-ci.com/profile/MY_GITHUB_ORG)
 
 ### Step 2
 
-Go to the Travis settings page for your fork.
+Go to the Travis settings page for your fork: [https://travis-ci.com/MY_GITHUB_ORG/MirrorUpdater.jl/settings](https://travis-ci.com/MY_GITHUB_ORG/MirrorUpdater.jl/settings)
 
 ### Step 3
 
-In the "Environment Variables" section, [add a new environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with name equal to `GITHUB_TOKEN` and value equal to your GitHub personal access token. 
+In the "Environment Variables" section of the Travis settings page, [add a new environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with name equal to `GITHUB_TOKEN` and value equal to your GitHub personal access token. **Make sure that the "Display value in build log" option is turned OFF.**
 
 ### Step 4
 
-In the "Cron Jobs" section, [create a new cron job for your fork](https://docs.travis-ci.com/user/cron-jobs/#adding-cron-jobs). For "Branch", select `master`. For "Interval", select whatever you like (I recommend `daily` or `weekly`). For "Options", select `Always Run`.
+In the "Cron Jobs" section of the Travis settings page, [create a new cron job for your fork](https://docs.travis-ci.com/user/cron-jobs/#adding-cron-jobs). For "Branch", select `master`. For "Interval", select whatever you like (I recommend `daily` or `weekly`). For "Options", select `Always Run`.
