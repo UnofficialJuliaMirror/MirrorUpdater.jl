@@ -1,13 +1,19 @@
 ##### Beginning of file
 
-module Utils # Begin submodule MirrorUpdater.Types
+module Types # Begin submodule MirrorUpdater.Types
 
 __precompile__(true)
 
 include("helper-functions.jl")
+
 include("abstract-types.jl")
 include("concrete-types.jl")
 
-end # End submodule MirrorUpdater.Utils
+include("regular-constructors.jl")
+include("special-constructors.jl")
+
+include("base.jl")
+
+end # End submodule MirrorUpdater.Types
 
 ##### End of file
