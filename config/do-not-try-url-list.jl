@@ -1,4 +1,5 @@
 const DO_NOT_TRY_URL_LIST = String[
+    #
     "git://git.colberg.org/OnlineMoments.jl.git",
     #
     "https://github.com/bramtayl/ChainRecursive.jl.git",
@@ -39,5 +40,6 @@ const DO_NOT_TRY_URL_LIST = String[
     "https://github.com/rennis250/GLUT.jl.git",
     "https://github.com/rennis250/OpenGL.jl.git",
     "https://github.com/rennis250/SDL.jl.git",
-    "https://github.com/rennis250/Sparrow.jl.git"
+    "https://github.com/rennis250/Sparrow.jl.git",
+    #
     ]
