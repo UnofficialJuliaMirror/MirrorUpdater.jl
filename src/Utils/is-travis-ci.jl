@@ -15,7 +15,9 @@ function _is_travis_ci(
     ci_is_true::Bool = ci == "true"
     travis_is_true::Bool = travis == "true"
     continuous_integration_is_true::Bool = continuous_integration == "true"
-    answer::Bool = ci && travis && continuous_integration
+    answer::Bool = ci_is_true &&
+        travis_is_true &&
+        continuous_integration_is_true
     return answer
 end
 

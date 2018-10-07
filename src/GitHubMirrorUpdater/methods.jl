@@ -17,7 +17,7 @@ function _get_github_username(
         auth = auth,
         )
     username::String = user_information["name"]
-    username_stripped:String = strip(username)
+    username_stripped::String = strip(username)
     return username_stripped
 end
 
@@ -324,8 +324,8 @@ function _make_list(
             )
         push!(full_list, registry_src_dest_pair)
         if registry_source_url in do_not_try_url_list ||
-                _name_with_git(registry_source_url) in do_not_try_url_list ||
-                _name_without_git(registry_source_url) in do_not_try_url_list
+                Types._name_with_git(registry_source_url) in do_not_try_url_list ||
+                Types._name_without_git(registry_source_url) in do_not_try_url_list
             blah
             @warn(
                 string(
@@ -398,9 +398,9 @@ function _make_list(
                     ENV["PATH"],
                     )
                 if registry_source_url in try_but_allow_failures_url_list ||
-                        _name_with_git(registry_source_url) in
+                        Types._name_with_git(registry_source_url) in
                             try_but_allow_failures_url_list ||
-                        _name_without_git(registry_source_url) in
+                        Types._name_without_git(registry_source_url) in
                             try_but_allow_failures_url_list
                     @warn(
                         string(
@@ -616,8 +616,8 @@ function _push_mirrors!!(
             "*****",
             )
         if src_url in do_not_try_url_list ||
-                _name_with_git(src_url) in do_not_try_url_list ||
-                _name_without_git(src_url) in do_not_try_url_list
+                Types._name_with_git(src_url) in do_not_try_url_list ||
+                Types._name_without_git(src_url) in do_not_try_url_list
             @warn(
                 string("Src url is in the do not try list, so skipping."),
                 src_url,
@@ -728,9 +728,9 @@ function _push_mirrors!!(
                     end
                 else
                     if src_url in try_but_allow_failures_url_list ||
-                            _name_with_git(src_url) in
+                            Types._name_with_git(src_url) in
                                 try_but_allow_failures_url_list ||
-                            _name_without_git(src_url) in
+                            Types._name_without_git(src_url) in
                                 try_but_allow_failures_url_list
                         @warn(
                             string(
@@ -787,15 +787,15 @@ function _push_mirrors!!(
                     )
                 if destination_repo_name in
                         do_not_push_to_these_destinations ||
-                        _name_with_git(destination_repo_name) in
+                        Types._name_with_git(destination_repo_name) in
                         do_not_push_to_these_destinations ||
-                        _name_without_git(destination_repo_name) in
+                        Types._name_without_git(destination_repo_name) in
                         do_not_push_to_these_destinations ||
                         destination_repo_fullname in
                         do_not_push_to_these_destinations ||
-                        _name_with_git(destination_repo_fullname) in
+                        Types._name_with_git(destination_repo_fullname) in
                         do_not_push_to_these_destinations ||
-                        _name_without_git(destination_repo_fullname) in
+                        Types._name_without_git(destination_repo_fullname) in
                         do_not_push_to_these_destinations
                     @warn(
                         string(
@@ -848,7 +848,7 @@ function _push_mirrors!!(
                                 ),
                             destination_repo_name,
                             )
-                        _create_dest_repo_if_it_doesnt_exist(
+                        _create_dest_repo_if_it_doesnt_exist!!(
                             pair,
                             github_organization,
                             github_user,
@@ -900,9 +900,9 @@ function _push_mirrors!!(
                 end
             else
                 if src_url in try_but_allow_failures_url_list ||
-                        _name_with_git(src_url) in
+                        Types._name_with_git(src_url) in
                             try_but_allow_failures_url_list ||
-                        _name_without_git(src_url) in
+                        Types._name_without_git(src_url) in
                             try_but_allow_failures_url_list
                     @warn(
                         string(

@@ -101,7 +101,7 @@ function run_mirror_updater!!(
         @info("Stage 1 completed successfully.")
     end
 
-    if task == "all" || _is_interval(task)
+    if task == "all" || Types._is_interval(task)
         @info("Starting stage 2...")
         if has_gist_description
             correct_gist_id::String = ""
@@ -136,8 +136,9 @@ function run_mirror_updater!!(
             all_repos_to_mirror_stage2 =
                 all_repos_to_mirror_stage1
         end
-        if _is_interval(task)
-            task_interval::Types.AbstractInterval = _construct_interval(task)
+        if Types._is_interval(task)
+            task_interval::Types.AbstractInterval =
+                Types._construct_interval(task)
             @info(
                 string("Using interval for stage 2: "),
                 task_interval,
