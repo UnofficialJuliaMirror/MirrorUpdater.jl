@@ -1,15 +1,15 @@
-const JULIACOMPUTING_REPOS = MirrorUpdater.SrcDestPair[
-    MirrorUpdater.SrcDestPair(
+const JULIACOMPUTING_REPOS = MirrorUpdater.Types.SrcDestPair[
+    MirrorUpdater.Types.SrcDestPair(
         ;
         source_url = "https://github.com/JuliaComputing/Deprecations.jl",
         destination_repo_name = "JuliaComputing-Deprecations.jl",
         ),
-    MirrorUpdater.SrcDestPair(
+    MirrorUpdater.Types.SrcDestPair(
         ;
         source_url = "https://github.com/JuliaComputing/FemtoCleaner.jl",
         destination_repo_name = "JuliaComputing-FemtoCleaner.jl",
         ),
-    MirrorUpdater.SrcDestPair(
+    MirrorUpdater.Types.SrcDestPair(
         ;
         source_url =
             "https://github.com/JuliaComputing/NewPkgEval.jl",

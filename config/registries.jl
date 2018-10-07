@@ -1,12 +1,12 @@
-const REGISTRY_LIST = MirrorUpdater.Registry[
-    MirrorUpdater.Registry(
+const REGISTRY_LIST = MirrorUpdater.Types.Registry[
+    MirrorUpdater.Types.Registry(
         ;
         owner = "JuliaRegistries",
         name = "General",
         uuid = "23338594-aafe-5451-b93e-139f81909106",
         url = "https://github.com/JuliaRegistries/General",
         ),
-    MirrorUpdater.Registry(
+    MirrorUpdater.Types.Registry(
         ;
         owner = "fredrikekre",
         name = "Registry",

@@ -21,8 +21,6 @@ struct Package
     end
 end
 
-
-
 struct Registry
     owner::String
     name::String
@@ -47,8 +45,6 @@ struct Registry
         return result
     end
 end
-
-
 
 struct SrcDestPair
     source_url::String

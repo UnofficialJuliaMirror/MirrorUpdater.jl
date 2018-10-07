@@ -15,11 +15,10 @@ include(joinpath("config", "registries.jl"))
 include(joinpath("config", "try-but-allow-failures-url-list.jl"))
 
 @info("Running the main run_mirror_updater method...")
-MirrorUpdater.GitHubMirrorUpdater.run_mirror_updater_command_line(
+MirrorUpdater.GitHubMirrorUpdater.run_mirror_updater_command_line!!(
     ;
     arguments = ARGS,
     github_organization = GITHUB_ORGANIZATION,
-    github_user = GITHUB_USER,
     github_token = GITHUB_TOKEN,
     registry_list = REGISTRY_LIST,
     additional_repos = ADDITIONAL_REPOS,
