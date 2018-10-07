@@ -11,8 +11,7 @@ const JULIACOMPUTING_REPOS = MirrorUpdater.Types.SrcDestPair[
         ),
     MirrorUpdater.Types.SrcDestPair(
         ;
-        source_url =
-            "https://github.com/JuliaComputing/NewPkgEval.jl",
+        source_url = "https://github.com/JuliaComputing/NewPkgEval.jl",
         destination_repo_name =
             "NewPkgEval.jl-9f2e2246-6dce-11e8-3d98-4b291446da6e",
         ),
