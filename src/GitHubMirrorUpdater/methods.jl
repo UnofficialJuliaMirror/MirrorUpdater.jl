@@ -2,22 +2,11 @@
 
 import ArgParse
 import Conda
+import Dates
 import GitHub
 import HTTP
 import Pkg
-
-function _get_repo_fullname(
-        x::SrcDestPair,
-        github_organization::String,
-        )::String
-    destination_repo_name::String = strip(x.destination_repo_name)
-    result::String = string(
-        github_organization,
-        "/",
-        destination_repo_name,
-        )
-    return result
-end
+import TimeZones
 
 function _get_destination_url(
         x::SrcDestPair,
@@ -50,6 +39,30 @@ function _get_destination_url(
         "/",
         destination_repo_name,
         )
+    return result
+end
+
+function _url_exists(url::AbstractString)::Bool
+    temp_url::String = strip(convert(String, url))
+    result::Bool = try
+        r = HTTP.request("GET", url)
+        r.status == 200
+    catch
+        false
+    end
+    return result
+end
+
+function _github_repo_exists(
+        full_repo_name;
+        auth::GitHub.Authorization,
+        )::Bool
+    result::Bool = try
+        repo = GitHub.repo(full_repo_name; auth = auth,)
+        true
+    catch
+        false
+    end
     return result
 end
 
@@ -95,28 +108,141 @@ function _create_dest_repo_if_it_doesnt_exist(
     return nothing
 end
 
-function _url_exists(url::AbstractString)::Bool
-    temp_url::String = strip(convert(String, url))
-    result::Bool = try
-        r = HTTP.request("GET", url)
-        r.status == 200
-    catch
-        false
+function _repo_name_with_organization(
+        ;
+        repo::AbstractString,
+        org::AbstractString,
+        )::String
+    repo_name_without_organization::String = _repo_name_without_organization(
+        ;
+        repo = repo,
+        org = org,
+        )
+    org_stripped::String = strip(
+        strip(strip(strip(strip(convert(String, org)), '/')), '/')
+        )
+    result::String = string(
+        org_stripped,
+        "/",
+        repo_name_without_organization,
+        )
+    return result
+end
+
+function _repo_name_without_organization(
+        ;
+        repo::AbstractString,
+        org::AbstractString,
+        )::String
+    repo_stripped::String = strip(
+        strip(strip(strip(strip(convert(String, repo)), '/')), '/')
+        )
+    org_stripped::String = strip(
+        strip(strip(strip(strip(convert(String, org)), '/')), '/')
+        )
+    if length(org_stripped) == 0
+        result = repo_stripped
+    else
+        repo_stripped_lowercase::String = lowercase(repo_stripped)
+        org_stripped_lowercase::String = lowercase(org_stripped)
+        org_stripped_lowercase_withtrailingslash::String = string(
+            org_stripped_lowercase,
+            "/",
+            )
+        if startswith(repo_stripped_lowercase,
+                org_stripped_lowercase_withtrailingslash)
+            index_start =
+                length(org_stripped_lowercase_withtrailingslash) + 1
+            result = repo_stripped[index_start:end]
+        else
+            result = repo_stripped
+        end
     end
     return result
 end
 
-function _github_repo_exists(
-        full_repo_name;
-        auth::GitHub.Authorization,
-        )::Bool
-    result::Bool = try
-        repo = GitHub.repo(full_repo_name; auth = auth,)
-        true
-    catch
-        false
-    end
+function _get_repo_fullname(
+        x::SrcDestPair,
+        github_organization::String,
+        )::String
+    destination_repo_name::String = strip(x.destination_repo_name)
+    result = _repo_name_with_organization(
+        ;
+        repo = destination_repo_name,
+        org = github_organization,
+        )
     return result
+end
+
+function _generate_new_repo_description(
+        x::SrcDestPair,
+        a::AbstractDict = ENV;
+        github_organization::String,
+        github_user::String,
+        when::TimeZones.ZonedDateTime = Dates.now(TimeZones.localzone()),
+        time_zone::Dates.TimeZone = TimeZones.TimeZone("America/New_York"),
+        )::String
+    source_url::String = x.source_url
+    destination_repo_name::String = x.destination_repo_name
+    repo_name_with_organization::String = _repo_name_with_organization(
+        ;
+        repo = destination_repo_name,
+        org = github_organization,
+        )
+    repo_name_without_organization::String = _repo_name_without_organization(
+        ;
+        repo = destination_repo_name,
+        org = github_organization,
+        )
+    if Utils._is_travis_ci()
+        travis_build_number::String = strip(
+            get(a, "TRAVIS_BUILD_NUMBER", "")
+            )
+        travis_job_number::String = strip(
+            get(a, "TRAVIS_JOB_NUMBER", "")
+            )
+        via_travis = string(
+            " via Travis ",
+            "(build $(travis_build_number) job $(travis_job_number))",
+            )
+    else
+        via_travis = ""
+    end
+
+    date_time_string = string(
+        TimeZones.astimezone(
+            when,
+            time_zone,
+            )
+        )
+    result = string(
+        "Last mirrored from $(source_url) on ",
+        date_time_string,
+        "by $(github_user)",
+        via_travis,
+        )
+    return
+end
+
+function _edit_repo_description_github(
+        repo_name::String;
+        new_description::String,
+        auth::GitHub.Authorization,
+        )::Nothing
+    repo_name_with_organization::String = _repo_name_with_organization(
+        ;
+        repo = repo_name,
+        org = github_organization,
+        )
+    repo_name_without_organization::String = _repo_name_without_organization(
+        ;
+        repo = repo_name,
+        org = github_organization,
+        )
+    if Utils._is_travis_ci(a)
+    else
+    end
+    return nothing
 end
 
 function _toml_file_to_package(packagetoml_file_filename::String)::Package
@@ -425,6 +551,7 @@ function _push_mirrors(
         do_not_push_to_these_destinations::Vector{String},
         do_not_try_url_list::Vector{String},
         try_but_allow_failures_url_list::Vector{String},
+        time_zone::Dates.TimeZone,
         )::Nothing
     @debug(string("Recursion level: $(recursion_level)"))
     src_dest_pairs_sorted_unique::Vector{SrcDestPair} = sort(
