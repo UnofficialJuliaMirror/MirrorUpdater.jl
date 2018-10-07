@@ -22,35 +22,53 @@ function _get_github_username(
 end
 
 function _get_destination_url(
-        x::Types.SrcDestPair,
+        destination_repo_name::String;
         github_organization::String,
+        github_user::String = "",
+        github_token::String = "",
         ):String
-    destination_repo_name::String = strip(x.destination_repo_name)
-    result::String = string(
-        "https://github.com/",
-        github_organization,
-        "/",
-        destination_repo_name,
-        )
+    destination_repo_name_without_organization::String =
+        _repo_name_without_organization(
+            ;
+            repo = destination_repo_name,
+            org = github_organization,
+            )
+    has_credentials = (length(github_user) > 0) &&
+        (length(github_token) > 0)
+    if has_credentials
+        result = string(
+            "https://",
+            github_user,
+            ":",
+            github_token,
+            "@github.com/",
+            github_organization,
+            "/",
+            destination_repo_name_without_organization,
+            )
+    else
+        result = string(
+            "https://github.com/",
+            github_organization,
+            "/",
+            destination_repo_name_without_organization,
+            )
+    end
     return result
 end
 
 function _get_destination_url(
-        x::Types.SrcDestPair,
+        x::Types.SrcDestPair;
         github_organization::String,
-        github_user::String,
-        github_token::String,
+        github_user::String = "",
+        github_token::String = "",
         ):String
     destination_repo_name::String = strip(x.destination_repo_name)
-    result::String = string(
-        "https://",
-        github_user,
-        ":",
-        github_token,
-        "@github.com/",
-        github_organization,
-        "/",
-        destination_repo_name,
+    result::String = _get_destination_url(
+        destination_repo_name;
+        github_organization = github_organization,
+        github_user = github_user,
+        github_token = github_token,
         )
     return result
 end
@@ -81,17 +99,13 @@ end
 
 function _create_dest_repo_if_it_doesnt_exist!!(
         x::Types.SrcDestPair,
-        github_organization::String,
-        github_user::String,
-        github_token::String;
+        github_organization::String;
         auth::GitHub.Authorization,
         )::Nothing
     repo_fullname = _get_repo_fullname(x, github_organization,)
     _create_dest_repo_if_it_doesnt_exist!!(
         repo_fullname,
-        github_organization,
-        github_user,
-        github_token;
+        github_organization;
         auth = auth,
         )
     return nothing
@@ -99,14 +113,12 @@ end
 
 function _create_dest_repo_if_it_doesnt_exist!!(
         repo_fullname::String,
-        github_organization::String,
-        github_user::String,
-        github_token::String;
+        github_organization::String;
         auth::GitHub.Authorization,
         )::Nothing
     dest_url_withoutauth = _get_destination_url(
-        x,
-        github_organization,
+        repo_fullname;
+        github_organization = github_organization,
         )
     if _url_exists(dest_url_withoutauth)
         # repo already exists, so do nothing
@@ -214,15 +226,31 @@ function _generate_new_repo_description(
         )::String
     source_url::String = x.source_url
     if Utils._is_travis_ci()
+        travis_event_type::String = strip(
+            get(a, "TRAVIS_EVENT_TYPE", "")
+            )
+        if length(travis_event_type) > 0
+            travis_event_string = string(" $(TRAVIS_EVENT_TYPE)")
+        else
+            travis_event_string = string("")
+        end
         travis_build_number::String = strip(
             get(a, "TRAVIS_BUILD_NUMBER", "")
             )
         travis_job_number::String = strip(
             get(a, "TRAVIS_JOB_NUMBER", "")
             )
+        if length(travis_job_number) > 0
+            travis_number_string = string(" (job $(travis_job_number))")
+        elseif length(travis_build_number) > 0
+            travis_number_string = string(" (build $(travis_build_number))")
+        else
+            travis_number_string = string("")
+        end
         via_travis = string(
-            " via Travis ",
-            "(build $(travis_build_number) job $(travis_job_number))",
+            " via Travis",
+            travis_event_string,
+            travis_number_string,
             )
     else
         via_travis = ""
@@ -236,7 +264,7 @@ function _generate_new_repo_description(
     result::String = string(
         "Mirrored from $(source_url) on ",
         date_time_string,
-        "by $(github_user)",
+        " by $(github_user)",
         via_travis,
         )
     return result
@@ -250,16 +278,14 @@ function _edit_repo_description_github!!(
         github_organization::String,
         github_user::String,
         )::Nothing
-    repo_fullname::String = _repo_name_with_organization(
+    full_repo_name::String = _repo_name_with_organization(
         ;
         repo = repo_name,
         org = github_organization,
         )
     _create_dest_repo_if_it_doesnt_exist!!(
-        repo_fullname,
-        github_organization,
-        github_user,
-        github_token::String;
+        full_repo_name,
+        github_organization;
         auth = auth,
         )
     repo = GitHub.repo(full_repo_name; auth = auth,)
@@ -343,6 +369,7 @@ function _make_list(
                 "Attempting to run command",
                 cmd_git_clone_registry_regular,
                 pwd(),
+                ENV["PATH"],
                 )
             clone_registry_regular_was_success =
                 Utils.command_ran_successfully!!(
@@ -600,20 +627,20 @@ function _push_mirrors!!(
             github_organization,
             )
         dest_url_withoutauth::String = _get_destination_url(
-            pair,
-            github_organization,
+            pair;
+            github_organization = github_organization,
             )
         dest_url_withauth::String = _get_destination_url(
-            pair,
-            github_organization,
-            github_user,
-            github_token,
+            pair;
+            github_organization = github_organization,
+            github_user = github_user,
+            github_token = github_token,
             )
         dest_url_withredactedauth::String = _get_destination_url(
-            pair,
-            github_organization,
-            github_user,
-            "*****",
+            pair;
+            github_organization = github_organization,
+            github_user = github_user,
+            github_token = "*****",
             )
         if src_url in do_not_try_url_list ||
                 Types._name_with_git(src_url) in do_not_try_url_list ||
@@ -850,9 +877,7 @@ function _push_mirrors!!(
                             )
                         _create_dest_repo_if_it_doesnt_exist!!(
                             pair,
-                            github_organization,
-                            github_user,
-                            github_token;
+                            github_organization;
                             auth = auth,
                             )
                         @info(
