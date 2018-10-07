@@ -47,12 +47,6 @@ Update the Github organization and Github username in `config/github.jl`.
 
 Update the other settings in the `config/` folder as you see fit.
 
-### Step 4.1 (only necessary while we wait for https://github.com/JuliaWeb/GitHub.jl/pull/118 to be merged)
-
-```bash
-julia --project -e 'import Pkg; p = Pkg.PackageSpec(name="GitHub", url="https://github.com/DilumAluthge/GitHub.jl", rev="da/fix-create-repo-bug"); Pkg.add(p);'
-```
-
 ### Step 5
 
 ```bash

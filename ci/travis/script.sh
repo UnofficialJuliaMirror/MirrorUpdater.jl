@@ -26,9 +26,6 @@ echo "TRAVIS_BRANCH=$TRAVIS_BRANCH"
 echo "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST"
 echo "DRY_RUN=$DRY_RUN"
 
-# Remove the following line once the bug in GitHub.jl has been fixed and a new release has been tagged
-julia --project -e 'import Pkg; p = Pkg.PackageSpec(name="GitHub", url="https://github.com/DilumAluthge/GitHub.jl", rev="da/fix-create-repo-bug"); Pkg.add(p);'
-
 julia --project -e 'import Pkg; Pkg.resolve();'
 
 julia --project deps/build.jl
