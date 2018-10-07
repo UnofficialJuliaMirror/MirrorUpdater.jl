@@ -264,7 +264,7 @@ function _generate_new_repo_description(
     result::String = string(
         "Mirrored from $(source_url) on ",
         date_time_string,
-        " by $(github_user)",
+        " by @$(github_user)",
         via_travis,
         )
     return result
