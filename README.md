@@ -24,9 +24,9 @@ mirrors at
 You can also use it to host your own mirror.
 
 ### Table of Contents
-1. [First time setup](#)
-2. [Running the updater manually](#)
-3. [Configuring the updater to run automatically via Travis cron jobs](#)
+1. [First time setup](#first-time-setup)
+2. [Running the updater manually](#running-the-updater-manually)
+3. [Configuring the updater to run automatically via Travis cron jobs](#configuring-the-updater-to-run-automatically-via-travis-cron-jobs)
 
 ## First Time Setup
 
