@@ -32,10 +32,14 @@ function run_mirror_updater_command_line!!(
         try_but_allow_failures_url_list::Vector{String},
         time_zone::Dates.TimeZone = Dates.TimeZone("America/New_York"),
         )::Nothing
+    @info(
+        "Running MirrorUpdater.CommandLine.run_mirror_updater_command_line!!"
+        )
     @info("parsing command line arguments...")
     parsed_arguments::Dict = _parse_arguments(
         arguments
         )
+    @info("processing parsed command line arguments...")
     processed_arguments::Dict = _process_parsed_arguments(
         parsed_arguments
         )

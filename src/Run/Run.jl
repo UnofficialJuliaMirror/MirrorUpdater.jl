@@ -4,13 +4,6 @@ module Run # Begin submodule MirrorUpdater.Run
 
 __precompile__(true)
 
-import ..Types
-import ..Utils
-import ..Hosts
-import ..Hosts.GitHubHost
-import ..Hosts.GitLabHost
-import ..Common
-
 import ArgParse
 import Conda
 import Dates
@@ -18,6 +11,13 @@ import GitHub
 import HTTP
 import Pkg
 import TimeZones
+
+import ..Types
+import ..Utils
+import ..Hosts
+import ..Hosts.GitHubHost
+import ..Hosts.GitLabHost
+import ..Common
 
 function run_mirror_updater!!(
         ;
@@ -35,6 +35,9 @@ function run_mirror_updater!!(
         try_but_allow_failures_url_list::Vector{String},
         time_zone::Dates.TimeZone = Dates.TimeZone("America/New_York"),
         )::Nothing
+    @info(
+        "Running MirrorUpdater.Run.run_mirror_updater!!"
+        )
     enabled_git_hosting_providers::Vector{Symbol} = Symbol[]
     git_hosting_providers_params::Dict{Symbol, Any} = Dict{Symbol, Any}()
     git_hosting_providers_functions::Dict{Symbol, Any} = Dict{Symbol, Any}()

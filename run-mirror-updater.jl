@@ -21,8 +21,6 @@ include(joinpath("config","repositories","registries.jl",))
 include(joinpath("config","repositories",
     "try-but-allow-failures-url-list.jl",))
 
-@info("Running the main run_mirror_updater method...")
-
 MirrorUpdater.CommandLine.run_mirror_updater_command_line!!(
     ;
     github_enabled = GITHUB_ENABLED,
