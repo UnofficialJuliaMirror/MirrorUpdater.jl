@@ -127,4 +127,4 @@ In the "Environment Variables" section of the Travis settings page, [add a new e
 
 ### Step 4
 
-In the "Cron Jobs" section of the Travis settings page, [create a new cron job for your fork](https://docs.travis-ci.com/user/cron-jobs/#adding-cron-jobs). For "Branch", select `master`. For "Interval", select whatever you like (I recommend `daily` or `weekly`). For "Options", select `Always Run`.
+In the "Cron Jobs" section of the Travis settings page, [create a new cron job for your fork](https://docs.travis-ci.com/user/cron-jobs/#adding-cron-jobs). For "Branch", select `master`. For "Interval", select whatever you like (I recommend `daily` or `weekly`). For "Options", I recommend selecting `Do not run if there has been a build in the last 24h`.
