@@ -380,10 +380,11 @@ function _remove_problematic_refs_before_github!!(
 end
 
 function _push_mirrors!!(
+        ;
         src_dest_pairs::Vector{Types.SrcDestPair},
-        github_org::String,
-        github_user::String,
-        github_token::String;
+        enabled_git_hosting_providers::Vector{Symbol},
+        git_hosting_providers_params::Dict{Symbol, Dict},
+        git_hosting_providers_functions::Dict{Symbol, Dict{Symbol, Function}},
         recursion_level::Integer = 0,
         max_recursion_depth::Integer = 5,
         is_dry_run::Bool = false,
@@ -515,10 +516,14 @@ function _push_mirrors!!(
                                 )
                         end
                         _push_mirrors!!(
-                            list_of_new_src_dest_pairs,
-                            github_org,
-                            github_user,
-                            github_token;
+                            ;
+                            src_dest_pairs = list_of_new_src_dest_pairs,
+                            enabled_git_hosting_providers =
+                                enabled_git_hosting_providers,
+                            git_hosting_providers_params =
+                                git_hosting_providers_params,
+                            git_hosting_providers_functions =
+                                git_hosting_providers_functions,
                             recursion_level = recursion_level + 1,
                             max_recursion_depth = max_recursion_depth,
                             is_dry_run = is_dry_run,

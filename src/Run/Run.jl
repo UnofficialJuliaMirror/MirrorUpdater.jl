@@ -35,36 +35,50 @@ function run_mirror_updater!!(
         try_but_allow_failures_url_list::Vector{String},
         time_zone::Dates.TimeZone = Dates.TimeZone("America/New_York"),
         )::Nothing
-    @info(
-        "Running MirrorUpdater.Run.run_mirror_updater!!"
-        )
+    @info("Running MirrorUpdater.Run.run_mirror_updater!!")
+
     enabled_git_hosting_providers::Vector{Symbol} = Symbol[]
-    git_hosting_providers_params::Dict{Symbol, Any} = Dict{Symbol, Any}()
-    git_hosting_providers_functions::Dict{Symbol, Any} = Dict{Symbol, Any}()
+    git_hosting_providers_params::Dict{Symbol, Dict} = Dict{Symbol, Dict}()
+    git_hosting_providers_functions::Dict{Symbol, Dict{Symbol, Function}} =
+        Dict{Symbol, Dict{Symbol, Function}}()
 
     if github_enabled
-        git_hosting_providers_params[:github] = Dict{Symbol, Any}()
         @info("Authenticating to GitHub...")
-        push!(enabled_git_hosting_providers, :github)
         my_github_auth::GitHub.Authorization = GitHub.authenticate(
             github_token
             )
         github_user::String = Hosts.GitHubHost._get_github_username(
             my_github_auth
             )
+
+        git_hosting_providers_params[:github] = Dict{Symbol, Any}()
         git_hosting_providers_params[:github][:my_github_auth] =
             my_github_auth
+        git_hosting_providers_params[:github][:github_organization] =
+            github_organization
+        git_hosting_providers_params[:github][:github_token] =
+            github_token
         git_hosting_providers_params[:github][:github_user] =
             github_user
-        git_hosting_providers_functions[:github] = Dict{Symbol, Any}()
-        git_hosting_providers_functions[:github][:create_gist] =
-            GitHubHost._github_create_gist
+
+        git_hosting_providers_functions[:github] = Dict{Symbol, Function}()
+        git_hosting_providers_functions[:github][:create_gist!!] =
+            GitHubHost._github_create_gist!!
+        git_hosting_providers_functions[:github][:retrieve_gist] =
+            GitHubHost._github_retrieve_gist
+        git_hosting_providers_functions[:github][:delete_gists!!] =
+            GitHubHost._github_delete_gists!!
+
+        push!(enabled_git_hosting_providers, :github)
     end
 
     if gitlab_enabled
         error("GitLab is not yet supported.")
+
         git_hosting_providers_params[:gitlab] = Dict{Symbol, Any}()
-        git_hosting_providers_functions[:gitlab] = Dict{Symbol, Any}()
+
+        git_hosting_providers_functions[:gitlab] = Dict{Symbol, Function}()
+
         push!(enabled_git_hosting_providers, :gitlab)
     end
 
@@ -96,10 +110,10 @@ function run_mirror_updater!!(
                 :gist_content_stage1 => gist_content_stage1,
                 )
             for host in enabled_git_hosting_providers
-                git_hosting_providers_functions[host][:create_gist](
+                git_hosting_providers_functions[host][:create_gist!!](
                     ;
-                    args = ,
-                    host_params = git_hosting_providers_params[:github],
+                    args = args,
+                    host_params = git_hosting_providers_params[host],
                     )
             end
         end
@@ -109,33 +123,34 @@ function run_mirror_updater!!(
     if task == "all" || Types._is_interval(task)
         @info("Starting stage 2...")
         if has_gist_description
-            correct_gist_id::String = ""
-            @info("loading all of my gists")
-            my_gists_stage2::Vector{GitHub.Gist} = GitHub.gists(
-                github_user;
-                auth = my_github_auth,
-                )[1]
-            for gist in my_gists_stage2
-                if gist.description == gist_description
-                    correct_gist_id = gist.id
+            correct_gist_content_stage2::String = ""
+            @info("looking for the correct gist")
+            args = Dict(
+                :gist_description => gist_description,
+                )
+            for host in enabled_git_hosting_providers
+                if length(strip(correct_gist_content_stage2)) == 0
+                    correct_gist_content_stage2 = try
+                        git_hosting_providers_functions[host][
+                            :retrieve_gist](
+                                ;
+                                args=args,
+                                host_params=
+                                    git_hosting_providers_params[host],
+                                )
+                    catch exception
+                        @warn("ignoring exception: ",exception,)
+                        ""
+                    end
                 end
             end
-            if length(correct_gist_id) > 0
-                @info("downloading the correct gist")
-                correct_gist::GitHub.Gist = GitHub.gist(
-                    correct_gist_id;
-                    auth = my_github_auth,
-                    )
-                correct_gist_content_stage2::String = correct_gist.files[
-                    "list.txt"][
-                    "content"]
-                all_repos_to_mirror_stage2 =
-                    Common._string_to_src_dest_pair_list(
-                        correct_gist_content_stage2
-                        )
-            else
-                error("could not find the correct gist!")
+            if length(strip(correct_gist_content_stage2)) == 0
+                error("I could not find the correct gist on any host")
             end
+            all_repos_to_mirror_stage2 =
+                Common._string_to_src_dest_pair_list(
+                    correct_gist_content_stage2
+                    )
         else
             @info("no need to download any gists: I already have the list")
             all_repos_to_mirror_stage2 =
@@ -158,10 +173,12 @@ function run_mirror_updater!!(
                 all_repos_to_mirror_stage2
         end
         Common._push_mirrors!!(
-            selected_repos_to_mirror_stage2,
-            github_organization,
-            github_user,
-            github_token;
+            ;
+            src_dest_pairs = selected_repos_to_mirror_stage2,
+            enabled_git_hosting_providers = enabled_git_hosting_providers,
+            git_hosting_providers_params = git_hosting_providers_params,
+            git_hosting_providers_functions =
+                git_hosting_providers_functions,
             is_dry_run = is_dry_run,
             auth = my_github_auth,
             do_not_try_url_list =
@@ -178,22 +195,14 @@ function run_mirror_updater!!(
     if task == "all" || task == "clean-up"
         @info("Starting stage 3...")
         if has_gist_description
-            list_of_gist_ids_to_delete::Vector{String} = String[]
-            @info("loading all my gists")
-            my_gists_stage3::Vector{GitHub.Gist} = GitHub.gists(
-                github_user;
-                auth = my_github_auth,
-                )[1]
-            for gist in my_gists_stage3
-                if gist.description == gist_description
-                    push!(list_of_gist_ids_to_delete, gist.id)
-                end
-            end
-            for gist_id_to_delete in list_of_gist_ids_to_delete
-                @info(string("deleting gist id $(gist_id_to_delete)"))
-                GitHub.delete_gist(
-                    gist_id_to_delete;
-                    auth = my_github_auth,
+            args = Dict(
+                :gist_description => gist_description
+                )
+            for host in enabled_git_hosting_providers
+                git_hosting_providers_functions[host][:delete_gists!!](
+                    ;
+                    args = args,
+                    host_params = git_hosting_providers_params[host],
                     )
             end
         end

@@ -4,14 +4,39 @@ module GitHubHost # Begin submodule MirrorUpdater.Hosts.GitHubHost
 
 __precompile__(true)
 
+import ..Types
+import ..Utils
+
 import Dates
 import GitHub
 import TimeZones
 
-import ..Types
-import ..Utils
+function _github_delete_gists!!(
+        ;
+        args::Dict,
+        host_params::Dict,
+        )::Nothing
+    github_user = host_params[:github_user]
+    my_github_auth = host_params[:my_github_auth]
+    gist_description::String = args[:gist_description]
+    list_of_gist_ids_to_delete::Vector{String} = String[]
+    @info("loading all my GitHub gists")
+    my_gists_stage3::Vector{GitHub.Gist} = GitHub.gists(
+        github_user;
+        auth = my_github_auth,)[1]
+    for gist in my_gists_stage3
+        if gist.description == gist_description
+            push!(list_of_gist_ids_to_delete, gist.id)
+        end
+    end
+    for gist_id_to_delete in list_of_gist_ids_to_delete
+        GitHub.delete_gist(gist_id_to_delete;auth = my_github_auth,)
+        @info(string("deleted GitHub gist id $(gist_id_to_delete)"))
+    end
+    return nothing
+end
 
-function _github_create_gist(
+function _github_create_gist!!(
         ;
         args::Dict,
         host_params::Dict,
@@ -34,6 +59,39 @@ function _github_create_gist(
             ),
         )
     return nothing
+end
+
+function _github_retrieve_gist(
+        ;
+        args::Dict,
+        host_params::Dict,
+        )::String
+    my_github_auth = host_params[:my_github_auth]
+    github_user = host_params[:github_user]
+    gist_description = args[:gist_description]
+    @info("loading all of my GitHub gists")
+    my_gists_stage2::Vector{GitHub.Gist} = GitHub.gists(
+        github_user;
+        auth = my_github_auth,
+        )[1]
+    correct_gist_id::String = ""
+    for gist in my_gists_stage2
+        if gist.description == gist_description
+            correct_gist_id = gist.id
+        end
+    end
+    result::String = ""
+    if length(correct_gist_id) > 0
+        @info("downloading the correct GitHub gist")
+        correct_gist::GitHub.Gist = GitHub.gist(
+            correct_gist_id;auth = my_github_auth,)
+        correct_gist_content_stage2::String = correct_gist.files[
+            "list.txt"]["content"]
+        result = correct_gist_content_stage2
+    else
+        result = ""
+    end
+    return result
 end
 
 function _generate_new_repo_description(

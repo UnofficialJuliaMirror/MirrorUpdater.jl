@@ -4,6 +4,9 @@ module GitLabHost # Begin submodule MirrorUpdater.Hosts.GitLabHost
 
 __precompile__(true)
 
+import ..Types
+import ..Utils
+
 import Dates
 # import GitLab
 import TimeZones
