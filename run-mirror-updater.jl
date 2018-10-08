@@ -21,6 +21,37 @@ include(joinpath("config","repositories","registries.jl",))
 include(joinpath("config","repositories",
     "try-but-allow-failures-url-list.jl",))
 
+if MirrorUpdater.Utils._is_travis_ci()
+    error(
+        string(
+            "I still need to test this code locally ",
+            "with the --dry-run flag ",
+            "and with no gist description.",
+            ),
+        )
+    error(
+        string(
+            "I still need to test this code locally ",
+            "with the --dry-run flag ",
+            "and with --gist-description equal to \"dilum-local-test\"",
+            "",
+            "",
+            ),
+        )
+    error(
+        string(
+            "I still need to test this code locally ",
+            "with no gist description.",
+            ),
+        )
+    error(
+        string(
+            "I still need to test this code locally ",
+            "with --gist-description equal to \"dilum-local-test\"",
+            ),
+        )
+end
+
 MirrorUpdater.CommandLine.run_mirror_updater_command_line!!(
     ;
     github_enabled = GITHUB_ENABLED,
