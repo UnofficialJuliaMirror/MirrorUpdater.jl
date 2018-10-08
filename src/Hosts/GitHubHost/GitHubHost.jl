@@ -190,28 +190,33 @@ function _create_dest_repo_if_it_doesnt_exist!!(
         repo_fullname;
         github_organization = github_organization,
         )
+    repo_name_with_organization = _repo_name_with_organization(
+        ;
+        repo = repo_fullname,
+        org = github_organization,
+        )
+    repo_name_without_organization = (
+        ;
+        repo = repo_fullname,
+        org = github_organization,
+        )
     if _url_exists(dest_url_withoutauth)
-        # repo already exists, so do nothing
     else
         if _github_repo_exists(repo_fullname; auth=auth)
-            # repo already exists, so do nothing
         else
             @info("Creating new repo: $(dest_url_withoutauth)")
-            destination_repo_name::String = strip(x.destination_repo_name)
             owner = GitHub.owner(
                 github_organization,
                 true;
                 auth = auth,
                 )
             params = Dict{String, Any}(
-                # "private" => "false",
                 "has_issues" => "false",
-                # "has_projects" => "false",
                 "has_wiki" => "false",
                 )
             repo = GitHub.create_repo(
                 owner,
-                destination_repo_name,
+                repo_name_without_organization,
                 params;
                 auth = auth,
                 )
