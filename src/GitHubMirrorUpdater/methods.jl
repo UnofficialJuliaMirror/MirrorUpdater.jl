@@ -739,6 +739,7 @@ function _push_mirrors!!(
                             max_recursion_depth = max_recursion_depth,
                             is_dry_run = is_dry_run,
                             do_not_try_url_list = do_not_try_url_list,
+                            time_zone = time_zone,
                             auth = auth,
                             do_not_push_to_these_destinations =
                                 do_not_push_to_these_destinations,
