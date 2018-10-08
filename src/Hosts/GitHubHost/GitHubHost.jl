@@ -10,7 +10,7 @@ function _generate_new_repo_description(
         github_organization::String,
         github_user::String,
         when::TimeZones.ZonedDateTime = Dates.now(TimeZones.localzone()),
-        time_zone::Dates.TimeZone = TimeZones.TimeZone("America/New_York"),
+        time_zone::Dates.TimeZone = Dates.TimeZone("America/New_York"),
         )::String
     source_url::String = x.source_url
     if Utils._is_travis_ci()

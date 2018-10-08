@@ -28,7 +28,7 @@ function run_mirror_updater!!(
         do_not_push_to_these_destinations::Vector{String},
         do_not_try_url_list::Vector{String},
         try_but_allow_failures_url_list::Vector{String},
-        time_zone::TimeZones.TimeZone = TimeZones.TimeZone("America/New_York"),
+        time_zone::Dates.TimeZone = Dates.TimeZone("America/New_York"),
         )::Nothing
     has_gist_description::Bool = length(gist_description) > 0
 
