@@ -230,7 +230,7 @@ function _generate_new_repo_description(
             get(a, "TRAVIS_EVENT_TYPE", "")
             )
         if length(travis_event_type) > 0
-            travis_event_string = string(" $(TRAVIS_EVENT_TYPE)")
+            travis_event_string = string(" $(travis_event_type)")
         else
             travis_event_string = string("")
         end
