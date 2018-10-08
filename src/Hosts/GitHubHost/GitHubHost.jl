@@ -16,13 +16,9 @@ function _create_dest_repo_if_it_doesnt_exist!!(
         args::Dict,
         host_params::Dict,
         )::Nothing
-    x = args[:x]
-
-    # (
-    #     x::Types.SrcDestPair,
-    #     github_organization::String;
-    #     auth::GitHub.Authorization,
-    #     )::Nothing
+    x::Types.SrcDestPair = args[:x]
+    github_organization::String = host_params[:github_organization]
+    auth::GitHub.Authorization = host_params[:auth]
     repo_fullname = _get_repo_fullname(x, github_organization,)
     _create_dest_repo_if_it_doesnt_exist!!(
         repo_fullname,
@@ -148,6 +144,8 @@ function _generate_new_repo_description(
     return result
 end
 
+
+
 function _edit_repo_description_github!!(
         ;
         args::Dict,
@@ -268,8 +266,13 @@ function _github_retrieve_gist(
 end
 
 function _get_github_username(
-        auth::GitHub.Authorization,
-        )
+        ;
+        args::Dict,
+        host_params::Dict,
+        )::String
+    # (
+    #     auth::GitHub.Authorization,
+    #     )
     user_information::AbstractDict = GitHub.gh_get_json(
         GitHub.DEFAULT_API,
         "/user";
@@ -281,11 +284,16 @@ function _get_github_username(
 end
 
 function _get_destination_url(
-        destination_repo_name::String;
-        github_organization::String,
-        github_user::String = "",
-        github_token::String = "",
-        ):String
+        ;
+        args::Dict,
+        host_params::Dict,
+        )::String
+    # (
+    #     destination_repo_name::String;
+    #     github_organization::String,
+    #     github_user::String = "",
+    #     github_token::String = "",
+    #     ):String
     destination_repo_name_without_organization::String =
         Utils._repo_name_without_organization(
             ;
@@ -317,11 +325,16 @@ function _get_destination_url(
 end
 
 function _get_destination_url(
-        x::Types.SrcDestPair;
-        github_organization::String,
-        github_user::String = "",
-        github_token::String = "",
-        ):String
+        ;
+        args::Dict,
+        host_params::Dict,
+        )::String
+    # (
+    #     x::Types.SrcDestPair;
+    #     github_organization::String,
+    #     github_user::String = "",
+    #     github_token::String = "",
+    #     ):String
     destination_repo_name::String = strip(x.destination_repo_name)
     result::String = _get_destination_url(
         destination_repo_name;
@@ -333,9 +346,14 @@ function _get_destination_url(
 end
 
 function _github_repo_exists(
-        full_repo_name;
-        auth::GitHub.Authorization,
-        )::Bool
+        ;
+        args::Dict,
+        host_params::Dict,
+        )::Nothing
+    # (
+    #     full_repo_name;
+    #     auth::GitHub.Authorization,
+    #     )::Bool
     result::Bool = try
         repo = GitHub.repo(full_repo_name; auth = auth,)
         true
