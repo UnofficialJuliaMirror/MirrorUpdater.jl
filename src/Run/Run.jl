@@ -62,13 +62,28 @@ function run_mirror_updater!!(
             github_user
 
         git_hosting_providers_functions[:github] = Dict{Symbol, Function}()
-        git_hosting_providers_functions[:github][:create_gist!!] =
-            GitHubHost._github_create_gist!!
-        git_hosting_providers_functions[:github][:retrieve_gist] =
-            GitHubHost._github_retrieve_gist
-        git_hosting_providers_functions[:github][:delete_gists!!] =
-            GitHubHost._github_delete_gists!!
-
+        git_hosting_providers_functions[:github][
+            :create_gist!!] = GitHubHost._github_create_gist!!
+        git_hosting_providers_functions[:github][
+            :retrieve_gist] = GitHubHost._github_retrieve_gist
+        git_hosting_providers_functions[:github][
+            :delete_gists!!] = GitHubHost._github_delete_gists!!
+        git_hosting_providers_functions[:github][
+            :] = GitHubHost.
+        git_hosting_providers_functions[:github][
+            :] = GitHubHost.
+        git_hosting_providers_functions[:github][
+            :] = GitHubHost.
+        git_hosting_providers_functions[:github][
+            :] = GitHubHost.
+        git_hosting_providers_functions[:github][
+            :] = GitHubHost.
+        git_hosting_providers_functions[:github][
+            :] = GitHubHost.
+        git_hosting_providers_functions[:github][
+            :] = GitHubHost.
+        git_hosting_providers_functions[:github][
+            :] = GitHubHost.
         push!(enabled_git_hosting_providers, :github)
     end
 
