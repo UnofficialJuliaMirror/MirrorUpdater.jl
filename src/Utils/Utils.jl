@@ -4,9 +4,6 @@ module Utils # Begin submodule MirrorUpdater.Utils
 
 __precompile__(true)
 
-# include("is-travis-ci.jl")
-# include("run-command.jl")
-
 function command_ran_successfully!!(
         cmds::Base.AbstractCmd,
         args...;
