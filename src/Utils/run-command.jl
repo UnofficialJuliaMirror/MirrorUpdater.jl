@@ -1,6 +1,6 @@
 ##### Beginning of file
 
-function command_ran_successfully(
+function command_ran_successfully!!(
         cmds::Base.AbstractCmd,
         args...;
         max_attempts::Integer = 10,

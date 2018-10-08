@@ -6,7 +6,7 @@ include("miscellaneous-ml-related-repos.jl")
 include("unregistered-packages.jl")
 
 const ADDITIONAL_REPOS = convert(
-    Vector{MirrorUpdater.SrcDestPair},
+    Vector{MirrorUpdater.Types.SrcDestPair},
     vcat(
         JULIACOMPUTING_REPOS,
         JULIALANG_REPOS,

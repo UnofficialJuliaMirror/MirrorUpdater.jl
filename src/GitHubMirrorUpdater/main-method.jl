@@ -5,38 +5,73 @@ import Conda
 import GitHub
 import HTTP
 import Pkg
+import TimeZones
 
-function run_mirror_updater( # this is the main method
+function run_mirror_updater_command_line!!(
         ;
         arguments::Vector{String},
         github_organization::String,
-        github_user::String,
         github_token::String,
-        registry_list::Vector{Registry},
-        additional_repos::Vector{SrcDestPair},
+        registry_list::Vector{Types.Registry},
+        additional_repos::Vector{Types.SrcDestPair},
         do_not_push_to_these_destinations::Vector{String},
         do_not_try_url_list::Vector{String},
         try_but_allow_failures_url_list::Vector{String},
+        time_zone::TimeZones.TimeZone = TimeZones.TimeZone("America/New_York"),
         )::Nothing
-
     @info("parsing command line arguments...")
     parsed_arguments::Dict = _parse_arguments(arguments)
+    task::String,
+        has_gist_description::Bool,
+        gist_description::String,
+        is_dry_run::Bool, = _process_parsed_arguments(parsed_arguments)
+    run_mirror_updater!!(
+        ;
+        task = task,
+        gist_description = gist_description,
+        is_dry_run = is_dry_run,
+        github_organization = github_organization,
+        github_token = github_token,
+        registry_list = registry_list,
+        additional_repos = additional_repos,
+        time_zone = time_zone,
+        do_not_push_to_these_destinations =
+            do_not_push_to_these_destinations,
+        do_not_try_url_list =
+            do_not_try_url_list,
+        try_but_allow_failures_url_list =
+            try_but_allow_failures_url_list,
+        )
+    return nothing
+end
+
+function run_mirror_updater!!(
+        ;
+        task::String,
+        gist_description::String,
+        is_dry_run::Bool,
+        github_organization::String,
+        github_token::String,
+        registry_list::Vector{Types.Registry},
+        additional_repos::Vector{Types.SrcDestPair},
+        do_not_push_to_these_destinations::Vector{String},
+        do_not_try_url_list::Vector{String},
+        try_but_allow_failures_url_list::Vector{String},
+        time_zone::TimeZones.TimeZone = TimeZones.TimeZone("America/New_York"),
+        )::Nothing
+    has_gist_description::Bool = length(gist_description) > 0
 
     @info("Authenticating to GitHub...")
     my_github_auth::GitHub.Authorization = GitHub.authenticate(
         github_token
         )
-
-    task,
-        has_gist_description,
-        gist_description,
-        is_dry_run, = _process_parsed_arguments(parsed_arguments)
+    github_user::String = _get_github_username(my_github_auth)
 
     if task == "all" || task == "make-list"
         @info("Starting stage 1...")
         @info("Making list of repos to mirror...")
 
-        all_repos_to_mirror_stage1::Vector{SrcDestPair} = _make_list(
+        all_repos_to_mirror_stage1::Vector{Types.SrcDestPair} = _make_list(
             registry_list,
             additional_repos;
             do_not_try_url_list =
@@ -66,7 +101,7 @@ function run_mirror_updater( # this is the main method
         @info("Stage 1 completed successfully.")
     end
 
-    if task == "all" || _is_interval(task)
+    if task == "all" || Types._is_interval(task)
         @info("Starting stage 2...")
         if has_gist_description
             correct_gist_id::String = ""
@@ -101,8 +136,9 @@ function run_mirror_updater( # this is the main method
             all_repos_to_mirror_stage2 =
                 all_repos_to_mirror_stage1
         end
-        if _is_interval(task)
-            task_interval::AbstractInterval = _construct_interval(task)
+        if Types._is_interval(task)
+            task_interval::Types.AbstractInterval =
+                Types._construct_interval(task)
             @info(
                 string("Using interval for stage 2: "),
                 task_interval,
@@ -116,7 +152,7 @@ function run_mirror_updater( # this is the main method
             selected_repos_to_mirror_stage2 =
                 all_repos_to_mirror_stage2
         end
-        _push_mirrors(
+        _push_mirrors!!(
             selected_repos_to_mirror_stage2,
             github_organization,
             github_user,
@@ -129,6 +165,7 @@ function run_mirror_updater( # this is the main method
                 try_but_allow_failures_url_list,
             do_not_push_to_these_destinations =
                 do_not_push_to_these_destinations,
+            time_zone = time_zone,
             )
         @info("Stage 2 completed successfully.")
     end

@@ -4,23 +4,8 @@ module GitHubMirrorUpdater # Begin submodule MirrorUpdater.GitHubMirrorUpdater
 
 __precompile__(true)
 
+import ..Types
 import ..Utils
-
-import ..AbstractInterval
-
-import ..OneSidedInterval
-import ..Package
-import ..Registry
-import ..SrcDestPair
-import ..TwoSidedInterval
-
-import .._construct_interval
-import .._is_interval
-
-import .._name_with_git
-import .._name_without_git
-import .._name_with_jl
-import .._name_without_jl
 
 include("main-method.jl")
 include("methods.jl")
