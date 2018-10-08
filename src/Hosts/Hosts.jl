@@ -4,8 +4,8 @@ module Hosts # Begin submodule MirrorUpdater.Hosts
 
 __precompile__(true)
 
-include("")
-include("")
+import ..Types
+import ..Utils
 
 end # End submodule MirrorUpdater.Hosts
 

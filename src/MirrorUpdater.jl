@@ -14,9 +14,9 @@ include(joinpath("Hosts", "Hosts.jl"))
 
 include(joinpath("Common", "Common.jl"))
 
-include(joinpath("CommandLine", "CommandLine.jl"))
-
 include(joinpath("Run", "Run.jl"))
+
+include(joinpath("CommandLine", "CommandLine.jl"))
 
 end # End module MirrorUpdater
 

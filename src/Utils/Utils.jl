@@ -4,6 +4,19 @@ module Utils # Begin submodule MirrorUpdater.Utils
 
 __precompile__(true)
 
+import ..Types
+
+function _url_exists(url::AbstractString)::Bool
+    temp_url::String = strip(convert(String, url))
+    result::Bool = try
+        r = HTTP.request("GET", url)
+        r.status == 200
+    catch
+        false
+    end
+    return result
+end
+
 function command_ran_successfully!!(
         cmds::Base.AbstractCmd,
         args...;
@@ -73,6 +86,60 @@ function _is_travis_ci(
         travis_is_true &&
         continuous_integration_is_true
     return answer
+end
+
+function _get_git_binary_path(
+        environment::Union{AbstractString,Symbol} = :MirrorUpdater,
+        )::String
+    path_git_conda_specified_env::String = try
+        joinpath(Conda.bin_dir(environment), "git",)
+    catch
+        ""
+    end
+    success_git_conda_specified_env::Bool = try
+        if length(path_git_conda_specified_env) > 0
+            success(`$(path_git_conda_specified_env) --version`)
+        else
+            false
+        end
+    catch
+        false
+    end
+    path_git_conda_root_env::String = try
+        joinpath(Conda.bin_dir(Conda.ROOTENV), "git",)
+    catch
+        ""
+    end
+    success_git_conda_root_env::Bool = try
+        if length(path_git_conda_root_env) > 0
+            success(`$(path_git_conda_root_env) --version`)
+        else
+            false
+        end
+    catch
+        false
+    end
+    path_git_default::String = "git"
+    success_git_default::Bool = try
+        success(`$(path_git_default) --version`)
+    catch
+        false
+    end
+    if success_git_conda_specified_env
+        git_path_to_use = path_git_conda_specified_env
+    elseif success_git_conda_root_env
+        git_path_to_use = path_git_conda_root_env
+    elseif success_git_default
+        git_path_to_use = path_git_default
+    else
+        error(
+            string(
+                "I could not find a usable Git."
+                )
+            )
+    end
+    result::String = strip(git_path_to_use)
+    return result
 end
 
 end # End submodule MirrorUpdater.Utils
