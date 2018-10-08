@@ -10,7 +10,7 @@ import MirrorUpdater
 include(joinpath("config","preferences","enabled-providers.jl",))
 include(joinpath("config","preferences","gitlab.jl",))
 include(joinpath("config","preferences","github.jl",))
-include(joinpath("config","preferences","time_zone.jl",))
+include(joinpath("config","preferences","time-zone.jl",))
 
 include(joinpath("config","repositories","additional-repos.jl",))
 include(joinpath("config","repositories",
@@ -23,8 +23,10 @@ include(joinpath("config","repositories",
 
 @info("Running the main run_mirror_updater method...")
 
-MirrorUpdater.GitHubMirrorUpdater.run_mirror_updater_command_line!!(
+MirrorUpdater.CommandLine.run_mirror_updater_command_line!!(
     ;
+    github_enabled = GITHUB_ENABLED,
+    gitlab_enabled = GITLAB_ENABLED,
     arguments = ARGS,
     github_organization = GITHUB_ORGANIZATION,
     github_token = GITHUB_TOKEN,

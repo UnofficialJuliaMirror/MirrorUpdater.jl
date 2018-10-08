@@ -7,10 +7,13 @@ __precompile__(true)
 import ..Types
 import ..Utils
 import ..Hosts
+import ..Hosts.GitHubHost
+import ..Hosts.GitLabHost
 import ..Common
 
 import ArgParse
 import Conda
+import Dates
 import GitHub
 import HTTP
 import Pkg
@@ -18,6 +21,8 @@ import TimeZones
 
 function run_mirror_updater!!(
         ;
+        github_enabled::Bool,
+        gitlab_enabled::Bool,
         task::String,
         gist_description::String,
         is_dry_run::Bool,
@@ -30,44 +35,62 @@ function run_mirror_updater!!(
         try_but_allow_failures_url_list::Vector{String},
         time_zone::Dates.TimeZone = Dates.TimeZone("America/New_York"),
         )::Nothing
-    has_gist_description::Bool = length(gist_description) > 0
+    enabled_git_hosting_providers::Vector{Symbol} = Symbol[]
+    git_hosting_providers_params::Dict{Symbol, Any} = Dict{Symbol, Any}()
+    git_hosting_providers_functions::Dict{Symbol, Any} = Dict{Symbol, Any}()
 
-    @info("Authenticating to GitHub...")
-    my_github_auth::GitHub.Authorization = GitHub.authenticate(
-        github_token
-        )
-    github_user::String = _get_github_username(my_github_auth)
+    if github_enabled
+        git_hosting_providers_params[:github] = Dict{Symbol, Any}()
+        @info("Authenticating to GitHub...")
+        push!(enabled_git_hosting_providers, :github)
+        my_github_auth::GitHub.Authorization = GitHub.authenticate(
+            github_token
+            )
+        github_user::String = Hosts.GitHubHost._get_github_username(
+            my_github_auth
+            )
+        git_hosting_providers_params[:github][:my_github_auth] =
+            my_github_auth
+        git_hosting_providers_params[:github][:github_user] =
+            github_user
+        git_hosting_providers_functions[:github] = Dict{Symbol, Any}()
+        git_hosting_providers_functions[:github][]
+    end
+
+    if gitlab_enabled
+        error("GitLab is not yet supported.")
+        git_hosting_providers_params[:gitlab] = Dict{Symbol, Any}()
+        git_hosting_providers_functions[:gitlab] = Dict{Symbol, Any}()
+        push!(enabled_git_hosting_providers, :gitlab)
+    end
+
+    if length(enabled_git_hosting_providers) == 0
+        error("You must enable at least one Git hosting provider")
+    end
+
+    has_gist_description::Bool = length(gist_description) > 0
 
     if task == "all" || task == "make-list"
         @info("Starting stage 1...")
         @info("Making list of repos to mirror...")
 
-        all_repos_to_mirror_stage1::Vector{Types.SrcDestPair} = _make_list(
-            registry_list,
-            additional_repos;
-            do_not_try_url_list =
-                do_not_try_url_list,
-            try_but_allow_failures_url_list =
-                try_but_allow_failures_url_list,
-            )
-        gist_content_stage1::String = _src_dest_pair_list_to_string(
+        all_repos_to_mirror_stage1::Vector{Types.SrcDestPair} =
+            Common._make_list(
+                registry_list,
+                additional_repos;
+                do_not_try_url_list =
+                    do_not_try_url_list,
+                try_but_allow_failures_url_list =
+                    try_but_allow_failures_url_list,
+                )
+        gist_content_stage1::String = Common._src_dest_pair_list_to_string(
             all_repos_to_mirror_stage1
             )
         if has_gist_description
-            @info("Making gist on GitHub...")
-            GitHub.create_gist(
-                ;
-                auth = my_github_auth,
-                params = Dict(
-                    :public => true,
-                    :description => gist_description,
-                    :files => Dict(
-                        "list.txt" => Dict(
-                            "content" => gist_content_stage1,
-                            ),
-                        ),
-                    ),
-                )
+            for host in enabled_git_hosting_providers
+            end
+            # @info("Making gist on GitHub...")
+            
         end
         @info("Stage 1 completed successfully.")
     end
@@ -96,7 +119,7 @@ function run_mirror_updater!!(
                     "list.txt"][
                     "content"]
                 all_repos_to_mirror_stage2 =
-                    _string_to_src_dest_pair_list(
+                    Common._string_to_src_dest_pair_list(
                         correct_gist_content_stage2
                         )
             else
@@ -123,7 +146,7 @@ function run_mirror_updater!!(
             selected_repos_to_mirror_stage2 =
                 all_repos_to_mirror_stage2
         end
-        _push_mirrors!!(
+        Common._push_mirrors!!(
             selected_repos_to_mirror_stage2,
             github_organization,
             github_user,

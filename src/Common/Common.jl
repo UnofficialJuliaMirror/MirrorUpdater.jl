@@ -116,7 +116,7 @@ function _make_list(
     for x in additional_repos
         push!(full_list, x)
     end
-    git = _get_git_binary_path()
+    git = Utils._get_git_binary_path()
     for registry in registry_list
         registry_name = registry.name
         registry_uuid = registry.uuid
@@ -399,7 +399,7 @@ function _push_mirrors!!(
             src_dest_pairs
             )
         )
-    git = _get_git_binary_path()
+    git = Utils._get_git_binary_path()
     for pair in src_dest_pairs_sorted_unique
         src_url = pair.source_url
         destination_repo_name = pair.destination_repo_name
@@ -407,22 +407,25 @@ function _push_mirrors!!(
             pair,
             github_organization,
             )
-        dest_url_withoutauth::String = _get_destination_url(
-            pair;
-            github_organization = github_organization,
-            )
-        dest_url_withauth::String = _get_destination_url(
-            pair;
-            github_organization = github_organization,
-            github_user = github_user,
-            github_token = github_token,
-            )
-        dest_url_withredactedauth::String = _get_destination_url(
-            pair;
-            github_organization = github_organization,
-            github_user = github_user,
-            github_token = "*****",
-            )
+        dest_url_withoutauth::String =
+            Hosts.GitHubHost._get_destination_url(
+                pair;
+                github_organization = github_organization,
+                )
+        dest_url_withauth::String =
+            Hosts.GitHubHost._get_destination_url(
+                pair;
+                github_organization = github_organization,
+                github_user = github_user,
+                github_token = github_token,
+                )
+        dest_url_withredactedauth::String =
+            Hosts.GitHubHost._get_destination_url(
+                pair;
+                github_organization = github_organization,
+                github_user = github_user,
+                github_token = "*****",
+                )
         if src_url in do_not_try_url_list ||
                 Types._name_with_git(src_url) in do_not_try_url_list ||
                 Types._name_without_git(src_url) in do_not_try_url_list

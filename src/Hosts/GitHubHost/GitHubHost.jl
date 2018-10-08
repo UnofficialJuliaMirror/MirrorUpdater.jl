@@ -4,6 +4,32 @@ module GitHubHost # Begin submodule MirrorUpdater.Hosts.GitHubHost
 
 __precompile__(true)
 
+import Dates
+import GitHub
+import TimeZones
+
+import ..Types
+import ..Utils
+
+function _github_create_gist(
+        ;
+        )::Nothing
+    GitHub.create_gist(
+        ;
+        auth = my_github_auth,
+        params = Dict(
+            :public => true,
+            :description => gist_description,
+            :files => Dict(
+                "list.txt" => Dict(
+                    "content" => gist_content_stage1,
+                    ),
+                ),
+            ),
+        )
+    return nothing
+end
+
 function _generate_new_repo_description(
         x::Types.SrcDestPair,
         a::AbstractDict = ENV;
@@ -109,7 +135,7 @@ function _get_destination_url(
         github_token::String = "",
         ):String
     destination_repo_name_without_organization::String =
-        _repo_name_without_organization(
+        Utils._repo_name_without_organization(
             ;
             repo = destination_repo_name,
             org = github_organization,

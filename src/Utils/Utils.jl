@@ -6,6 +6,72 @@ __precompile__(true)
 
 import ..Types
 
+function _repo_name_with_organization(
+        ;
+        repo::AbstractString,
+        org::AbstractString,
+        )::String
+    repo_name_without_organization::String = _repo_name_without_organization(
+        ;
+        repo = repo,
+        org = org,
+        )
+    org_stripped::String = strip(
+        strip(strip(strip(strip(convert(String, org)), '/')), '/')
+        )
+    result::String = string(
+        org_stripped,
+        "/",
+        repo_name_without_organization,
+        )
+    return result
+end
+
+function _repo_name_without_organization(
+        ;
+        repo::AbstractString,
+        org::AbstractString,
+        )::String
+    repo_stripped::String = strip(
+        strip(strip(strip(strip(convert(String, repo)), '/')), '/')
+        )
+    org_stripped::String = strip(
+        strip(strip(strip(strip(convert(String, org)), '/')), '/')
+        )
+    if length(org_stripped) == 0
+        result = repo_stripped
+    else
+        repo_stripped_lowercase::String = lowercase(repo_stripped)
+        org_stripped_lowercase::String = lowercase(org_stripped)
+        org_stripped_lowercase_withtrailingslash::String = string(
+            org_stripped_lowercase,
+            "/",
+            )
+        if startswith(repo_stripped_lowercase,
+                org_stripped_lowercase_withtrailingslash)
+            index_start =
+                length(org_stripped_lowercase_withtrailingslash) + 1
+            result = repo_stripped[index_start:end]
+        else
+            result = repo_stripped
+        end
+    end
+    return result
+end
+
+function _get_repo_fullname(
+        x::Types.SrcDestPair,
+        organization::String,
+        )::String
+    destination_repo_name::String = strip(x.destination_repo_name)
+    result = _repo_name_with_organization(
+        ;
+        repo = destination_repo_name,
+        org = organization,
+        )
+    return result
+end
+
 function _url_exists(url::AbstractString)::Bool
     temp_url::String = strip(convert(String, url))
     result::Bool = try

@@ -12,6 +12,7 @@ import ..Run
 
 import ArgParse
 import Conda
+import Dates
 import GitHub
 import HTTP
 import Pkg
@@ -19,6 +20,8 @@ import TimeZones
 
 function run_mirror_updater_command_line!!(
         ;
+        github_enabled::Bool,
+        gitlab_enabled::Bool,
         arguments::Vector{String},
         github_organization::String,
         github_token::String,
@@ -37,6 +40,8 @@ function run_mirror_updater_command_line!!(
         is_dry_run::Bool, = _process_parsed_arguments(parsed_arguments)
     Run.run_mirror_updater!!(
         ;
+        github_enabled = github_enabled,
+        gitlab_enabled = gitlab_enabled,
         task = task,
         gist_description = gist_description,
         is_dry_run = is_dry_run,
