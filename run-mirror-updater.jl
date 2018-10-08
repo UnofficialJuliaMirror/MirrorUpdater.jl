@@ -5,15 +5,59 @@ pushfirst!(Base.LOAD_PATH, joinpath(@__DIR__, "src"))
 import MirrorUpdater
 
 @info("Reading config files...")
-include(joinpath("config", "additional-repos.jl"))
-include(joinpath("config", "do-not-push-to-these-destinations.jl"))
-include(joinpath("config", "do-not-try-url-list.jl"))
-include(joinpath("config", "git-hosting-providers.jl"))
-include(joinpath("config", "gitlab.jl"))
-include(joinpath("config", "github.jl"))
-include(joinpath("config", "registries.jl"))
-include(joinpath("config", "time_zone.jl"))
-include(joinpath("config", "try-but-allow-failures-url-list.jl"))
+include(
+    joinpath(
+        "config",
+        "additional-repos.jl",
+        )
+    )
+include(
+    joinpath(
+        "config",
+        "do-not-push-to-these-destinations.jl",
+        )
+    )
+include(
+    joinpath(
+        "config",
+        "do-not-try-url-list.jl",
+        )
+    )
+include(
+    joinpath(
+        "config",
+        "git-hosting-providers.jl",
+        )
+    )
+include(
+    joinpath(
+        "config",
+        "gitlab.jl",
+        )
+    )
+include(
+    joinpath(
+        "config",
+        "github.jl",
+        )
+    )
+include(
+    joinpath(
+        "config",
+        "registries.jl",
+        )
+    )
+include(
+    joinpath(
+        "config",
+        "time_zone.jl",
+        )
+    )
+include(
+    joinpath(
+        "config", "try-but-allow-failures-url-list.jl",
+        )
+    )
 
 @info("Running the main run_mirror_updater method...")
 MirrorUpdater.GitHubMirrorUpdater.run_mirror_updater_command_line!!(
