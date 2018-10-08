@@ -49,10 +49,9 @@ You can also use it to host your own mirror.
 
 ### Step 5
 
-Update lines 1 and 2 of `config/github.jl` to look like:
+Update line 1 of `config/github.jl` to look like:
 ```julia
 const GITHUB_ORGANIZATION = "MY_GITHUB_ORG"
-const GITHUB_USER = "MY_GITHUB_BOT"
 ```
 
 Leave the rest of `config/github.jl` unchanged. Please do not stored your personal access token in the file.
