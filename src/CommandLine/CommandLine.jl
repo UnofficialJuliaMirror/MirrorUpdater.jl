@@ -4,12 +4,6 @@ module CommandLine # Begin submodule MirrorUpdater.CommandLine
 
 __precompile__(true)
 
-import ..Types
-import ..Utils
-import ..Hosts
-import ..Common
-import ..Run
-
 import ArgParse
 import Conda
 import Dates
@@ -17,6 +11,12 @@ import GitHub
 import HTTP
 import Pkg
 import TimeZones
+
+import ..Types
+import ..Utils
+import ..Hosts
+import ..Common
+import ..Run
 
 function run_mirror_updater_command_line!!(
         ;
@@ -33,11 +33,16 @@ function run_mirror_updater_command_line!!(
         time_zone::Dates.TimeZone = Dates.TimeZone("America/New_York"),
         )::Nothing
     @info("parsing command line arguments...")
-    parsed_arguments::Dict = _parse_arguments(arguments)
-    task::String,
-        has_gist_description::Bool,
-        gist_description::String,
-        is_dry_run::Bool, = _process_parsed_arguments(parsed_arguments)
+    parsed_arguments::Dict = _parse_arguments(
+        arguments
+        )
+    processed_arguments::Dict = _process_parsed_arguments(
+        parsed_arguments
+        )
+    task::String = processed_arguments[:task]
+    has_gist_description::Bool =  processed_arguments[:has_gist_description]
+    gist_description::String = processed_arguments[:gist_description]
+    is_dry_run::Bool = processed_arguments[:is_dry_run]
     Run.run_mirror_updater!!(
         ;
         github_enabled = github_enabled,
@@ -79,7 +84,7 @@ function _parse_arguments(arguments::Vector{String})::Dict
     return result
 end
 
-function _process_parsed_arguments(parsed_arguments::Dict)::Tuple
+function _process_parsed_arguments(parsed_arguments::Dict)::Dict{Symbol, Any}
     task_argument::String = strip(
         convert(String, parsed_arguments["task"])
         )
@@ -99,7 +104,13 @@ function _process_parsed_arguments(parsed_arguments::Dict)::Tuple
     end
 
     is_dry_run::Bool = parsed_arguments["dry-run"]
-    return task, has_gist_description, gist_description, is_dry_run
+    result::Dict{Symbol, Any} = Dict{Symbol, Any}()
+    result[:task] = task
+    result[:has_gist_description] = has_gist_description
+    result[:gist_description] = gist_description
+    result[:is_dry_run] = is_dry_run
+
+    return result
 end
 
 end # End submodule MirrorUpdater.CommandLine

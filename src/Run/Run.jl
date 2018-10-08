@@ -54,7 +54,8 @@ function run_mirror_updater!!(
         git_hosting_providers_params[:github][:github_user] =
             github_user
         git_hosting_providers_functions[:github] = Dict{Symbol, Any}()
-        git_hosting_providers_functions[:github][]
+        git_hosting_providers_functions[:github][:create_gist] =
+            GitHubHost._github_create_gist
     end
 
     if gitlab_enabled
@@ -87,10 +88,17 @@ function run_mirror_updater!!(
             all_repos_to_mirror_stage1
             )
         if has_gist_description
+            args = Dict(
+                :gist_description => gist_description,
+                :gist_content_stage1 => gist_content_stage1,
+                )
             for host in enabled_git_hosting_providers
+                git_hosting_providers_functions[host][:create_gist](
+                    ;
+                    args = ,
+                    host_params = git_hosting_providers_params[:github],
+                    )
             end
-            # @info("Making gist on GitHub...")
-            
         end
         @info("Stage 1 completed successfully.")
     end

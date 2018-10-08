@@ -13,7 +13,13 @@ import ..Utils
 
 function _github_create_gist(
         ;
+        args::Dict,
+        host_params::Dict,
         )::Nothing
+    my_github_auth = host_params[:my_github_auth]
+    gist_description::String = args[:gist_description]
+    gist_content_stage1::String = args[:gist_content_stage1]
+    @info("Making gist on GitHub...")
     GitHub.create_gist(
         ;
         auth = my_github_auth,

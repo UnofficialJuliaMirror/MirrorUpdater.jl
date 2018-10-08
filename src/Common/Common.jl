@@ -16,12 +16,12 @@ import HTTP
 import Pkg
 import TimeZones
 
-function _repo_name_with_organization(
+function _repo_name_with_org(
         ;
         repo::AbstractString,
         org::AbstractString,
         )::String
-    repo_name_without_organization::String = _repo_name_without_organization(
+    repo_name_without_org::String = _repo_name_without_org(
         ;
         repo = repo,
         org = org,
@@ -32,12 +32,12 @@ function _repo_name_with_organization(
     result::String = string(
         org_stripped,
         "/",
-        repo_name_without_organization,
+        repo_name_without_org,
         )
     return result
 end
 
-function _repo_name_without_organization(
+function _repo_name_without_org(
         ;
         repo::AbstractString,
         org::AbstractString,
@@ -71,13 +71,13 @@ end
 
 function _get_repo_fullname(
         x::Types.SrcDestPair,
-        github_organization::String,
+        github_org::String,
         )::String
     destination_repo_name::String = strip(x.destination_repo_name)
-    result = _repo_name_with_organization(
+    result = _repo_name_with_org(
         ;
         repo = destination_repo_name,
-        org = github_organization,
+        org = github_org,
         )
     return result
 end
@@ -381,7 +381,7 @@ end
 
 function _push_mirrors!!(
         src_dest_pairs::Vector{Types.SrcDestPair},
-        github_organization::String,
+        github_org::String,
         github_user::String,
         github_token::String;
         recursion_level::Integer = 0,
@@ -405,24 +405,24 @@ function _push_mirrors!!(
         destination_repo_name = pair.destination_repo_name
         destination_repo_fullname = _get_repo_fullname(
             pair,
-            github_organization,
+            github_org,
             )
         dest_url_withoutauth::String =
             Hosts.GitHubHost._get_destination_url(
                 pair;
-                github_organization = github_organization,
+                github_org = github_org,
                 )
         dest_url_withauth::String =
             Hosts.GitHubHost._get_destination_url(
                 pair;
-                github_organization = github_organization,
+                github_org = github_org,
                 github_user = github_user,
                 github_token = github_token,
                 )
         dest_url_withredactedauth::String =
             Hosts.GitHubHost._get_destination_url(
                 pair;
-                github_organization = github_organization,
+                github_org = github_org,
                 github_user = github_user,
                 github_token = "*****",
                 )
@@ -516,7 +516,7 @@ function _push_mirrors!!(
                         end
                         _push_mirrors!!(
                             list_of_new_src_dest_pairs,
-                            github_organization,
+                            github_org,
                             github_user,
                             github_token;
                             recursion_level = recursion_level + 1,
@@ -626,7 +626,7 @@ function _push_mirrors!!(
                     new_repo_description::String =
                         _generate_new_repo_description(
                             pair;
-                            github_organization = github_organization,
+                            github_org = github_org,
                             github_user = github_user,
                             time_zone = time_zone,
                             )
@@ -645,7 +645,7 @@ function _push_mirrors!!(
                                 "(3) I would update the description of the ",
                                 "destination repo on GitHub.",
                                 ),
-                            github_organization,
+                            github_org,
                             destination_repo_name,
                             mirrorpush_cmd_withredactedauth,
                             new_repo_description,
@@ -662,7 +662,7 @@ function _push_mirrors!!(
                             )
                         _create_dest_repo_if_it_doesnt_exist!!(
                             pair,
-                            github_organization;
+                            github_org;
                             auth = auth,
                             )
                         @info(
@@ -685,7 +685,7 @@ function _push_mirrors!!(
                                     ),
                                 destination_repo_name,
                                 new_repo_description,
-                                github_organization,
+                                github_org,
                                 github_user,
                                 )
                             _edit_repo_description_github!!(
@@ -693,7 +693,7 @@ function _push_mirrors!!(
                                 repo_name = destination_repo_name,
                                 new_repo_description = new_repo_description,
                                 auth = auth,
-                                github_organization = github_organization,
+                                github_org = github_org,
                                 github_user = github_user,
                                 )
                         else
