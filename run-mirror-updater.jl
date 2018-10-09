@@ -26,11 +26,12 @@ include(joinpath("config","repositories",
 git_hosting_providers::Vector{Any} = Any[]
 
 if GITHUB_ENABLED
-    const github_provider = MirrorUpdater.Hosts.GitHubHost.new_github_session(
-        ;
-        github_organization = GITHUB_ORGANIZATION,
-        github_token = GITHUB_TOKEN,
-        )
+    const github_provider =
+        MirrorUpdater.Hosts.GitHubHost.new_github_session(
+            ;
+            github_organization = GITHUB_ORGANIZATION,
+            github_token = GITHUB_TOKEN,
+            )
     push!(git_hosting_providers, github_provider)
 end
 

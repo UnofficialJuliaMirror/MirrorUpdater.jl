@@ -30,64 +30,25 @@ function run_mirror_updater!!(
         )::Nothing
     @info("Running MirrorUpdater.Run.run_mirror_updater!!")
 
-    enabled_git_hosting_providers::Vector{Symbol} = Symbol[]
-    git_hosting_providers_params::Dict{Symbol, Dict} = Dict{Symbol, Dict}()
-    git_hosting_providers_functions::Dict{Symbol, Dict{Symbol, Function}} =
-        Dict{Symbol, Dict{Symbol, Function}}()
-
-    if github_enabled
-        @info("Authenticating to GitHub...")
-
-
-
-        git_hosting_providers_params[:github] = Dict{Symbol, Any}()
-        git_hosting_providers_params[:github][:my_github_auth] =
-            my_github_auth
-        git_hosting_providers_params[:github][:github_organization] =
-            github_organization
-        git_hosting_providers_params[:github][:github_token] =
-            github_token
-        git_hosting_providers_params[:github][:github_user] =
-            github_user
-
-        git_hosting_providers_functions[:github] = Dict{Symbol, Function}()
-        git_hosting_providers_functions[:github][
-            :create_gist!!] = GitHubHost._github_create_gist!!
-        git_hosting_providers_functions[:github][
-            :retrieve_gist] = GitHubHost._github_retrieve_gist
-        git_hosting_providers_functions[:github][
-            :delete_gists!!] = GitHubHost._github_delete_gists!!
-        git_hosting_providers_functions[:github][
-            :] = GitHubHost.
-        git_hosting_providers_functions[:github][
-            :] = GitHubHost.
-        git_hosting_providers_functions[:github][
-            :] = GitHubHost.
-        git_hosting_providers_functions[:github][
-            :] = GitHubHost.
-        git_hosting_providers_functions[:github][
-            :] = GitHubHost.
-        git_hosting_providers_functions[:github][
-            :] = GitHubHost.
-        git_hosting_providers_functions[:github][
-            :] = GitHubHost.
-        git_hosting_providers_functions[:github][
-            :] = GitHubHost.
-        push!(enabled_git_hosting_providers, :github)
-    end
-
-    if gitlab_enabled
-        error("GitLab is not yet supported.")
-
-        git_hosting_providers_params[:gitlab] = Dict{Symbol, Any}()
-
-        git_hosting_providers_functions[:gitlab] = Dict{Symbol, Function}()
-
-        push!(enabled_git_hosting_providers, :gitlab)
-    end
-
-    if length(enabled_git_hosting_providers) == 0
-        error("You must enable at least one Git hosting provider")
+    if length(git_hosting_providers) == 0
+        error(
+            string(
+                "You must supply at least one git hosting provider",
+                )
+            )
+    elseif length(git_hosting_providers) == 1
+        @info(
+            string(
+                "I will push to one git hosting provider.",
+                ),
+            )
+    else
+        @info(
+            string(
+                "I will push to $(length(git_hosting_providers)) ",
+                "git hosting providers.",
+                ),
+            )
     end
 
     has_gist_description::Bool = length(gist_description) > 0

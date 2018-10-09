@@ -8,15 +8,13 @@ include(joinpath("Types", "Types.jl"))
 
 include(joinpath("Utils", "Utils.jl"))
 
-include(joinpath("Hosts", "Hosts.jl"))
-
-# include(joinpath("GitHubMirrorUpdater", "GitHubMirrorUpdater.jl"))
-
 include(joinpath("Common", "Common.jl"))
 
 include(joinpath("Run", "Run.jl"))
 
 include(joinpath("CommandLine", "CommandLine.jl"))
+
+include(joinpath("Hosts", "Hosts.jl"))
 
 end # End module MirrorUpdater
 

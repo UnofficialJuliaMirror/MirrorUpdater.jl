@@ -56,11 +56,17 @@ const GITHUB_ORGANIZATION = "MY_GITHUB_ORG"
 
 Leave the rest of `config/github.jl` unchanged. Please do not stored your personal access token in the file.
 
-### Step 6 (optional)
+### Step 6
+
+Update line 1 of `config/enabled-providers.jl` to look like:
+```julia
+const GITHUB_ENABLED = true
+```
+### Step 7 (optional)
 
 If there are other registries of Julia packages that you would like to mirror, add them to the `config/registries.jl` file.
 
-### Step 7 (optional)
+### Step 8 (optional)
 
 Update the other configuration files in the `config/` folder as you see fit.
 

@@ -4,6 +4,8 @@ module Types # Begin submodule MirrorUpdater.Types
 
 __precompile__(true)
 
+abstract type AbstractInterval end
+
 function _name_with_jl(x::AbstractString)::String
     name_without_jl::String = _name_without_jl(x)
     name_with_jl::String = string(name_without_jl, ".jl")
@@ -61,8 +63,6 @@ function _is_one_sided_interval(x::String)::Bool
     return result
 end
 
-abstract type AbstractInterval end
-
 struct Package
     name::String
     uuid::String
@@ -82,6 +82,20 @@ struct Package
             )
         return result
     end
+end
+
+function Package(
+        ;
+        name::AbstractString,
+        uuid::AbstractString,
+        source_url::AbstractString,
+        )::Package
+    result::Package = Package(
+        convert(String,name),
+        convert(String,uuid),
+        convert(String,source_url),
+        )
+    return result
 end
 
 struct Registry
@@ -109,6 +123,22 @@ struct Registry
     end
 end
 
+function Registry(
+        ;
+        owner::AbstractString,
+        name::AbstractString,
+        uuid::AbstractString,
+        url::AbstractString,
+        )::Registry
+    result::Registry = Registry(
+        convert(String,owner),
+        convert(String,name),
+        convert(String,uuid),
+        convert(String,url),
+        )
+    return result
+end
+
 struct SrcDestPair
     source_url::String
     destination_repo_name::String
@@ -124,6 +154,18 @@ struct SrcDestPair
             )
         return result
     end
+end
+
+function SrcDestPair(
+    ;
+    source_url::AbstractString,
+    destination_repo_name::String,
+    )::SrcDestPair
+    result::SrcDestPair = SrcDestPair(
+        convert(String, source_url),
+        convert(String, destination_repo_name),
+        )
+    return result
 end
 
 struct TwoSidedInterval <: AbstractInterval
@@ -154,48 +196,6 @@ struct OneSidedInterval <: AbstractInterval
             )
         return result
     end
-end
-
-function Package(
-        ;
-        name::AbstractString,
-        uuid::AbstractString,
-        source_url::AbstractString,
-        )::Package
-    result::Package = Package(
-        convert(String,name),
-        convert(String,uuid),
-        convert(String,source_url),
-        )
-    return result
-end
-
-function Registry(
-        ;
-        owner::AbstractString,
-        name::AbstractString,
-        uuid::AbstractString,
-        url::AbstractString,
-        )::Registry
-    result::Registry = Registry(
-        convert(String,owner),
-        convert(String,name),
-        convert(String,uuid),
-        convert(String,url),
-        )
-    return result
-end
-
-function SrcDestPair(
-    ;
-    source_url::AbstractString,
-    destination_repo_name::String,
-    )::SrcDestPair
-    result::SrcDestPair = SrcDestPair(
-        convert(String, source_url),
-        convert(String, destination_repo_name),
-        )
-    return result
 end
 
 function _construct_interval(x::String)::AbstractInterval
