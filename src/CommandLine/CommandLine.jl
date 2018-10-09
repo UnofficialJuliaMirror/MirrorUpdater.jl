@@ -7,30 +7,26 @@ __precompile__(true)
 import ArgParse
 import Conda
 import Dates
-import GitHub
 import HTTP
 import Pkg
 import TimeZones
 
 import ..Types
 import ..Utils
-import ..Hosts
 import ..Common
 import ..Run
 
 function run_mirror_updater_command_line!!(
         ;
-        github_enabled::Bool,
-        gitlab_enabled::Bool,
+        git_hosting_providers::AbstractVector = [],
         arguments::Vector{String},
-        github_organization::String,
-        github_token::String,
         registry_list::Vector{Types.Registry},
         additional_repos::Vector{Types.SrcDestPair},
         do_not_push_to_these_destinations::Vector{String},
         do_not_try_url_list::Vector{String},
         try_but_allow_failures_url_list::Vector{String},
-        time_zone::Dates.TimeZone = Dates.TimeZone("America/New_York"),
+        time_zone::TimeZones.TimeZone =
+            TimeZones.TimeZone("America/New_York"),
         )::Nothing
     @info(
         "Running MirrorUpdater.CommandLine.run_mirror_updater_command_line!!"
@@ -49,13 +45,10 @@ function run_mirror_updater_command_line!!(
     is_dry_run::Bool = processed_arguments[:is_dry_run]
     Run.run_mirror_updater!!(
         ;
-        github_enabled = github_enabled,
-        gitlab_enabled = gitlab_enabled,
+        git_hosting_providers = git_hosting_providers,
         task = task,
         gist_description = gist_description,
         is_dry_run = is_dry_run,
-        github_organization = github_organization,
-        github_token = github_token,
         registry_list = registry_list,
         additional_repos = additional_repos,
         time_zone = time_zone,

@@ -7,27 +7,20 @@ __precompile__(true)
 import ArgParse
 import Conda
 import Dates
-import GitHub
 import HTTP
 import Pkg
 import TimeZones
 
 import ..Types
 import ..Utils
-import ..Hosts
-import ..Hosts.GitHubHost
-import ..Hosts.GitLabHost
 import ..Common
 
 function run_mirror_updater!!(
         ;
-        github_enabled::Bool,
-        gitlab_enabled::Bool,
+        git_hosting_providers::AbstractVector = [],
         task::String,
         gist_description::String,
         is_dry_run::Bool,
-        github_organization::String,
-        github_token::String,
         registry_list::Vector{Types.Registry},
         additional_repos::Vector{Types.SrcDestPair},
         do_not_push_to_these_destinations::Vector{String},
@@ -44,12 +37,8 @@ function run_mirror_updater!!(
 
     if github_enabled
         @info("Authenticating to GitHub...")
-        my_github_auth::GitHub.Authorization = GitHub.authenticate(
-            github_token
-            )
-        github_user::String = Hosts.GitHubHost._get_github_username(
-            my_github_auth
-            )
+
+
 
         git_hosting_providers_params[:github] = Dict{Symbol, Any}()
         git_hosting_providers_params[:github][:my_github_auth] =

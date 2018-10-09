@@ -1,3 +1,3 @@
-import Dates
+import TimeZones
 
-const TIME_ZONE = Dates.TimeZone("America/New_York")
+const TIME_ZONE = TimeZones.TimeZone("America/New_York")
