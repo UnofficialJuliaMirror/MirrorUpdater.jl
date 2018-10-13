@@ -72,14 +72,22 @@ function run_mirror_updater!!(
         if has_gist_description
             args = Dict(
                 :gist_description => gist_description,
-                :gist_content_stage1 => gist_content_stage1,
+                :gist_content => gist_content_stage1,
                 )
-            for host in enabled_git_hosting_providers
-                git_hosting_providers_functions[host][:create_gist!!](
-                    ;
-                    args = args,
-                    host_params = git_hosting_providers_params[host],
+            for p in 1:length(git_hosting_providers)
+                @info(
+                    string(
+                        "Git hosting provider ",
+                        "$(p) of $(length(git_hosting_providers))",
+                        ),
                     )
+                provider = git_hosting_providers[p]
+                @info(
+                    string(
+                        "Creating gist on git hosting provider $(p).",
+                        )
+                    )
+                provider(:create_gist)(args)
             end
         end
         @info("Stage 1 completed successfully.")
@@ -93,18 +101,26 @@ function run_mirror_updater!!(
             args = Dict(
                 :gist_description => gist_description,
                 )
-            for host in enabled_git_hosting_providers
-                if length(strip(correct_gist_content_stage2)) == 0
+            correct_gist_content_stage2::String = ""
+            for p = 1:length(git_hosting_providers)
+                @info(
+                    string(
+                        "Git hosting provider ",
+                        "$(p) of $(length(git_hosting_providers))",
+                        ),
+                    )
+                provider = git_hosting_providers[p]
+                if length(correct_gist_content_stage2) == 0
+                    @info(
+                        string(
+                            "Searching git hosting provider $(p) ",
+                            "for the correct gist.",
+                            )
+                        )
                     correct_gist_content_stage2 = try
-                        git_hosting_providers_functions[host][
-                            :retrieve_gist](
-                                ;
-                                args=args,
-                                host_params=
-                                    git_hosting_providers_params[host],
-                                )
+                        provider(:retrieve_gist)(args)
                     catch exception
-                        @warn("ignoring exception: ",exception,)
+                        @warn("Ignored exception", exception,)
                         ""
                     end
                 end
@@ -140,12 +156,8 @@ function run_mirror_updater!!(
         Common._push_mirrors!!(
             ;
             src_dest_pairs = selected_repos_to_mirror_stage2,
-            enabled_git_hosting_providers = enabled_git_hosting_providers,
-            git_hosting_providers_params = git_hosting_providers_params,
-            git_hosting_providers_functions =
-                git_hosting_providers_functions,
+            git_hosting_providers = git_hosting_providers,
             is_dry_run = is_dry_run,
-            auth = my_github_auth,
             do_not_try_url_list =
                 do_not_try_url_list,
             try_but_allow_failures_url_list =
@@ -163,12 +175,20 @@ function run_mirror_updater!!(
             args = Dict(
                 :gist_description => gist_description
                 )
-            for host in enabled_git_hosting_providers
-                git_hosting_providers_functions[host][:delete_gists!!](
-                    ;
-                    args = args,
-                    host_params = git_hosting_providers_params[host],
+            for p = 1:length(git_hosting_providers)
+                @info(
+                    string(
+                        "Git hosting provider ",
+                        "$(p) of $(length(git_hosting_providers))",
+                        ),
                     )
+                provider = git_hosting_providers[p]
+                @info("Deleting gist from git hosting provider $(p).")
+                try
+                    host(:delete_gists)(args)
+                catch exception
+                    @warn("ignoring exception: ", exception)
+                end
             end
         end
         @info("Stage 3 completed successfully.")

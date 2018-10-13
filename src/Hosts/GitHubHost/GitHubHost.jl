@@ -13,10 +13,15 @@ import TimeZones
 
 function new_github_session(
         ;
-        github_organization::String,
-        github_token::String,
+        github_organization::AbstractString,
+        github_token::AbstractString,
         )::Function
-
+    _github_organization::String = strip(
+        convert(String, github_organization)
+        )
+    _github_token::String = strip(
+        convert(String, github_token)
+        )
     function _get_github_username(auth::GitHub.Authorization)::String
         user_information::AbstractDict = GitHub.gh_get_json(
             GitHub.DEFAULT_API,
@@ -29,14 +34,14 @@ function new_github_session(
     end
 
     @info("Attempting to authenticate to GitHub...")
-    auth::GitHub.Authorization = GitHub.authenticate(github_token)
+    auth::GitHub.Authorization = GitHub.authenticate(_github_token)
     github_user::String = Hosts.GitHubHost._get_github_username(
         my_github_auth,
         )
     @info("Successfully authenticated to GitHub")
 
     repository_owner = GitHub.owner(
-        github_org,
+        _github_organization,
         true;
         auth = auth,
         )
@@ -84,6 +89,9 @@ function new_github_session(
             result = correct_gist_content
         else
             result = ""
+        end
+        if length(result) == 0
+            error("Could not find the matching Gist")
         end
         return result
     end
@@ -168,7 +176,7 @@ function new_github_session(
         repo_name_without_org::String = _repo_name_without_org(
             ;
             repo = repo_name,
-            org = github_org,
+            org = _github_organization,
             )
         result::String = ""
         if credentials == :with_auth
@@ -176,10 +184,10 @@ function new_github_session(
                 "https://",
                 github_user,
                 ":",
-                github_token,
+                _github_token,
                 "@",
                 "github.com/",
-                github_org,
+                _github_organization,
                 "/",
                 repo_name_without_org,
                 )
@@ -191,7 +199,7 @@ function new_github_session(
                 "*****",
                 "@",
                 "github.com/",
-                github_org,
+                _github_organization,
                 "/",
                 repo_name_without_org,
                 )
@@ -199,7 +207,7 @@ function new_github_session(
             result =string(
                 "https://",
                 "github.com/",
-                github_org,
+                _github_organization,
                 "/",
                 repo_name_without_org,
                 )
@@ -216,7 +224,7 @@ function new_github_session(
         repo_name_with_org = _repo_name_with_org(
             ;
             repo = repo_name,
-            org = github_org,
+            org = _github_organization,
             )
         result:::Bool = try
             repo = GitHub.repo(
@@ -235,12 +243,12 @@ function new_github_session(
         repo_name_with_org::String = _repo_name_with_org(
             ;
             repo = repo_name,
-            org = github_org,
+            org = _github_organization,
             )
         repo_name_without_org::String = _repo_name_without_org(
             ;
             repo = repo_name,
-            org = github_org,
+            org = _github_organization,
             )
         repo_destination_url_without_auth = _get_destination_url(
             ;
@@ -274,7 +282,7 @@ function new_github_session(
     function _push_mirrored_repo(params::Dict{Symbol, Any})::Nothing
         repo_name::String = params[:repo_name]
         repo_directory::String = params[:directory]
-        git_path::String = params[:git_path]
+        git_path::String = params[:git]
         repo_destination_url_with_auth = _get_destination_url(
             ;
             repo_name = repo_name_without_org,
@@ -319,8 +327,8 @@ function new_github_session(
 
         source_url::String = params[:source_url]
 
-        when::TimeZones.ZonedDateTime = params[:when] # Dates.now(TimeZones.localzone()),
-        time_zone::Dates.TimeZone = params[:time_zone] # TimeZones.TimeZone("America/New_York")
+        when::TimeZones.ZonedDateTime = params[:when]
+        time_zone::Dates.TimeZone = params[:time_zone]
         date_time_string = string(TimeZones.astimezone(when,time_zone,))
 
         via_travis::String = ""
@@ -375,7 +383,7 @@ function new_github_session(
         repo_name_with_org::String = _repo_name_with_org(
             ;
             repo = repo_name,
-            org = github_org,
+            org = _github_organization,
             )
         repo = GitHub.repo(repo_name_with_org; auth = auth,)
         result = GitHub.gh_patch_json(

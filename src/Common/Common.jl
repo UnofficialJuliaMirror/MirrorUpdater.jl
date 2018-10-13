@@ -325,393 +325,345 @@ function _remove_problematic_refs_before_github!!(
     return nothing
 end
 
-# function _push_mirrors!!(
-#         ;
-#         src_dest_pairs::Vector{Types.SrcDestPair},
-#         git_hosting_providers = git_hosting_providers,
-#         recursion_level::Integer = 0,
-#         max_recursion_depth::Integer = 5,
-#         is_dry_run::Bool = false,
-#         do_not_push_to_these_destinations::Vector{String},
-#         do_not_try_url_list::Vector{String},
-#         try_but_allow_failures_url_list::Vector{String},
-#         time_zone::Dates.TimeZone,
-#         )::Nothing
-#     @debug(string("Recursion level: $(recursion_level)"))
-#     src_dest_pairs_sorted_unique::Vector{Types.SrcDestPair} = sort(
-#         unique(
-#             src_dest_pairs
-#             )
-#         )
-#     git = Utils._get_git_binary_path()
-#     for pair in src_dest_pairs_sorted_unique
-#         src_url = pair.source_url
-#         if src_url in do_not_try_url_list ||
-#                 Types._name_with_git(src_url) in do_not_try_url_list ||
-#                 Types._name_without_git(src_url) in do_not_try_url_list
-#             @warn(
-#                 string("Src url is in the do not try list, so skipping."),
-#                 src_url,
-#                 )
-#         else
-#             previous_dir::String = pwd()
-#             temp_dir_repo_git_clone_regular::String = mktempdir()
-#             temp_dir_repo_git_clone_mirror::String = mktempdir()
-#             if recursion_level <= max_recursion_depth
-#                 @info(
-#                     string(
-#                         "Now I will look for additional repos to mirror ",
-#                         "(e.g. BinaryBuilder repos that are referenced ",
-#                         "in this repo).",
-#                         )
-#                     )
-#                 cd(temp_dir_repo_git_clone_regular)
-#                 cmd_git_clone_repo_regular =
-#                     `$(git) clone $(src_url) GITCLONEREPOREGULAR`
-#                 @info(
-#                     "Attempting to run command",
-#                     cmd_git_clone_repo_regular,
-#                     pwd(),
-#                     ENV["PATH"],
-#                     )
-#                 repo_regular_clone_was_success =
-#                     Utils.command_ran_successfully!!(
-#                     cmd_git_clone_repo_regular;
-#                     )
-#                 if repo_regular_clone_was_success
-#                     @info("Command ran successfully",)
-#                     cd(
-#                         joinpath(
-#                             temp_dir_repo_git_clone_regular,
-#                             "GITCLONEREPOREGULAR",
-#                             )
-#                         )
-#                     git_grep_results::String = try
-#                         strip(read(`$(git) grep Builder`, String))
-#                     catch exception
-#                         @info("ignoring exception: ", exception)
-#                         ""
-#                     end
-#                     list_of_new_src_dest_pairs::Vector{Types.SrcDestPair} =
-#                         Types.SrcDestPair[]
-#                     if length(git_grep_results) > 0
-#                         bin_bldr_pair_list::Vector{Types.SrcDestPair} =
-#                             _get_list_of_binary_builder_repos(
-#                                 git_grep_results
-#                                 )
-#                         for bin_bldr_pair in bin_bldr_pair_list
-#                             if bin_bldr_pair in src_dest_pairs
-#                             else
-#                                 push!(
-#                                     list_of_new_src_dest_pairs,
-#                                     bin_bldr_pair,
-#                                     )
-#                             end
-#                         end
-#                     end
-#                     if (length(git_grep_results) > 0) &&
-#                             (length(list_of_new_src_dest_pairs) > 0)
-#                         if length(list_of_new_src_dest_pairs) == 1
-#                             @info(
-#                                 string(
-#                                     "I found ",
-#                                     "1 ",
-#                                     "additional repo to mirror. ",
-#                                     "I will mirror ",
-#                                     " it first, and then I will return ",
-#                                     "to my previous list.",
-#                                     )
-#                                 )
-#                         else
-#                             @info(
-#                                 string(
-#                                     "I found ",
-#                                     "$(length(list_of_new_src_dest_pairs)) ",
-#                                     "additional repos to mirror. ",
-#                                     "I will mirror ",
-#                                     " them first, and then I will return ",
-#                                     "to my previous list.",
-#                                     )
-#                                 )
-#                         end
-#                         _push_mirrors!!(
-#                             ;
-#                             src_dest_pairs = list_of_new_src_dest_pairs,
-#                             git_hosting_providers = git_hosting_providers,
-#                             recursion_level = recursion_level + 1,
-#                             max_recursion_depth = max_recursion_depth,
-#                             is_dry_run = is_dry_run,
-#                             do_not_try_url_list = do_not_try_url_list,
-#                             time_zone = time_zone,
-#                             do_not_push_to_these_destinations =
-#                                 do_not_push_to_these_destinations,
-#                             try_but_allow_failures_url_list =
-#                                 try_but_allow_failures_url_list,
-#                             )
-#                     else
-#                         @info(
-#                             string(
-#                                 "I did not find any additional ",
-#                                 "repos to mirror.",
-#                                 )
-#                             )
-#                     end
-#                 else
-#                     if src_url in try_but_allow_failures_url_list ||
-#                             Types._name_with_git(src_url) in
-#                                 try_but_allow_failures_url_list ||
-#                             Types._name_without_git(src_url) in
-#                                 try_but_allow_failures_url_list
-#                         @warn(
-#                             string(
-#                                 "URL in the try-but-allow-failures list, ",
-#                                 "so ignoring the error ",
-#                                 "that occured while running command",
-#                                 ),
-#                             cmd_git_clone_repo_regular,
-#                             pwd(),
-#                             ENV["PATH"],
-#                             )
-#                     else
-#                         error(
-#                             string(
-#                                 "Encountered error when running command: ",
-#                                 cmd_git_clone_repo_regular,
-#                                 pwd(),
-#                                 ENV["PATH"],
-#                                 )
-#                             )
-#                     end
-#                 end
-#             else
-#                 @warn(
-#                     string(
-#                         "I have exceeded the maximum recursion depth.",
-#                         ),
-#                     recursion_level,
-#                     max_recursion_depth,
-#                     )
-#             end
-#             for host in enabled_git_hosting_providers
-#                 host_params = git_hosting_providers_params[host]
-#                 host_functions = git_hosting_providers_functions[host]
-#             end
-#         end
-#
-#         #
-#         # destination_repo_name = pair.destination_repo_name
-#         # destination_repo_fullname = _get_repo_fullname(
-#         #     pair,
-#         #     github_org,
-#         #     )
-#         # dest_url_withoutauth::String =
-#         #     Hosts.GitHubHost._get_destination_url(
-#         #         pair;
-#         #         github_org = github_org,
-#         #         )
-#         # dest_url_withauth::String =
-#         #     Hosts.GitHubHost._get_destination_url(
-#         #         pair;
-#         #         github_org = github_org,
-#         #         github_user = github_user,
-#         #         github_token = github_token,
-#         #         )
-#         # dest_url_withredactedauth::String =
-#         #     Hosts.GitHubHost._get_destination_url(
-#         #         pair;
-#         #         github_org = github_org,
-#         #         github_user = github_user,
-#         #         github_token = "*****",
-#         #         )
-#         # if
-#         # else
-#         #
-#         #
-#         #
-#             # if recursion_level <= max_recursion_depth
-#             # end
-#         #     cd(temp_dir_repo_git_clone_mirror)
-#         #     cmd_git_repo_clone_mirror =
-#         #         `$(git) clone --mirror $(src_url) GITCLONEREPOMIRROR`
-#         #     @info(
-#         #         "Attempting to run command",
-#         #         cmd_git_repo_clone_mirror,
-#         #         pwd(),
-#         #         ENV["PATH"],
-#         #         )
-#         #     repo_mirror_clone_was_success =
-#         #         Utils.command_ran_successfully!!(
-#         #         cmd_git_repo_clone_mirror;
-#         #         )
-#         #     if repo_mirror_clone_was_success
-#         #         @info("Command ran successfully",)
-#         #         cd(
-#         #             joinpath(
-#         #                 temp_dir_repo_git_clone_mirror,
-#         #                 "GITCLONEREPOMIRROR",
-#         #                 )
-#         #             )
-#         #         @info("Processing the repository")
-#         #         packed_refs_filename = joinpath(
-#         #             temp_dir_repo_git_clone_mirror,
-#         #             "GITCLONEREPOMIRROR",
-#         #             "packed-refs",
-#         #             )
-#         #         _remove_problematic_refs_before_github!!(
-#         #             ;
-#         #             packed_refs_filename = packed_refs_filename,
-#         #             )
-#         #         if destination_repo_name in
-#         #                 do_not_push_to_these_destinations ||
-#         #                 Types._name_with_git(destination_repo_name) in
-#         #                 do_not_push_to_these_destinations ||
-#         #                 Types._name_without_git(destination_repo_name) in
-#         #                 do_not_push_to_these_destinations ||
-#         #                 destination_repo_fullname in
-#         #                 do_not_push_to_these_destinations ||
-#         #                 Types._name_with_git(destination_repo_fullname) in
-#         #                 do_not_push_to_these_destinations ||
-#         #                 Types._name_without_git(destination_repo_fullname) in
-#         #                 do_not_push_to_these_destinations
-#         #             @warn(
-#         #                 string(
-#         #                     "Destination repo is in the ",
-#         #                     "do-not-push-to-these-destinations list, ",
-#         #                     "therefore skipping push.",
-#         #                     ),
-#         #                 destination_repo_name,
-#         #                 destination_repo_fullname,
-#         #                 )
-#         #         else
-#         #
-#         #
-#         #             new_repo_description::String =
-#         #                 _generate_new_repo_description(
-#         #                     pair;
-#         #                     github_org = github_org,
-#         #                     github_user = github_user,
-#         #                     time_zone = time_zone,
-#         #                     )
-#         #             if is_dry_run
-#         #                 @info(
-#         #                     string(
-#         #                         "If this were not a dry run, ",
-#         #                         "I would now do the following 3 things: ",
-#         #                         "(1) I would make sure that the ",
-#         #                         "destination repo exists on GitHub, ",
-#         #                         "creating it if it does not already ",
-#         #                         "exist. ",
-#         #                         "(2) I would run the ",
-#         #                         "\"git push --mirror\"",
-#         #                         "command.",
-#         #                         "(3) I would update the description of the ",
-#         #                         "destination repo on GitHub.",
-#         #                         ),
-#         #                     github_org,
-#         #                     destination_repo_name,
-#         #                     mirrorpush_cmd_withredactedauth,
-#         #                     new_repo_description,
-#         #                     pwd(),
-#         #                     ENV["PATH"],
-#         #                     )
-#         #             else
-#         #                 @info(
-#         #                     string(
-#         #                         "Making sure the destination repo exists. ",
-#         #                         "If it does not exist, it will be created.",
-#         #                         ),
-#         #                     destination_repo_name,
-#         #                     )
-#         #                 _create_dest_repo_if_it_doesnt_exist!!(
-#         #                     pair,
-#         #                     github_org;
-#         #                     auth = auth,
-#         #                     )
-#         #                 @info(
-#         #                     "Attempting to run command",
-#         #                     mirrorpush_cmd_withredactedauth,
-#         #                     pwd(),
-#         #                     ENV["PATH"],
-#         #                     )
-#         #                 mirrorpush_was_success =
-#         #                     Utils.command_ran_successfully!!(
-#         #                         mirrorpush_cmd_withauth;
-#         #                         )
-#         #                 if mirrorpush_was_success
-#         #                     @info("Command ran successfully",)
-#         #                     # @info("Updating repo description on GitHub")
-#         #                     @info(
-#         #                         string(
-#         #                             "Updating repo description ",
-#         #                             "on GitHub ",
-#         #                             ),
-#         #                         destination_repo_name,
-#         #                         new_repo_description,
-#         #                         github_org,
-#         #                         github_user,
-#         #                         )
-#         #                     _edit_repo_description_github!!(
-#         #                         ;
-#         #                         repo_name = destination_repo_name,
-#         #                         new_repo_description = new_repo_description,
-#         #                         auth = auth,
-#         #                         github_org = github_org,
-#         #                         github_user = github_user,
-#         #                         )
-#         #                 else
-#         #                     error(
-#         #                         string(
-#         #                             "Command did not run successfully",
-#         #                             cmd_withredactedauth,
-#         #                             pwd(),
-#         #                             ENV["PATH"],
-#         #                             )
-#         #                         )
-#         #                 end
-#         #             end
-#         #         end
-#         #     else
-#         #         if src_url in try_but_allow_failures_url_list ||
-#         #                 Types._name_with_git(src_url) in
-#         #                     try_but_allow_failures_url_list ||
-#         #                 Types._name_without_git(src_url) in
-#         #                     try_but_allow_failures_url_list
-#         #             @warn(
-#         #                 string(
-#         #                     "URL in the try-but-allow-failures list, ",
-#         #                     "so ignoring the error ",
-#         #                     "that occured while running command",
-#         #                     ),
-#         #                 cmd_git_repo_clone_mirror,
-#         #                 pwd(),
-#         #                 ENV["PATH"],
-#         #                 )
-#         #         else
-#         #             error(
-#         #                 string(
-#         #                     "Encountered error when running command: ",
-#         #                     cmd_git_repo_clone_mirror,
-#         #                     pwd(),
-#         #                     ENV["PATH"],
-#         #                     )
-#         #                 )
-#         #         end
-#         #     end
-#         #     cd(previous_dir)
-#         #     rm(
-#         #         temp_dir_repo_git_clone_regular;
-#         #         force = true,
-#         #         recursive = true,
-#         #         )
-#         #     rm(
-#         #         temp_dir_repo_git_clone_mirror;
-#         #         force = true,
-#         #         recursive = true,
-#         #         )
-#         # end
-#     end
-#     return nothing
-# end
+function _push_mirrors!!(
+        ;
+        src_dest_pairs::Vector{Types.SrcDestPair},
+        git_hosting_providers = git_hosting_providers,
+        recursion_level::Integer = 0,
+        max_recursion_depth::Integer = 10,
+        is_dry_run::Bool = false,
+        do_not_push_to_these_destinations::Vector{String},
+        do_not_try_url_list::Vector{String},
+        try_but_allow_failures_url_list::Vector{String},
+        time_zone::Dates.TimeZone,
+        )::Nothing
+    @debug(string("Recursion level: $(recursion_level)"))
+    git = Utils._get_git_binary_path()
+    src_dest_pairs_sorted_unique::Vector{Types.SrcDestPair} = sort(
+        unique(
+            src_dest_pairs
+            )
+        )
+    for pair in src_dest_pairs_sorted_unique
+        src_url = pair.source_url
+        if src_url in do_not_try_url_list ||
+                Types._name_with_git(src_url) in do_not_try_url_list ||
+                Types._name_without_git(src_url) in do_not_try_url_list
+            @warn(
+                string("Src url is in the do not try list, so skipping."),
+                src_url,
+                )
+        else
+            previous_dir::String = pwd()
+            temp_dir_repo_git_clone_regular::String = mktempdir()
+            temp_dir_repo_git_clone_mirror::String = mktempdir()
+            if recursion_level <= max_recursion_depth
+                @info(
+                    string(
+                        "Now I will look for additional repos to mirror ",
+                        "(e.g. BinaryBuilder repos that are referenced ",
+                        "in this repo).",
+                        )
+                    )
+                cd(temp_dir_repo_git_clone_regular)
+                cmd_git_clone_repo_regular =
+                    `$(git) clone $(src_url) GITCLONEREPOREGULAR`
+                @info(
+                    "Attempting to run command",
+                    cmd_git_clone_repo_regular,
+                    pwd(),
+                    ENV["PATH"],
+                    )
+                repo_regular_clone_was_success =
+                    Utils.command_ran_successfully!!(
+                    cmd_git_clone_repo_regular;
+                    )
+                if repo_regular_clone_was_success
+                    @info("Command ran successfully",)
+                    cd(
+                        joinpath(
+                            temp_dir_repo_git_clone_regular,
+                            "GITCLONEREPOREGULAR",
+                            )
+                        )
+                    git_grep_results::String = try
+                        strip(read(`$(git) grep Builder`, String))
+                    catch exception
+                        @info("ignoring exception: ", exception)
+                        ""
+                    end
+                    list_of_new_src_dest_pairs::Vector{Types.SrcDestPair} =
+                        Types.SrcDestPair[]
+                    if length(git_grep_results) > 0
+                        bin_bldr_pair_list::Vector{Types.SrcDestPair} =
+                            _get_list_of_binary_builder_repos(
+                                git_grep_results
+                                )
+                        for bin_bldr_pair in bin_bldr_pair_list
+                            if bin_bldr_pair in src_dest_pairs
+                            else
+                                push!(
+                                    list_of_new_src_dest_pairs,
+                                    bin_bldr_pair,
+                                    )
+                            end
+                        end
+                    end
+                    if (length(git_grep_results) > 0) &&
+                            (length(list_of_new_src_dest_pairs) > 0)
+                        if length(list_of_new_src_dest_pairs) == 1
+                            @info(
+                                string(
+                                    "I found ",
+                                    "1 ",
+                                    "additional repo to mirror. ",
+                                    "I will mirror ",
+                                    " it first, and then I will return ",
+                                    "to my previous list.",
+                                    )
+                                )
+                        else
+                            @info(
+                                string(
+                                    "I found ",
+                                    "$(length(list_of_new_src_dest_pairs)) ",
+                                    "additional repos to mirror. ",
+                                    "I will mirror ",
+                                    " them first, and then I will return ",
+                                    "to my previous list.",
+                                    )
+                                )
+                        end
+                        _push_mirrors!!(
+                            ;
+                            do_not_push_to_these_destinations =
+                                do_not_push_to_these_destinations,
+                            src_dest_pairs = list_of_new_src_dest_pairs,
+                            git_hosting_providers = git_hosting_providers,
+                            recursion_level = recursion_level + 1,
+                            max_recursion_depth = max_recursion_depth,
+                            is_dry_run = is_dry_run,
+                            do_not_try_url_list = do_not_try_url_list,
+                            time_zone = time_zone,
+                            try_but_allow_failures_url_list =
+                                try_but_allow_failures_url_list,
+                            )
+                    else
+                        @info(
+                            string(
+                                "I did not find any additional ",
+                                "repos to mirror.",
+                                )
+                            )
+                    end
+                else
+                    if src_url in try_but_allow_failures_url_list ||
+                            Types._name_with_git(src_url) in
+                                try_but_allow_failures_url_list ||
+                            Types._name_without_git(src_url) in
+                                try_but_allow_failures_url_list
+                        @warn(
+                            string(
+                                "URL in the try-but-allow-failures list, ",
+                                "so ignoring the error ",
+                                "that occured while running command",
+                                ),
+                            cmd_git_clone_repo_regular,
+                            pwd(),
+                            ENV["PATH"],
+                            )
+                    else
+                        error(
+                            string(
+                                "Encountered error when running command: ",
+                                cmd_git_clone_repo_regular,
+                                pwd(),
+                                ENV["PATH"],
+                                )
+                            )
+                    end
+                end
+            else
+                @warn(
+                    string(
+                        "I have exceeded the maximum recursion depth.",
+                        ),
+                    recursion_level,
+                    max_recursion_depth,
+                    )
+            end
+            cd(temp_dir_repo_git_clone_mirror)
+            cmd_git_repo_clone_mirror =
+                `$(git) clone --mirror $(src_url) GITCLONEREPOMIRROR`
+            @info(
+                "Attempting to run command",
+                cmd_git_repo_clone_mirror,
+                pwd(),
+                ENV["PATH"],
+                )
+            repo_mirror_clone_was_success =
+                Utils.command_ran_successfully!!(
+                cmd_git_repo_clone_mirror;
+                )
+            if repo_mirror_clone_was_success
+                @info("Command ran successfully",)
+                cd(
+                    joinpath(
+                        temp_dir_repo_git_clone_mirror,
+                        "GITCLONEREPOMIRROR",
+                        )
+                    )
+                @info("Processing the repository")
+                packed_refs_filename = joinpath(
+                    temp_dir_repo_git_clone_mirror,
+                    "GITCLONEREPOMIRROR",
+                    "packed-refs",
+                    )
+                _remove_problematic_refs_before_github!!(
+                    ;
+                    packed_refs_filename = packed_refs_filename,
+                    )
+                destination_repo_name = pair.destination_repo_name
+                if destination_repo_name in do_not_push_to_these_destinations ||
+                        destination_repo_name in do_not_push_to_these_destinations ||
+                        destination_repo_name in do_not_push_to_these_destinations
+                    @warn(
+                        string(
+                            "Destination repo name is in the ",
+                            "do_not_push_to_these_destinations list, ",
+                            "so skipping.",
+                            )
+                        )
+                else
+                    if is_dry_run
+                        @info(
+                            string(
+                                "This is a dry run, so I will not ",
+                                "push to any git hosting providers.",
+                                )
+                            )
+                    else
+                        for p = 1:length(git_hosting_providers)
+                            @info(
+                                string(
+                                    "Git hosting provider ",
+                                    "$(p) of ",
+                                    "$(length(git_hosting_providers))",
+                                    ),
+                                )
+                            provider = git_hosting_providers[p]
+                            args1 = Dict(
+                                :repo_name => destination_repo_name,
+                                )
+                            @info(
+                                string(
+                                    "Making sure that repo exists on ",
+                                    "git hosting provider $(p). ",
+                                    "(If it does not already exist, ",
+                                    "I will create it.)",
+                                    )
+                                )
+                            provider(:create_repo)(args)
+                            args2 = Dict(
+                                :repo_name => destination_repo_name,
+                                :directory => pwd(),
+                                :git_path => git,
+                                )
+                            @info(
+                                string(
+                                    "Attempting to push to ",
+                                    "git hosting provider $(p).",
+                                    )
+                                )
+                            push_to_provider_was_success = try
+                                provider(:push_mirrored_repo)(args2)
+                                true
+                            catch exception
+                                @warn(
+                                    "ignoring exception: ",
+                                    exception,
+                                    )
+                            end
+                            if push_to_provider_was_success
+                                args3 = Dict(
+                                    :source_url => source_url,
+                                    :when => Dates.now(
+                                        TimeZones.localzone(),
+                                        ),
+                                    :time_zone => time_zone,
+                                    )
+                                new_repo_description = provider(
+                                    :generate_new_repo_description)(
+                                    args3)
+                                args4 = Dict(
+                                    :repo_name =>
+                                        destination_repo_name,
+                                    :new_repo_description =>
+                                        new_repo_description
+                                    )
+                                @info(
+                                    string(
+                                        "Attempting to update ",
+                                        "repo description on git hosting ",
+                                        "provider $(p).",
+                                        ),
+                                    destination_repo_name,
+                                    new_repo_description,
+                                    )
+                                provider(:update_repo_description)(args4)
+                            else
+                                error(
+                                    string(
+                                        "Push to provider $(p) ",
+                                        "was not a success.",
+                                        )
+                                    )
+                            end
+                        end
+                    end
+                end
+            else
+                if src_url in try_but_allow_failures_url_list ||
+                        Types._name_with_git(src_url) in
+                            try_but_allow_failures_url_list ||
+                        Types._name_without_git(src_url) in
+                            try_but_allow_failures_url_list
+                    @warn(
+                        string(
+                            "URL in the try-but-allow-failures list, ",
+                            "so ignoring the error ",
+                            "that occured while running command",
+                            ),
+                        cmd_git_repo_clone_mirror,
+                        pwd(),
+                        ENV["PATH"],
+                        )
+                else
+                    error(
+                        string(
+                            "Encountered error when running command: ",
+                            cmd_git_repo_clone_mirror,
+                            pwd(),
+                            ENV["PATH"],
+                            )
+                        )
+                end
+            end
+            cd(previous_dir)
+            rm(
+                temp_dir_repo_git_clone_regular;
+                force = true,
+                recursive = true,
+                )
+            rm(
+                temp_dir_repo_git_clone_mirror;
+                force = true,
+                recursive = true,
+                )
+        end
+    end
+    return nothing
+end
 
 function _get_list_of_binary_builder_repos(
         text::AbstractString,
