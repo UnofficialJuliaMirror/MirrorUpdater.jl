@@ -751,7 +751,9 @@ function _pairs_that_fall_in_interval(
     full_sublist::Vector{Types.SrcDestPair} = list_of_pairs[
         ith_pair_falls_in_interval
         ]
-    unique_sorted_sublist::Vector{Types.SrcDestPair} = sort(unique(full_sublist))
+    unique_sorted_sublist::Vector{Types.SrcDestPair} = sort(
+        unique(full_sublist)
+        )
     return unique_sorted_sublist
 end
 
