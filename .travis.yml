@@ -6,13 +6,12 @@ git:
 jobs:
   include:
     -
-      name: runtests
-      script: ./ci/travis/runtests.sh
-      stage: runtests
-    -
       name: make-list
       script: "./ci/travis/script.sh \"make-list\""
       stage: stage-1
+    -
+      name: runtests
+      script: ./ci/travis/runtests.sh
     -
       name: "[0,C)"
       script: "./ci/travis/script.sh \"[0,C)\""

@@ -14,7 +14,7 @@ then
     then
         export DRY_RUN=""
     else
-        export DRY_RUN="--dry-run"
+        export DRY_RUN=""
     fi
 else
     export DRY_RUN="--dry-run"
@@ -26,14 +26,27 @@ echo "TASK=$TASK"
 echo "TRAVIS_BRANCH=$TRAVIS_BRANCH"
 echo "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST"
 
-julia --project -e 'import Pkg; Pkg.resolve();'
+export JULIA_FLAGS="--code-coverage=all --check-bounds=yes --color=yes --project"
 
-julia --project deps/build.jl
+echo "JULIA_FLAGS=$JULIA_FLAGS"
 
-julia --project run-mirror-updater.jl --gist-description "$GIST_DESCRIPTION" --task "$TASK" $DRY_RUN
+julia $JULIA_FLAGS -e 'import Pkg; Pkg.resolve();'
+
+julia $JULIA_FLAGS deps/build.jl
+
+julia $JULIA_FLAGS run-mirror-updater.jl --gist-description "$GIST_DESCRIPTION" --task "$TASK" $DRY_RUN
 
 cat Project.toml
 
 cat Manifest.toml
+
+# julia $JULIA_FLAGS -e 'import Pkg; try Pkg.add("Coverage") catch end;'
+
+# julia $JULIA_FLAGS -e '
+#     import Coverage;
+#     import MirrorUpdater;
+#     cd(MirrorUpdater.package_directory());
+#     Coverage.Codecov.submit(Coverage.Codecov.process_folder());
+#     '
 
 ##### End of file

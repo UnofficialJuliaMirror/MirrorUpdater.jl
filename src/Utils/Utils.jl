@@ -171,6 +171,11 @@ function _get_git_binary_path(
             )
     end
     result::String = strip(git_path_to_use)
+    @debug(
+        string(
+            "Selected git: $(result)",
+            ),
+        )
     return result
 end
 
