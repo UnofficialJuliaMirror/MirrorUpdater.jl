@@ -345,6 +345,7 @@ function new_github_session(
             )::String
 
         source_url::String = params[:source_url]
+        env_dict::AbstractDict = ENV
 
         when::TimeZones.ZonedDateTime = params[:when]
         time_zone::Dates.TimeZone = params[:time_zone]
@@ -353,7 +354,7 @@ function new_github_session(
         via_travis::String = ""
         if Utils._is_travis_ci()
             travis_event_type::String = strip(
-                get(a, "TRAVIS_EVENT_TYPE", "")
+                get(env_dict, "TRAVIS_EVENT_TYPE", "")
                 )
             if length(travis_event_type) > 0
                 travis_event_string = string(" $(travis_event_type)")
@@ -361,15 +362,19 @@ function new_github_session(
                 travis_event_string = string("")
             end
             travis_build_number::String = strip(
-                get(a, "TRAVIS_BUILD_NUMBER", "")
+                get(env_dict, "TRAVIS_BUILD_NUMBER", "")
                 )
             travis_job_number::String = strip(
-                get(a, "TRAVIS_JOB_NUMBER", "")
+                get(env_dict, "TRAVIS_JOB_NUMBER", "")
                 )
             if length(travis_job_number) > 0
-                travis_number_string = string(" (job $(travis_job_number))")
+                travis_number_string = string(
+                    " (job $(travis_job_number))",
+                    )
             elseif length(travis_build_number) > 0
-                travis_number_string = string(" (build $(travis_build_number))")
+                travis_number_string = string(
+                    " (build $(travis_build_number))",
+                    )
             else
                 travis_number_string = string("")
             end
