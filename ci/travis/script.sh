@@ -30,7 +30,7 @@ julia --project -e 'import Pkg; Pkg.resolve();'
 
 julia --project deps/build.jl
 
-julia --project run-github-mirror-updater.jl --gist-description "$GIST_DESCRIPTION" --task "$TASK" $DRY_RUN
+julia --project run-mirror-updater.jl --gist-description "$GIST_DESCRIPTION" --task "$TASK" $DRY_RUN
 
 cat Project.toml
 
