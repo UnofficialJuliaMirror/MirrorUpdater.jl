@@ -17,16 +17,25 @@ import ..Common
 
 function run_mirror_updater!!(
         ;
-        git_hosting_providers::AbstractVector = [],
-        task::String,
-        gist_description::String,
-        is_dry_run::Bool,
         registry_list::Vector{Types.Registry},
-        additional_repos::Vector{Types.SrcDestPair},
-        do_not_push_to_these_destinations::Vector{String},
-        do_not_try_url_list::Vector{String},
-        try_but_allow_failures_url_list::Vector{String},
-        time_zone::Dates.TimeZone = Dates.TimeZone("America/New_York"),
+        git_hosting_providers::AbstractVector =
+            Any[],
+        task::String =
+            "all",
+        gist_description::String =
+            "",
+        is_dry_run::Bool =
+            false,
+        additional_repos::Vector{Types.SrcDestPair} =
+            Types.SrcDestPair[],
+        do_not_push_to_these_destinations::Vector{String} =
+            String[],
+        do_not_try_url_list::Vector{String} =
+            String[],
+        try_but_allow_failures_url_list::Vector{String} =
+            String[],
+        time_zone::Dates.TimeZone =
+            Dates.TimeZone("America/New_York"),
         )::Nothing
     @info("Running MirrorUpdater.Run.run_mirror_updater!!")
 
@@ -69,11 +78,14 @@ function run_mirror_updater!!(
         gist_content_stage1::String = Common._src_dest_pair_list_to_string(
             all_repos_to_mirror_stage1
             )
-        if has_gist_description
-            args = Dict(
-                :gist_description => gist_description,
-                :gist_content => gist_content_stage1,
+        @info(
+            string(
+                "The full list has ",
+                "$(length(all_repos_to_mirror_stage1)) ",
+                "unique pairs.",
                 )
+            )
+        if has_gist_description
             for p in 1:length(git_hosting_providers)
                 @info(
                     string(
@@ -87,10 +99,14 @@ function run_mirror_updater!!(
                         "Creating gist on git hosting provider $(p).",
                         )
                     )
+                args = Dict(
+                    :gist_description => gist_description,
+                    :gist_content => gist_content_stage1,
+                    )
                 provider(:create_gist)(args)
             end
         end
-        @info("Stage 1 completed successfully.")
+        @info("SUCCESS: Stage 1 completed successfully.")
     end
 
     if task == "all" || Types._is_interval(task)
@@ -101,7 +117,6 @@ function run_mirror_updater!!(
             args = Dict(
                 :gist_description => gist_description,
                 )
-            correct_gist_content_stage2::String = ""
             for p = 1:length(git_hosting_providers)
                 @info(
                     string(
@@ -137,6 +152,13 @@ function run_mirror_updater!!(
             all_repos_to_mirror_stage2 =
                 all_repos_to_mirror_stage1
         end
+        @info(
+            string(
+                "The full list has ",
+                "$(length(all_repos_to_mirror_stage2)) ",
+                "unique pairs.",
+                )
+            )
         if Types._is_interval(task)
             task_interval::Types.AbstractInterval =
                 Types._construct_interval(task)
@@ -153,6 +175,14 @@ function run_mirror_updater!!(
             selected_repos_to_mirror_stage2 =
                 all_repos_to_mirror_stage2
         end
+        @info(
+            string(
+                "The selected subset of the list ",
+                "for this particular job has ",
+                "$(length(selected_repos_to_mirror_stage2)) ",
+                "unique pairs.",
+                )
+            )
         Common._push_mirrors!!(
             ;
             src_dest_pairs = selected_repos_to_mirror_stage2,
@@ -166,7 +196,7 @@ function run_mirror_updater!!(
                 do_not_push_to_these_destinations,
             time_zone = time_zone,
             )
-        @info("Stage 2 completed successfully.")
+        @info("SUCCESS: Stage 2 completed successfully.")
     end
 
     if task == "all" || task == "clean-up"
@@ -185,16 +215,21 @@ function run_mirror_updater!!(
                 provider = git_hosting_providers[p]
                 @info("Deleting gist from git hosting provider $(p).")
                 try
-                    host(:delete_gists)(args)
+                    provider(:delete_gists)(args)
                 catch exception
                     @warn("ignoring exception: ", exception)
                 end
             end
         end
-        @info("Stage 3 completed successfully.")
+        @info("SUCCESS: Stage 3 completed successfully.")
     end
 
-    @info("run_mirror_updater completed successfully :)")
+    @info(
+        string(
+            "SUCCESS: run_mirror_updater completed ",
+            "successfully :) Good-bye!",
+            )
+        )
 
     return nothing
 end

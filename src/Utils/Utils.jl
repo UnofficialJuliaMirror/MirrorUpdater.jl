@@ -6,13 +6,21 @@ __precompile__(true)
 
 import ..Types
 
+import HTTP
+
 function _url_exists(url::AbstractString)::Bool
-    temp_url::String = strip(convert(String, url))
+    _url::String = strip(convert(String, url))
     result::Bool = try
-        r = HTTP.request("GET", url)
+        r = HTTP.request("GET", _url)
+        @debug("HTTP GET request result: ", _url, r.status,)
         r.status == 200
-    catch
+    catch exception
+        @debug(string("Ignoring exception"), exception,)
         false
+    end
+    if result
+    else
+        @debug(string("URL does not exist"), _url,)
     end
     return result
 end

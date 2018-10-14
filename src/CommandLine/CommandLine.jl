@@ -18,13 +18,19 @@ import ..Run
 
 function run_mirror_updater_command_line!!(
         ;
-        git_hosting_providers::AbstractVector = [],
-        arguments::Vector{String},
         registry_list::Vector{Types.Registry},
-        additional_repos::Vector{Types.SrcDestPair},
-        do_not_push_to_these_destinations::Vector{String},
-        do_not_try_url_list::Vector{String},
-        try_but_allow_failures_url_list::Vector{String},
+        arguments::Vector{String} =
+            String[],
+        git_hosting_providers::AbstractVector =
+            Any[],
+        additional_repos::Vector{Types.SrcDestPair} =
+            Types.SrcDestPair[],
+        do_not_push_to_these_destinations::Vector{String} =
+            String[],
+        do_not_try_url_list::Vector{String} =
+            String[],
+        try_but_allow_failures_url_list::Vector{String} =
+            String[],
         time_zone::TimeZones.TimeZone =
             TimeZones.TimeZone("America/New_York"),
         )::Nothing

@@ -34,11 +34,26 @@ function new_github_session(
     end
 
     @info("Attempting to authenticate to GitHub...")
-    auth::GitHub.Authorization = GitHub.authenticate(_github_token)
-    github_user::String = Hosts.GitHubHost._get_github_username(
-        my_github_auth,
+    auth::GitHub.Authorization = GitHub.authenticate(
+        _github_token
+        )
+    github_user::String = _get_github_username(
+        auth,
         )
     @info("Successfully authenticated to GitHub")
+
+    @info(
+        string(
+            "GitHub username: ",
+            "$(_get_github_username(auth))",
+            )
+        )
+    @info(
+        string(
+            "GitHub organization: ",
+            "$(_github_organization)",
+            )
+        )
 
     repository_owner = GitHub.owner(
         _github_organization,
@@ -46,9 +61,9 @@ function new_github_session(
         auth = auth,
         )
 
-    function _create_gist(params::Dict{Symbol, Any})::Nothing
+    function _create_gist(params::AbstractDict)::Nothing
         gist_description::String = params[:gist_description]
-        gist_content::String = args[:gist_content]
+        gist_content::String = params[:gist_content]
         @info("Attempting to create gist on GitHub...")
         GitHub.create_gist(
             ;
@@ -67,7 +82,7 @@ function new_github_session(
         return nothing
     end
 
-    function _retrieve_gist(params::Dict{Symbol, Any})::String
+    function _retrieve_gist(params::AbstractDict)::String
         gist_description::String = params[:gist_description]
         @info("Loading the list of all of my GitHub gists")
         my_gists::Vector{GitHub.Gist} = GitHub.gists(github_user;auth = auth,)[1]
@@ -82,7 +97,7 @@ function new_github_session(
             @info("Downloading the correct GitHub gist")
             correct_gist::GitHub.Gist = GitHub.gist(
                 correct_gist_id;
-                auth = my_github_auth,
+                auth = auth,
                 )
             correct_gist_content::String = correct_gist.files[
                 "list.txt"]["content"]
@@ -96,7 +111,7 @@ function new_github_session(
         return result
     end
 
-    function _delete_gists(params::Dict{Symbol, Any})::Nothing
+    function _delete_gists(params::AbstractDict)::Nothing
         gist_description::String = params[:gist_description]
         list_of_gist_ids_to_delete::Vector{String} = String[]
         @info("Loading the list of all of my GitHub gists")
@@ -109,7 +124,7 @@ function new_github_session(
             end
         end
         for gist_id_to_delete in list_of_gist_ids_to_delete
-            GitHub.delete_gist(gist_id_to_delete;auth = my_github_auth,)
+            GitHub.delete_gist(gist_id_to_delete;auth = auth,)
             @info(string("Deleted GitHub gist id $(gist_id_to_delete)"))
         end
         return nothing
@@ -226,7 +241,7 @@ function new_github_session(
             repo = repo_name,
             org = _github_organization,
             )
-        result:::Bool = try
+        result::Bool = try
             repo = GitHub.repo(
                 repo_name_with_org;
                 auth = auth,
@@ -238,7 +253,7 @@ function new_github_session(
         return result
     end
 
-    function _create_repo(params::Dict{Symbol, Any})::Nothing
+    function _create_repo(params::AbstractDict)::Nothing
         repo_name::String = params[:repo_name]
         repo_name_with_org::String = _repo_name_with_org(
             ;
@@ -279,26 +294,31 @@ function new_github_session(
         return nothing
     end
 
-    function _push_mirrored_repo(params::Dict{Symbol, Any})::Nothing
+    function _push_mirrored_repo(params::AbstractDict)::Nothing
         repo_name::String = params[:repo_name]
         repo_directory::String = params[:directory]
         git_path::String = params[:git]
-        repo_destination_url_with_auth = _get_destination_url(
+        repo_name_without_org = _repo_name_without_org(
+            ;
+            repo = repo_name,
+            org = _github_organization,
+            )
+        repo_dest_url_with_auth = _get_destination_url(
             ;
             repo_name = repo_name_without_org,
             credentials = :with_auth,
             )
-        repo_destination_url_with_redacted_auth = _get_destination_url(
+        repo_dest_url_with_redacted_auth = _get_destination_url(
             ;
             repo_name = repo_name_without_org,
             credentials = :with_redacted_auth,
             )
         previous_directory = pwd()
-        cd(directory)
+        cd(repo_directory)
         mirrorpush_cmd_withauth =
-            `$(git_path) push --mirror $(dest_url_withauth)`
+            `$(git_path) push --mirror $(repo_dest_url_with_auth)`
         mirrorpush_cmd_withredactedauth =
-            `$(git_path) push --mirror $(dest_url_withredactedauth)`
+            `$(git_path) push --mirror $(repo_dest_url_with_redacted_auth)`
         @info(
             string("Attempting to push repo to GitHub..."),
             mirrorpush_cmd_withredactedauth,
@@ -306,24 +326,23 @@ function new_github_session(
             ENV["PATH"],
             )
         mirrorpush_was_success = try
-            command_ran_successfully!!(mirrorpush_cmd_withauth)
+            Utils.command_ran_successfully!!(mirrorpush_cmd_withauth)
         catch exception
             @warn("Ignoring exception: ", exception)
             false
         end
         if mirrorpush_was_success
-            @info("Successfully pushed repo to GitHub...")
+            @info("Successfully pushed repo to GitHub.")
         else
-            error("An error occured while attempting to push to GitHub...")
+            error("An error occured while attempting to push to GitHub.")
         end
-        @info(string("Push to GitHub was successful."))
         cd(previous_directory)
         return nothing
     end
 
     function _generate_new_repo_description(
-            params::Dict{Symbol, Any},
-            )::Nothing
+            params::AbstractDict,
+            )::String
 
         source_url::String = params[:source_url]
 
@@ -373,12 +392,13 @@ function new_github_session(
         return new_description
     end
 
-    function _update_repo_description(params::Dict{Symbol, Any})::Nothing
+    function _update_repo_description(params::AbstractDict)::Nothing
         repo_name::String = params[:repo_name]
         new_repo_description = params[:new_repo_description]
         _create_repo(
-            ;
-            repo_name = repo_name,
+            Dict(
+                :repo_name => repo_name,
+                ),
             )
         repo_name_with_org::String = _repo_name_with_org(
             ;

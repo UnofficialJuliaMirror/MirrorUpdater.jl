@@ -14,20 +14,6 @@ import HTTP
 import Pkg
 import TimeZones
 
-
-# function _get_repo_fullname(
-#         x::Types.SrcDestPair,
-#         github_org::String,
-#         )::String
-#     destination_repo_name::String = strip(x.destination_repo_name)
-#     result = _repo_name_with_org(
-#         ;
-#         repo = destination_repo_name,
-#         org = github_org,
-#         )
-#     return result
-# end
-
 function _toml_file_to_package(
         packagetoml_file_filename::String,
         )::Types.Package
@@ -186,6 +172,13 @@ function _make_list(
         end
     end
     unique_list_sorted::Vector{Types.SrcDestPair} = sort(unique(full_list))
+    @info(
+        string(
+            "I made a list with ",
+            "$(length(unique_list_sorted)) ",
+            "unique pairs."
+            )
+        )
     return unique_list_sorted
 end
 
@@ -344,7 +337,21 @@ function _push_mirrors!!(
             src_dest_pairs
             )
         )
-    for pair in src_dest_pairs_sorted_unique
+    @info(
+        string(
+            "Running _push_mirrors!! with ",
+            "$(length(src_dest_pairs_sorted_unique)) ",
+            "unique pairs.",
+            )
+        )
+    for pair_number = 1:length(src_dest_pairs_sorted_unique)
+        @info(
+            string(
+                "Pair $(pair_number) of ",
+                "$(length(src_dest_pairs_sorted_unique))",
+                )
+            )
+        pair = src_dest_pairs_sorted_unique[pair_number]
         src_url = pair.source_url
         if src_url in do_not_try_url_list ||
                 Types._name_with_git(src_url) in do_not_try_url_list ||
@@ -563,11 +570,11 @@ function _push_mirrors!!(
                                     "I will create it.)",
                                     )
                                 )
-                            provider(:create_repo)(args)
+                            provider(:create_repo)(args1)
                             args2 = Dict(
                                 :repo_name => destination_repo_name,
                                 :directory => pwd(),
-                                :git_path => git,
+                                :git => git,
                                 )
                             @info(
                                 string(
@@ -583,10 +590,11 @@ function _push_mirrors!!(
                                     "ignoring exception: ",
                                     exception,
                                     )
+                                false
                             end
                             if push_to_provider_was_success
                                 args3 = Dict(
-                                    :source_url => source_url,
+                                    :source_url => src_url,
                                     :when => Dates.now(
                                         TimeZones.localzone(),
                                         ),
