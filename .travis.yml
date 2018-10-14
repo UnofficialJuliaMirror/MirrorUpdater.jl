@@ -6,6 +6,10 @@ git:
 jobs:
   include:
     -
+      name: runtests
+      script: "./ci/travis/runtests.sh"
+      stage: runtests
+    -
       name: make-list
       script: "./ci/travis/script.sh \"make-list\""
       stage: stage-1
