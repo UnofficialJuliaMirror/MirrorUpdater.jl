@@ -4,6 +4,9 @@
 
 set -ev
 
+export JULIA_FLAGS="--check-bounds=yes --code-coverage=all --color=yes --compiled-modules=no --inline=no --project"
+echo "JULIA_FLAGS=$JULIA_FLAGS"
+
 export GIST_DESCRIPTION="MirrorUpdater-Travis-$TRAVIS_EVENT_TYPE-$TRAVIS_BRANCH-$TRAVIS_BUILD_DIR-$TRAVIS_BUILD_ID-$TRAVIS_BUILD_NUMBER-$TRAVIS_COMMIT-$TRAVIS_EVENT_TYPE-$TRAVIS_PULL_REQUEST-$TRAVIS_PULL_REQUEST_BRANCH-$TRAVIS_PULL_REQUEST_SHA-$TRAVIS_PULL_REQUEST_SLUG-$TRAVIS_REPO_SLUG-$TRAVIS_TAG"
 
 export TASK="$1"
@@ -25,10 +28,6 @@ echo "GIST_DESCRIPTION=$GIST_DESCRIPTION"
 echo "TASK=$TASK"
 echo "TRAVIS_BRANCH=$TRAVIS_BRANCH"
 echo "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST"
-
-export JULIA_FLAGS="--code-coverage=all --check-bounds=yes --color=yes --project"
-
-echo "JULIA_FLAGS=$JULIA_FLAGS"
 
 julia $JULIA_FLAGS -e 'import Pkg; Pkg.resolve();'
 

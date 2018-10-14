@@ -4,8 +4,7 @@
 
 set -ev
 
-export JULIA_FLAGS="--check-bounds=yes --code-coverage=all --color=yes --compiled-modules=no --inline=no"
-
+export JULIA_FLAGS="--check-bounds=yes --code-coverage=all --color=yes --compiled-modules=yes --inline=no"
 echo "JULIA_FLAGS=$JULIA_FLAGS"
 
 julia $JULIA_FLAGS -e 'import Pkg; Pkg.build("MirrorUpdater");'
