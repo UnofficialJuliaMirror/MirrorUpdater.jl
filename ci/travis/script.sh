@@ -20,17 +20,17 @@ else
     export DRY_RUN="--dry-run"
 fi
 
+echo "DRY_RUN=$DRY_RUN"
 echo "GIST_DESCRIPTION=$GIST_DESCRIPTION"
 echo "TASK=$TASK"
 echo "TRAVIS_BRANCH=$TRAVIS_BRANCH"
 echo "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST"
-echo "DRY_RUN=$DRY_RUN"
 
 julia --project -e 'import Pkg; Pkg.resolve();'
 
 julia --project deps/build.jl
 
-julia --project run-github-mirror-updater.jl --gist-description "$GIST_DESCRIPTION" --task "$TASK" $DRY_RUN
+julia --project run-mirror-updater.jl --gist-description "$GIST_DESCRIPTION" --task "$TASK" $DRY_RUN
 
 cat Project.toml
 

@@ -1,305 +1,18 @@
 ##### Beginning of file
 
+module Common # Begin submodule MirrorUpdater.Common
+
+__precompile__(true)
+
+import ..Types
+import ..Utils
+
 import ArgParse
 import Conda
 import Dates
-import GitHub
 import HTTP
 import Pkg
 import TimeZones
-
-function _get_github_username(
-        auth::GitHub.Authorization,
-        )
-    user_information::AbstractDict = GitHub.gh_get_json(
-        GitHub.DEFAULT_API,
-        "/user";
-        auth = auth,
-        )
-    username::String = user_information["name"]
-    username_stripped::String = strip(username)
-    return username_stripped
-end
-
-function _get_destination_url(
-        destination_repo_name::String;
-        github_organization::String,
-        github_user::String = "",
-        github_token::String = "",
-        ):String
-    destination_repo_name_without_organization::String =
-        _repo_name_without_organization(
-            ;
-            repo = destination_repo_name,
-            org = github_organization,
-            )
-    has_credentials = (length(github_user) > 0) &&
-        (length(github_token) > 0)
-    if has_credentials
-        result = string(
-            "https://",
-            github_user,
-            ":",
-            github_token,
-            "@github.com/",
-            github_organization,
-            "/",
-            destination_repo_name_without_organization,
-            )
-    else
-        result = string(
-            "https://github.com/",
-            github_organization,
-            "/",
-            destination_repo_name_without_organization,
-            )
-    end
-    return result
-end
-
-function _get_destination_url(
-        x::Types.SrcDestPair;
-        github_organization::String,
-        github_user::String = "",
-        github_token::String = "",
-        ):String
-    destination_repo_name::String = strip(x.destination_repo_name)
-    result::String = _get_destination_url(
-        destination_repo_name;
-        github_organization = github_organization,
-        github_user = github_user,
-        github_token = github_token,
-        )
-    return result
-end
-
-function _url_exists(url::AbstractString)::Bool
-    temp_url::String = strip(convert(String, url))
-    result::Bool = try
-        r = HTTP.request("GET", url)
-        r.status == 200
-    catch
-        false
-    end
-    return result
-end
-
-function _github_repo_exists(
-        full_repo_name;
-        auth::GitHub.Authorization,
-        )::Bool
-    result::Bool = try
-        repo = GitHub.repo(full_repo_name; auth = auth,)
-        true
-    catch
-        false
-    end
-    return result
-end
-
-function _create_dest_repo_if_it_doesnt_exist!!(
-        x::Types.SrcDestPair,
-        github_organization::String;
-        auth::GitHub.Authorization,
-        )::Nothing
-    repo_fullname = _get_repo_fullname(x, github_organization,)
-    _create_dest_repo_if_it_doesnt_exist!!(
-        repo_fullname,
-        github_organization;
-        auth = auth,
-        )
-    return nothing
-end
-
-function _create_dest_repo_if_it_doesnt_exist!!(
-        repo_fullname::String,
-        github_organization::String;
-        auth::GitHub.Authorization,
-        )::Nothing
-    dest_url_withoutauth = _get_destination_url(
-        repo_fullname;
-        github_organization = github_organization,
-        )
-    if _url_exists(dest_url_withoutauth)
-        # repo already exists, so do nothing
-    else
-        if _github_repo_exists(repo_fullname; auth=auth)
-            # repo already exists, so do nothing
-        else
-            @info("Creating new repo: $(dest_url_withoutauth)")
-            destination_repo_name::String = strip(x.destination_repo_name)
-            owner = GitHub.owner(
-                github_organization,
-                true;
-                auth = auth,
-                )
-            params = Dict{String, Any}(
-                # "private" => "false",
-                "has_issues" => "false",
-                # "has_projects" => "false",
-                "has_wiki" => "false",
-                )
-            repo = GitHub.create_repo(
-                owner,
-                destination_repo_name,
-                params;
-                auth = auth,
-                )
-        end
-    end
-    return nothing
-end
-
-function _repo_name_with_organization(
-        ;
-        repo::AbstractString,
-        org::AbstractString,
-        )::String
-    repo_name_without_organization::String = _repo_name_without_organization(
-        ;
-        repo = repo,
-        org = org,
-        )
-    org_stripped::String = strip(
-        strip(strip(strip(strip(convert(String, org)), '/')), '/')
-        )
-    result::String = string(
-        org_stripped,
-        "/",
-        repo_name_without_organization,
-        )
-    return result
-end
-
-function _repo_name_without_organization(
-        ;
-        repo::AbstractString,
-        org::AbstractString,
-        )::String
-    repo_stripped::String = strip(
-        strip(strip(strip(strip(convert(String, repo)), '/')), '/')
-        )
-    org_stripped::String = strip(
-        strip(strip(strip(strip(convert(String, org)), '/')), '/')
-        )
-    if length(org_stripped) == 0
-        result = repo_stripped
-    else
-        repo_stripped_lowercase::String = lowercase(repo_stripped)
-        org_stripped_lowercase::String = lowercase(org_stripped)
-        org_stripped_lowercase_withtrailingslash::String = string(
-            org_stripped_lowercase,
-            "/",
-            )
-        if startswith(repo_stripped_lowercase,
-                org_stripped_lowercase_withtrailingslash)
-            index_start =
-                length(org_stripped_lowercase_withtrailingslash) + 1
-            result = repo_stripped[index_start:end]
-        else
-            result = repo_stripped
-        end
-    end
-    return result
-end
-
-function _get_repo_fullname(
-        x::Types.SrcDestPair,
-        github_organization::String,
-        )::String
-    destination_repo_name::String = strip(x.destination_repo_name)
-    result = _repo_name_with_organization(
-        ;
-        repo = destination_repo_name,
-        org = github_organization,
-        )
-    return result
-end
-
-function _generate_new_repo_description(
-        x::Types.SrcDestPair,
-        a::AbstractDict = ENV;
-        github_organization::String,
-        github_user::String,
-        when::TimeZones.ZonedDateTime = Dates.now(TimeZones.localzone()),
-        time_zone::Dates.TimeZone = TimeZones.TimeZone("America/New_York"),
-        )::String
-    source_url::String = x.source_url
-    if Utils._is_travis_ci()
-        travis_event_type::String = strip(
-            get(a, "TRAVIS_EVENT_TYPE", "")
-            )
-        if length(travis_event_type) > 0
-            travis_event_string = string(" $(travis_event_type)")
-        else
-            travis_event_string = string("")
-        end
-        travis_build_number::String = strip(
-            get(a, "TRAVIS_BUILD_NUMBER", "")
-            )
-        travis_job_number::String = strip(
-            get(a, "TRAVIS_JOB_NUMBER", "")
-            )
-        if length(travis_job_number) > 0
-            travis_number_string = string(" (job $(travis_job_number))")
-        elseif length(travis_build_number) > 0
-            travis_number_string = string(" (build $(travis_build_number))")
-        else
-            travis_number_string = string("")
-        end
-        via_travis = string(
-            " via Travis",
-            travis_event_string,
-            travis_number_string,
-            )
-    else
-        via_travis = ""
-    end
-    date_time_string = string(
-        TimeZones.astimezone(
-            when,
-            time_zone,
-            )
-        )
-    result::String = string(
-        "Mirrored from $(source_url) on ",
-        date_time_string,
-        " by @$(github_user)",
-        via_travis,
-        )
-    return result
-end
-
-function _edit_repo_description_github!!(
-        ;
-        repo_name::String,
-        new_repo_description::String,
-        auth::GitHub.Authorization,
-        github_organization::String,
-        github_user::String,
-        )::Nothing
-    full_repo_name::String = _repo_name_with_organization(
-        ;
-        repo = repo_name,
-        org = github_organization,
-        )
-    _create_dest_repo_if_it_doesnt_exist!!(
-        full_repo_name,
-        github_organization;
-        auth = auth,
-        )
-    repo = GitHub.repo(full_repo_name; auth = auth,)
-    result = GitHub.gh_patch_json(
-        GitHub.DEFAULT_API,
-        "/repos/$(GitHub.name(repo.owner))/$(GitHub.name(repo.name))";
-        auth = auth,
-        params = Dict(
-            "name" => GitHub.name(repo.name),
-            "description" => new_repo_description,
-            )
-        )
-    return nothing
-end
 
 function _toml_file_to_package(
         packagetoml_file_filename::String,
@@ -335,7 +48,7 @@ function _make_list(
     for x in additional_repos
         push!(full_list, x)
     end
-    git = _get_git_binary_path()
+    git = Utils._get_git_binary_path()
     for registry in registry_list
         registry_name = registry.name
         registry_uuid = registry.uuid
@@ -459,6 +172,13 @@ function _make_list(
         end
     end
     unique_list_sorted::Vector{Types.SrcDestPair} = sort(unique(full_list))
+    @info(
+        string(
+            "I made a list with ",
+            "$(length(unique_list_sorted)) ",
+            "unique pairs."
+            )
+        )
     return unique_list_sorted
 end
 
@@ -599,49 +319,40 @@ function _remove_problematic_refs_before_github!!(
 end
 
 function _push_mirrors!!(
+        ;
         src_dest_pairs::Vector{Types.SrcDestPair},
-        github_organization::String,
-        github_user::String,
-        github_token::String;
+        git_hosting_providers = git_hosting_providers,
         recursion_level::Integer = 0,
-        max_recursion_depth::Integer = 5,
+        max_recursion_depth::Integer = 10,
         is_dry_run::Bool = false,
-        auth::GitHub.Authorization,
         do_not_push_to_these_destinations::Vector{String},
         do_not_try_url_list::Vector{String},
         try_but_allow_failures_url_list::Vector{String},
         time_zone::Dates.TimeZone,
         )::Nothing
     @debug(string("Recursion level: $(recursion_level)"))
+    git = Utils._get_git_binary_path()
     src_dest_pairs_sorted_unique::Vector{Types.SrcDestPair} = sort(
         unique(
             src_dest_pairs
             )
         )
-    git = _get_git_binary_path()
-    for pair in src_dest_pairs_sorted_unique
+    @info(
+        string(
+            "Running _push_mirrors!! with ",
+            "$(length(src_dest_pairs_sorted_unique)) ",
+            "unique pairs.",
+            )
+        )
+    for pair_number = 1:length(src_dest_pairs_sorted_unique)
+        @info(
+            string(
+                "Pair $(pair_number) of ",
+                "$(length(src_dest_pairs_sorted_unique))",
+                )
+            )
+        pair = src_dest_pairs_sorted_unique[pair_number]
         src_url = pair.source_url
-        destination_repo_name = pair.destination_repo_name
-        destination_repo_fullname = _get_repo_fullname(
-            pair,
-            github_organization,
-            )
-        dest_url_withoutauth::String = _get_destination_url(
-            pair;
-            github_organization = github_organization,
-            )
-        dest_url_withauth::String = _get_destination_url(
-            pair;
-            github_organization = github_organization,
-            github_user = github_user,
-            github_token = github_token,
-            )
-        dest_url_withredactedauth::String = _get_destination_url(
-            pair;
-            github_organization = github_organization,
-            github_user = github_user,
-            github_token = "*****",
-            )
         if src_url in do_not_try_url_list ||
                 Types._name_with_git(src_url) in do_not_try_url_list ||
                 Types._name_without_git(src_url) in do_not_try_url_list
@@ -731,18 +442,16 @@ function _push_mirrors!!(
                                 )
                         end
                         _push_mirrors!!(
-                            list_of_new_src_dest_pairs,
-                            github_organization,
-                            github_user,
-                            github_token;
+                            ;
+                            do_not_push_to_these_destinations =
+                                do_not_push_to_these_destinations,
+                            src_dest_pairs = list_of_new_src_dest_pairs,
+                            git_hosting_providers = git_hosting_providers,
                             recursion_level = recursion_level + 1,
                             max_recursion_depth = max_recursion_depth,
                             is_dry_run = is_dry_run,
                             do_not_try_url_list = do_not_try_url_list,
                             time_zone = time_zone,
-                            auth = auth,
-                            do_not_push_to_these_destinations =
-                                do_not_push_to_these_destinations,
                             try_but_allow_failures_url_list =
                                 try_but_allow_failures_url_list,
                             )
@@ -781,6 +490,14 @@ function _push_mirrors!!(
                             )
                     end
                 end
+            else
+                @warn(
+                    string(
+                        "I have exceeded the maximum recursion depth.",
+                        ),
+                    recursion_level,
+                    max_recursion_depth,
+                    )
             end
             cd(temp_dir_repo_git_clone_mirror)
             cmd_git_repo_clone_mirror =
@@ -813,114 +530,103 @@ function _push_mirrors!!(
                     ;
                     packed_refs_filename = packed_refs_filename,
                     )
-                if destination_repo_name in
-                        do_not_push_to_these_destinations ||
-                        Types._name_with_git(destination_repo_name) in
-                        do_not_push_to_these_destinations ||
-                        Types._name_without_git(destination_repo_name) in
-                        do_not_push_to_these_destinations ||
-                        destination_repo_fullname in
-                        do_not_push_to_these_destinations ||
-                        Types._name_with_git(destination_repo_fullname) in
-                        do_not_push_to_these_destinations ||
-                        Types._name_without_git(destination_repo_fullname) in
-                        do_not_push_to_these_destinations
+                destination_repo_name = pair.destination_repo_name
+                if destination_repo_name in do_not_push_to_these_destinations ||
+                        destination_repo_name in do_not_push_to_these_destinations ||
+                        destination_repo_name in do_not_push_to_these_destinations
                     @warn(
                         string(
-                            "Destination repo is in the ",
-                            "do-not-push-to-these-destinations list, ",
-                            "therefore skipping push.",
-                            ),
-                        destination_repo_name,
-                        destination_repo_fullname,
+                            "Destination repo name is in the ",
+                            "do_not_push_to_these_destinations list, ",
+                            "so skipping.",
+                            )
                         )
                 else
-                    mirrorpush_cmd_withauth =
-                        `$(git) push --mirror $(dest_url_withauth)`
-                    mirrorpush_cmd_withredactedauth =
-                        `$(git) push --mirror $(dest_url_withredactedauth)`
-                    new_repo_description::String =
-                        _generate_new_repo_description(
-                            pair;
-                            github_organization = github_organization,
-                            github_user = github_user,
-                            time_zone = time_zone,
-                            )
                     if is_dry_run
                         @info(
                             string(
-                                "If this were not a dry run, ",
-                                "I would now do the following 3 things: ",
-                                "(1) I would make sure that the ",
-                                "destination repo exists on GitHub, ",
-                                "creating it if it does not already ",
-                                "exist. ",
-                                "(2) I would run the ",
-                                "\"git push --mirror\"",
-                                "command.",
-                                "(3) I would update the description of the ",
-                                "destination repo on GitHub.",
-                                ),
-                            github_organization,
-                            destination_repo_name,
-                            mirrorpush_cmd_withredactedauth,
-                            new_repo_description,
-                            pwd(),
-                            ENV["PATH"],
+                                "This is a dry run, so I will not ",
+                                "push to any git hosting providers.",
+                                )
                             )
                     else
-                        @info(
-                            string(
-                                "Making sure the destination repo exists. ",
-                                "If it does not exist, it will be created.",
-                                ),
-                            destination_repo_name,
-                            )
-                        _create_dest_repo_if_it_doesnt_exist!!(
-                            pair,
-                            github_organization;
-                            auth = auth,
-                            )
-                        @info(
-                            "Attempting to run command",
-                            mirrorpush_cmd_withredactedauth,
-                            pwd(),
-                            ENV["PATH"],
-                            )
-                        mirrorpush_was_success =
-                            Utils.command_ran_successfully!!(
-                                mirrorpush_cmd_withauth;
-                                )
-                        if mirrorpush_was_success
-                            @info("Command ran successfully",)
-                            # @info("Updating repo description on GitHub")
+                        for p = 1:length(git_hosting_providers)
                             @info(
                                 string(
-                                    "Updating repo description ",
-                                    "on GitHub ",
+                                    "Git hosting provider ",
+                                    "$(p) of ",
+                                    "$(length(git_hosting_providers))",
                                     ),
-                                destination_repo_name,
-                                new_repo_description,
-                                github_organization,
-                                github_user,
                                 )
-                            _edit_repo_description_github!!(
-                                ;
-                                repo_name = destination_repo_name,
-                                new_repo_description = new_repo_description,
-                                auth = auth,
-                                github_organization = github_organization,
-                                github_user = github_user,
+                            provider = git_hosting_providers[p]
+                            args1 = Dict(
+                                :repo_name => destination_repo_name,
                                 )
-                        else
-                            error(
+                            @info(
                                 string(
-                                    "Command did not run successfully",
-                                    cmd_withredactedauth,
-                                    pwd(),
-                                    ENV["PATH"],
+                                    "Making sure that repo exists on ",
+                                    "git hosting provider $(p). ",
+                                    "(If it does not already exist, ",
+                                    "I will create it.)",
                                     )
                                 )
+                            provider(:create_repo)(args1)
+                            args2 = Dict(
+                                :repo_name => destination_repo_name,
+                                :directory => pwd(),
+                                :git => git,
+                                )
+                            @info(
+                                string(
+                                    "Attempting to push to ",
+                                    "git hosting provider $(p).",
+                                    )
+                                )
+                            push_to_provider_was_success = try
+                                provider(:push_mirrored_repo)(args2)
+                                true
+                            catch exception
+                                @warn(
+                                    "ignoring exception: ",
+                                    exception,
+                                    )
+                                false
+                            end
+                            if push_to_provider_was_success
+                                args3 = Dict(
+                                    :source_url => src_url,
+                                    :when => Dates.now(
+                                        TimeZones.localzone(),
+                                        ),
+                                    :time_zone => time_zone,
+                                    )
+                                new_repo_description = provider(
+                                    :generate_new_repo_description)(
+                                    args3)
+                                args4 = Dict(
+                                    :repo_name =>
+                                        destination_repo_name,
+                                    :new_repo_description =>
+                                        new_repo_description
+                                    )
+                                @info(
+                                    string(
+                                        "Attempting to update ",
+                                        "repo description on git hosting ",
+                                        "provider $(p).",
+                                        ),
+                                    destination_repo_name,
+                                    new_repo_description,
+                                    )
+                                provider(:update_repo_description)(args4)
+                            else
+                                error(
+                                    string(
+                                        "Push to provider $(p) ",
+                                        "was not a success.",
+                                        )
+                                    )
+                            end
                         end
                     end
                 end
@@ -1045,7 +751,9 @@ function _pairs_that_fall_in_interval(
     full_sublist::Vector{Types.SrcDestPair} = list_of_pairs[
         ith_pair_falls_in_interval
         ]
-    unique_sorted_sublist::Vector{Types.SrcDestPair} = sort(unique(full_sublist))
+    unique_sorted_sublist::Vector{Types.SrcDestPair} = sort(
+        unique(full_sublist)
+        )
     return unique_sorted_sublist
 end
 
@@ -1070,59 +778,6 @@ function _interval_contains_x(
     return result
 end
 
-function _get_git_binary_path(
-        environment::Union{AbstractString,Symbol} = :MirrorUpdater,
-        )::String
-    path_git_conda_specified_env::String = try
-        joinpath(Conda.bin_dir(environment), "git",)
-    catch
-        ""
-    end
-    success_git_conda_specified_env::Bool = try
-        if length(path_git_conda_specified_env) > 0
-            success(`$(path_git_conda_specified_env) --version`)
-        else
-            false
-        end
-    catch
-        false
-    end
-    path_git_conda_root_env::String = try
-        joinpath(Conda.bin_dir(Conda.ROOTENV), "git",)
-    catch
-        ""
-    end
-    success_git_conda_root_env::Bool = try
-        if length(path_git_conda_root_env) > 0
-            success(`$(path_git_conda_root_env) --version`)
-        else
-            false
-        end
-    catch
-        false
-    end
-    path_git_default::String = "git"
-    success_git_default::Bool = try
-        success(`$(path_git_default) --version`)
-    catch
-        false
-    end
-    if success_git_conda_specified_env
-        git_path_to_use = path_git_conda_specified_env
-    elseif success_git_conda_root_env
-        git_path_to_use = path_git_conda_root_env
-    elseif success_git_default
-        git_path_to_use = path_git_default
-    else
-        error(
-            string(
-                "I could not find a usable Git."
-                )
-            )
-    end
-    result::String = strip(git_path_to_use)
-    return result
-end
-
+end # End submodule MirrorUpdater.Common
 
 ##### End of file

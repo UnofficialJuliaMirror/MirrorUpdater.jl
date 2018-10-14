@@ -49,19 +49,24 @@ You can also use it to host your own mirror.
 
 ### Step 5
 
-Update lines 1 and 2 of `config/github.jl` to look like:
+Update line 1 of `config/github.jl` to look like:
 ```julia
 const GITHUB_ORGANIZATION = "MY_GITHUB_ORG"
-const GITHUB_USER = "MY_GITHUB_BOT"
 ```
 
 Leave the rest of `config/github.jl` unchanged. Please do not stored your personal access token in the file.
 
-### Step 6 (optional)
+### Step 6
+
+Update line 1 of `config/enabled-providers.jl` to look like:
+```julia
+const GITHUB_ENABLED = true
+```
+### Step 7 (optional)
 
 If there are other registries of Julia packages that you would like to mirror, add them to the `config/registries.jl` file.
 
-### Step 7 (optional)
+### Step 8 (optional)
 
 Update the other configuration files in the `config/` folder as you see fit.
 
@@ -127,4 +132,4 @@ In the "Environment Variables" section of the Travis settings page, [add a new e
 
 ### Step 4
 
-In the "Cron Jobs" section of the Travis settings page, [create a new cron job for your fork](https://docs.travis-ci.com/user/cron-jobs/#adding-cron-jobs). For "Branch", select `master`. For "Interval", select whatever you like (I recommend `daily` or `weekly`). For "Options", select `Always Run`.
+In the "Cron Jobs" section of the Travis settings page, [create a new cron job for your fork](https://docs.travis-ci.com/user/cron-jobs/#adding-cron-jobs). For "Branch", select `master`. For "Interval", select whatever you like (I recommend `daily` or `weekly`). For "Options", I recommend selecting `Do not run if there has been a build in the last 24h`.

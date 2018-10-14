@@ -6,25 +6,47 @@ git:
 jobs:
   include:
     -
+      name: runtests
+      script: ./ci/travis/runtests.sh
+      stage: runtests
+    -
       name: make-list
       script: "./ci/travis/script.sh \"make-list\""
       stage: stage-1
     -
-      name: "[0,F)"
-      script: "./ci/travis/script.sh \"[0,F)\""
+      name: "[0,C)"
+      script: "./ci/travis/script.sh \"[0,C)\""
       stage: stage-2
     -
-      name: "[F,L)"
-      script: "./ci/travis/script.sh \"[F,L)\""
+      name: "[C,F)"
+      script: "./ci/travis/script.sh \"[C,F)\""
     -
-      name: "[L,R)"
-      script: "./ci/travis/script.sh \"[L,R)\""
+      name: "[F,I)"
+      script: "./ci/travis/script.sh \"[F,I)\""
     -
-      name: "[R,X)"
-      script: "./ci/travis/script.sh \"[R,X)\""
+      name: "[I,L)"
+      script: "./ci/travis/script.sh \"[I,L)\""
     -
-      name: "[X,)"
-      script: "./ci/travis/script.sh \"[X,)\""
+      name: "[L,O)"
+      script: "./ci/travis/script.sh \"[L,O)\""
+    -
+      name: "[O,R)"
+      script: "./ci/travis/script.sh \"[O,R)\""
+    -
+      name: "[R,U)"
+      script: "./ci/travis/script.sh \"[R,U)\""
+    -
+      name: "[U,X)"
+      script: "./ci/travis/script.sh \"[U,X)\""
+    -
+      name: "[X,a)"
+      script: "./ci/travis/script.sh \"[X,a)\""
+    -
+      name: "[a,m)"
+      script: "./ci/travis/script.sh \"[a,m)\""
+    -
+      name: "[m,)"
+      script: "./ci/travis/script.sh \"[m,)\""
     -
       name: clean-up
       script: "./ci/travis/script.sh \"clean-up\""
