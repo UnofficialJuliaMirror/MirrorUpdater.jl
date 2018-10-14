@@ -8,17 +8,13 @@ export JULIA_FLAGS="--check-bounds=yes --code-coverage=all --color=yes --compile
 echo "JULIA_FLAGS=$JULIA_FLAGS"
 
 julia $JULIA_FLAGS -e 'import Pkg; Pkg.build("MirrorUpdater");'
-
 julia $JULIA_FLAGS -e 'import MirrorUpdater;'
-
 julia $JULIA_FLAGS -e 'import Pkg; Pkg.test("MirrorUpdater"; coverage=true);'
 
 cat Project.toml
-
 cat Manifest.toml
 
 julia $JULIA_FLAGS -e 'import Pkg; try Pkg.add("Coverage") catch end;'
-
 julia $JULIA_FLAGS -e '
     import Coverage;
     import MirrorUpdater;
