@@ -7,7 +7,7 @@ jobs:
   include:
     -
       name: runtests
-      script: "./ci/travis/runtests.sh"
+      script: ./ci/travis/runtests.sh
       stage: runtests
     -
       name: make-list
