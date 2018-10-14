@@ -4,7 +4,7 @@
 
 set -ev
 
-export JULIA_FLAGS="--code-coverage=all --check-bounds=yes --color=yes"
+export JULIA_FLAGS="--check-bounds=yes --code-coverage=all --color=yes --compiled-modules=no --inline=no"
 
 echo "JULIA_FLAGS=$JULIA_FLAGS"
 
