@@ -6,6 +6,7 @@ __precompile__(true)
 
 import ..Types
 
+import Conda
 import HTTP
 
 function _url_exists(url::AbstractString)::Bool
@@ -101,31 +102,38 @@ function _get_git_binary_path(
         )::String
     path_git_conda_specified_env::String = try
         joinpath(Conda.bin_dir(environment), "git",)
-    catch
+    catch exception
+        @debug("ignoring exception: ", exception,)
         ""
     end
-    success_git_conda_specified_env::Bool = try
-        if length(path_git_conda_specified_env) > 0
+    success_git_conda_specified_env::Bool = false
+    if length(path_git_conda_specified_env) > 0
+        success_git_conda_specified_env = try
             success(`$(path_git_conda_specified_env) --version`)
-        else
+        catch exception
+            @debug("ignoring exception: ", exception,)
             false
         end
-    catch
-        false
+    else
+        success_git_conda_specified_env = false
     end
+
     path_git_conda_root_env::String = try
         joinpath(Conda.bin_dir(Conda.ROOTENV), "git",)
-    catch
+    catch exception
+        @debug("ignoring exception: ", exception,)
         ""
     end
-    success_git_conda_root_env::Bool = try
-        if length(path_git_conda_root_env) > 0
+    success_git_conda_root_env = false
+    if length(path_git_conda_root_env) > 0
+        success_git_conda_root_env = try
             success(`$(path_git_conda_root_env) --version`)
-        else
+        catch exception
+            @debug("ignoring exception: ", exception,)
             false
         end
-    catch
-        false
+    else
+        success_git_conda_root_env = false
     end
     path_git_default::String = "git"
     success_git_default::Bool = try
@@ -133,6 +141,22 @@ function _get_git_binary_path(
     catch
         false
     end
+    @debug(
+        "MirrorUpdater conda environment:",
+        environment,
+        success_git_conda_specified_env,
+        path_git_conda_specified_env,
+        )
+    @debug(
+        "Root conda environment:",
+        success_git_conda_root_env,
+        path_git_conda_root_env,
+        )
+    @debug(
+        "Default git:",
+        success_git_default,
+        path_git_default,
+        )
     if success_git_conda_specified_env
         git_path_to_use = path_git_conda_specified_env
     elseif success_git_conda_root_env
