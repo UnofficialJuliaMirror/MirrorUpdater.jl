@@ -4,13 +4,12 @@ import InteractiveUtils
 import MirrorUpdater
 import Test
 
-git = MirrorUpdater.Utils._get_git_binary_path()
-@info(string("git: "), git,)
+include("test-utils.jl")
 
-git_version_cmd = `$(git) --version`
-@info(string("Attempting to run command: "), git_version_cmd,)
-Test.@test(
-    MirrorUpdater.Utils.command_ran_successfully!!(git_version_cmd)
-    )
+include("set-up-test-modules.jl")
+
+include("test-package-directory.jl")
+
+include("test-version.jl")
 
 ##### End of file
