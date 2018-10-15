@@ -10,8 +10,11 @@ jobs:
       script: "./ci/travis/script.sh \"make-list\""
       stage: stage-1
     -
-      name: runtests
-      script: ./ci/travis/runtests.sh
+      name: runtests-compiled-modules-no
+      script: ./ci/travis/runtests-compiled-modules-no.sh
+    -
+      name: runtests-compiled-modules-yes
+      script: ./ci/travis/runtests-compiled-modules-yes.sh
     -
       name: "[0,C)"
       script: "./ci/travis/script.sh \"[0,C)\""
