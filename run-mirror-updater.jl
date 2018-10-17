@@ -30,7 +30,7 @@ if GITHUB_ENABLED
         MirrorUpdater.Hosts.GitHubHost.new_github_session(
             ;
             github_organization = GITHUB_ORGANIZATION,
-            github_token = GITHUB_TOKEN,
+            github_personal_access_token = GITHUB_PERSONAL_ACCESS_TOKEN,
             )
     push!(git_hosting_providers, github_provider)
 end
