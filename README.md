@@ -106,10 +106,10 @@ julia --project deps/build.jl
 
 ### Step 5
 
-Set the `GITHUB_TOKEN` environment variable equal to your GitHub personal access token:
+Set the `GITHUB_PERSONAL_ACCESS_TOKEN` environment variable equal to your GitHub personal access token:
 
 ```bash
-export GITHUB_TOKEN="your-github-personal-access-token-goes-here"
+export GITHUB_PERSONAL_ACCESS_TOKEN="your-github-personal-access-token-goes-here"
 ```
 
 ### Step 6
@@ -132,7 +132,7 @@ Go to the Travis settings page for your fork: [https://travis-ci.com/MY_GITHUB_O
 
 ### Step 3
 
-In the "Environment Variables" section of the Travis settings page, [add a new environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with name equal to `GITHUB_TOKEN` and value equal to your GitHub personal access token. **Make sure that the "Display value in build log" option is turned OFF.**
+In the "Environment Variables" section of the Travis settings page, [add a new environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with name equal to `GITHUB_PERSONAL_ACCESS_TOKEN` and value equal to your GitHub personal access token. **Make sure that the "Display value in build log" option is turned OFF.**
 
 ### Step 4
 

@@ -14,13 +14,13 @@ import TimeZones
 function new_github_session(
         ;
         github_organization::AbstractString,
-        github_token::AbstractString,
+        github_personal_access_token::AbstractString,
         )::Function
     _github_organization::String = strip(
         convert(String, github_organization)
         )
-    _github_token::String = strip(
-        convert(String, github_token)
+    _github_personal_access_token::String = strip(
+        convert(String, github_personal_access_token)
         )
     function _get_github_username(auth::GitHub.Authorization)::String
         user_information::AbstractDict = GitHub.gh_get_json(
@@ -34,12 +34,8 @@ function new_github_session(
     end
 
     @info("Attempting to authenticate to GitHub...")
-    auth::GitHub.Authorization = GitHub.authenticate(
-        _github_token
-        )
-    github_user::String = _get_github_username(
-        auth,
-        )
+    auth::GitHub.Authorization = GitHub.authenticate(_github_personal_access_token)
+    github_user::String = _get_github_username(auth)
     @info("Successfully authenticated to GitHub")
 
     @info(
@@ -199,7 +195,7 @@ function new_github_session(
                 "https://",
                 github_user,
                 ":",
-                _github_token,
+                _github_personal_access_token,
                 "@",
                 "github.com/",
                 _github_organization,

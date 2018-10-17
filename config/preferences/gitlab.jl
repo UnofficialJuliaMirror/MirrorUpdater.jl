@@ -1,2 +1,2 @@
-# const GITHUB_GROUP = "UnofficialJuliaMirror"
-# const GITHUB_TOKEN = ENV["GITLAB_TOKEN"]
+# const GITLAB_GROUP = "UnofficialJuliaMirror"
+# const GITLAB_PERSONAL_ACCESS_TOKEN = ENV["GITLAB_PERSONAL_ACCESS_TOKEN"]
