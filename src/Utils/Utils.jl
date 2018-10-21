@@ -14,7 +14,7 @@ function default_repo_description(
         ;
         env::AbstractDict = ENV,
         from::Any = "",
-        when::Any = "",
+        when::Any = Dates.now(TimeZones.localzone(),),
         time_zone::Dates.TimeZone = TimeZones.TimeZone("America/New_York"),
         by::Any = "",
         )::String
@@ -42,7 +42,7 @@ function default_repo_description(
             string(when)
             )
     end
-    if length(_when) = 0
+    if length(_when) == 0
         date_time_string = ""
     else
         date_time_string = strip(
