@@ -339,55 +339,16 @@ function new_github_session(
     function _generate_new_repo_description(
             params::AbstractDict,
             )::String
-
         source_url::String = params[:source_url]
-        env_dict::AbstractDict = ENV
-
         when::TimeZones.ZonedDateTime = params[:when]
-        time_zone::Dates.TimeZone = params[:time_zone]
-        date_time_string = string(TimeZones.astimezone(when,time_zone,))
+        time_zone::TimeZones.TimeZone = params[:time_zone]
 
-        via_travis::String = ""
-        if Utils._is_travis_ci()
-            travis_event_type::String = strip(
-                get(env_dict, "TRAVIS_EVENT_TYPE", "")
-                )
-            if length(travis_event_type) > 0
-                travis_event_string = string(" $(travis_event_type)")
-            else
-                travis_event_string = string("")
-            end
-            travis_build_number::String = strip(
-                get(env_dict, "TRAVIS_BUILD_NUMBER", "")
-                )
-            travis_job_number::String = strip(
-                get(env_dict, "TRAVIS_JOB_NUMBER", "")
-                )
-            if length(travis_job_number) > 0
-                travis_number_string = string(
-                    " (job $(travis_job_number))",
-                    )
-            elseif length(travis_build_number) > 0
-                travis_number_string = string(
-                    " (build $(travis_build_number))",
-                    )
-            else
-                travis_number_string = string("")
-            end
-            via_travis = string(
-                " via Travis",
-                travis_event_string,
-                travis_number_string,
-                )
-        else
-            via_travis = ""
-        end
-
-        new_description::String = string(
-            "Mirrored from $(source_url) on ",
-            date_time_string,
-            " by @$(github_user)",
-            via_travis,
+        new_description::String = Utils.default_repo_description(
+            ;
+            from = source_url,
+            when = when,
+            time_zone = time_zone,
+            by = strip(string("@", github_user)),
             )
 
         return new_description
