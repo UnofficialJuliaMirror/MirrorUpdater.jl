@@ -35,8 +35,14 @@ julia $JULIA_FLAGS run-mirror-updater.jl --gist-description "$GIST_DESCRIPTION" 
 cat Project.toml
 cat Manifest.toml
 
-julia $JULIA_FLAGS -e 'import Pkg; try Pkg.add("Coverage") catch end;'
 julia $JULIA_FLAGS -e '
+    import Pkg;
+    try Pkg.add("Coverage") catch end;
+    '
+
+julia $JULIA_FLAGS -e '
+    import Pkg;
+    try Pkg.add("Coverage") catch end;
     import Coverage;
     import MirrorUpdater;
     cd(MirrorUpdater.package_directory());
