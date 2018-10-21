@@ -29,11 +29,11 @@ You can also use it to host your own mirror.
 
 | Table of Contents |
 | ----------------- |
-| [1. Setting up GitHub (required)](#anchor1) |
-| [2. Setting up GitLab (optional)](#anchor2) |
-| [3. Setting up BitBucket (optional)](#anchor3) |
-| [4. Setting up Travis (required)](#anchor4) |
-| [5. Running the updater manually](#anchor5) |
+| [1. Setting up GitHub (required)](#setting-up-github-required) |
+| [2. Setting up GitLab (optional)](#setting-up-gitlab-optional) |
+| [3. Setting up BitBucket (optional)](#setting-up-bitbucket-optional) |
+| [4. Setting up Travis (required)](#setting-up-travis-required) |
+| [5. Running the updater manually](#running-the-updater-manually) |
 
 ## Setting up GitHub (required)
 
@@ -45,7 +45,7 @@ If you do not already have a personal GitHub account, [create one](https://help.
 
 ### Step 2
 
-Log in as `MY_PERSONAL_GITHUB_USERNAME`.
+Log in to GitHub as `MY_PERSONAL_GITHUB_USERNAME`.
 
 ### Step 3
 
@@ -71,7 +71,7 @@ Log out of the `MY_PERSONAL_GITHUB_USERNAME` account.
 
 ### Step 7
 
-Log in as `MY_GITHUB_BOT_USERNAME`.
+Log in to GitHub as `MY_GITHUB_BOT_USERNAME`.
 
 ### Step 8
 
@@ -81,7 +81,7 @@ While logged in as `MY_GITHUB_BOT_USERNAME`, [enable two-factor authentication](
 
 ### Step 9
 
-While logged in as `MY_GITHUB_BOT_USERNAME`, [create a personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) for the `MY_GITHUB_BOT_USERNAME` account and store it in a secure place (such as a password manager). For the remainder of this README, `MY_GITHUB_BOT_PERSONAL_ACCESS_TOKEN` refers to this personal access token.
+While logged in as `MY_GITHUB_BOT_USERNAME`, [create a personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) for the `MY_GITHUB_BOT_USERNAME` account and store it in a secure place (such as a password manager). For the remainder of this README, `my-github-bot-personal-access-token` refers to this personal access token.
 
 **The personal access token should be treated as securely as a password. Do not share it with anyone. Do not save it in any unsecure location. Do not save it in a file. Do not commit it in a Git repository.**
 
@@ -91,7 +91,7 @@ Log out of the `MY_GITHUB_BOT_USERNAME` account.
 
 ### Step 11
 
-Log in as `MY_PERSONAL_GITHUB_USERNAME`.
+Log in to GitHub as `MY_PERSONAL_GITHUB_USERNAME`.
 
 ### Step 12
 
@@ -103,7 +103,7 @@ This will allow `MY_GITHUB_BOT_USERNAME` to create new repositories within the `
 
 ### Step 13
 
-While logged in as `MY_PERSONAL_GITHUB_USERNAME`, [Fork the MirrorUpdater.jl repository](https://github.com/UnofficialJuliaMirror/MirrorUpdater.jl/fork) to the `MY_GITHUB_ORG` organization.
+While logged in as `MY_PERSONAL_GITHUB_USERNAME`, [fork the MirrorUpdater.jl repository](https://github.com/UnofficialJuliaMirror/MirrorUpdater.jl/fork) to the `MY_GITHUB_ORG` organization.
 
 ### Step 14
 
@@ -146,17 +146,25 @@ BitBucket support is coming soon!
 
 ### Step 1
 
-Enable Travis for your fork: `https://travis-ci.com/profile/MY_GITHUB_ORG`
+Log in to GitHub as `MY_PERSONAL_GITHUB_USERNAME`.
 
 ### Step 2
 
-Go to the Travis settings page for your fork: `https://travis-ci.com/MY_GITHUB_ORG/MirrorUpdater.jl/settings`
+Log in to Travis using the GitHub account `MY_PERSONAL_GITHUB_USERNAME`: `https://travis-ci.com/`
 
 ### Step 3
 
-In the "Environment Variables" section of the Travis settings page, [add a new environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with name equal to `GITHUB_PERSONAL_ACCESS_TOKEN` and value equal to your GitHub personal access token. **Make sure that the "Display value in build log" option is turned OFF.**
+Enable Travis for your fork: `https://travis-ci.com/profile/MY_GITHUB_ORG`
 
 ### Step 4
+
+Go to the Travis settings page for your fork: `https://travis-ci.com/MY_GITHUB_ORG/MirrorUpdater.jl/settings`
+
+### Step 5
+
+In the "Environment Variables" section of the Travis settings page, [add a new environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with name equal to `GITHUB_PERSONAL_ACCESS_TOKEN` and value equal to `my-github-bot-personal-access-token`. **Make sure that the "Display value in build log" option is turned OFF.**
+
+### Step 6
 
 In the "Cron Jobs" section of the Travis settings page, [create a new cron job for your fork](https://docs.travis-ci.com/user/cron-jobs/#adding-cron-jobs). For "Branch", select `master`. For "Interval", select whatever you like (I recommend `daily` or `weekly`). For "Options", select `Always run`.
 
@@ -197,7 +205,7 @@ julia --project deps/build.jl
 Set the `GITHUB_PERSONAL_ACCESS_TOKEN` environment variable equal to your GitHub personal access token:
 
 ```bash
-export GITHUB_PERSONAL_ACCESS_TOKEN="your-github-personal-access-token-goes-here"
+export GITHUB_PERSONAL_ACCESS_TOKEN="my-github-bot-personal-access-token"
 ```
 
 ### Step 6
