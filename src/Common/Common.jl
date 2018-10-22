@@ -613,7 +613,7 @@ function _push_mirrors!!(
                                 catch exception
                                     @warn(
                                         string("ignoring exception: "),
-                                        exception
+                                        exception,
                                         )
                                     ""
                                 end
@@ -632,6 +632,14 @@ function _push_mirrors!!(
                                         repo_description_provider
                                         )
                                 end
+
+                                @debug(
+                                    string("Repo descriptions: "),
+                                    repo_description_default,
+                                    repo_description_provider,
+                                    new_repo_description,
+                                    )
+
                                 args4 = Dict(
                                     :repo_name =>
                                         destination_repo_name,

@@ -25,10 +25,9 @@ function default_repo_description(
     if length(_from) == 0
         from_string = ""
     else
-        from_string = strip(
-            string(
-                " from $(from_string)",
-                )
+        from_string = string(
+            " ",
+            strip(string("from $(_from)",)),
             )
     end
 
@@ -46,11 +45,9 @@ function default_repo_description(
     if length(_when) == 0
         date_time_string = ""
     else
-        date_time_string = strip(
-            string(
-                " on ",
-                _when,
-                )
+        date_time_string = string(
+            " ",
+            strip(string("on ",_when,)),
             )
     end
 
@@ -61,11 +58,9 @@ function default_repo_description(
     if length(_by) == 0
         by_string = ""
     else
-        by_string = strip(
-            string(
-                " by ",
-                _by,
-                )
+        by_string = string(
+            " ",
+            strip(string("by ",_by,)),
             )
     end
 
@@ -133,12 +128,15 @@ function default_repo_description(
                     )
                 )
         end
-        travis_string = strip(
-            string(
-                " via Travis",
-                job_or_build_string,
-                triggered_by_string,
-                )
+        travis_string = string(
+            " ",
+            strip(
+                string(
+                    "via Travis",
+                    job_or_build_string,
+                    triggered_by_string,
+                    )
+                ),
             )
     else
         travis_string = ""
@@ -149,6 +147,7 @@ function default_repo_description(
             "Last mirrored",
             from_string,
             date_time_string,
+            by_string,
             travis_string,
             )
         )

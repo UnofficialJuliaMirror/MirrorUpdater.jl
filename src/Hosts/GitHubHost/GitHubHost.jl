@@ -342,13 +342,14 @@ function new_github_session(
         source_url::String = params[:source_url]
         when::TimeZones.ZonedDateTime = params[:when]
         time_zone::TimeZones.TimeZone = params[:time_zone]
+        by::String = strip(string("@", github_user))
 
         new_description::String = Utils.default_repo_description(
             ;
             from = source_url,
             when = when,
             time_zone = time_zone,
-            by = strip(string("@", github_user)),
+            by = by,
             )
 
         return new_description
