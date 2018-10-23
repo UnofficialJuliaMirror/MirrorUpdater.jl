@@ -87,45 +87,63 @@ function default_repo_description(
 
         job_or_build_string::String = ""
         if length(TRAVIS_JOB_NUMBER) > 0
-            job_or_build_string = strip(string("job $(TRAVIS_JOB_NUMBER)"))
+            job_or_build_string = string(
+                " ",
+                strip(string("job $(TRAVIS_JOB_NUMBER)")),
+                )
         elseif length(TRAVIS_BUILD_NUMBER) > 0
-            job_or_build_string = strip(string("build $(TRAVIS_BUILD_NUMBER)"))
+            job_or_build_string = string(
+                " ",
+                strip(string("build $(TRAVIS_BUILD_NUMBER)")),
+                )
         else
             job_or_build_string = ""
         end
 
         triggered_by_string::String = ""
         if lowercase(TRAVIS_EVENT_TYPE) == "push"
-            triggered_by_string = strip(
-                string(
-                    ", triggered by the push of",
-                    " commit \"$(TRAVIS_COMMIT)\"",
-                    " to branch \"$(TRAVIS_BRANCH)\"",
-                    )
+            triggered_by_string = string(
+                " ",
+                strip(
+                    string(
+                        ", triggered by the push of",
+                        " commit \"$(TRAVIS_COMMIT)\"",
+                        " to branch \"$(TRAVIS_BRANCH)\"",
+                        )
+                    ),
                 )
         elseif lowercase(TRAVIS_EVENT_TYPE) == "pull_request"
-            triggered_by_string = strip(
-                string(
-                    ", triggered by ",
-                    "pull request #$(TRAVIS_PULL_REQUEST)",
-                    )
+            triggered_by_string = string(
+                " ",
+                strip(
+                    string(
+                        ", triggered by",
+                        " pull request #$(TRAVIS_PULL_REQUEST)",
+                        )
+                    ),
                 )
         elseif lowercase(TRAVIS_EVENT_TYPE) == "cron"
-            triggered_by_string = strip(
-                string(
-                    ", triggered by Travis",
-                    " cron job on",
-                    " branch \"$(TRAVIS_BRANCH)\"",
-                    )
+            triggered_by_string = string(
+                " ",
+                strip(
+                    string(
+                        ", triggered by Travis",
+                        " cron job on",
+                        " branch \"$(TRAVIS_BRANCH)\"",
+                        )
+                    ),
                 )
         else
-            triggered_by_string = strip(
-                string(
-                    ", triggered by Travis \"",
-                    strip(TRAVIS_EVENT_TYPE),
-                    "\" event on",
-                    " branch \"$(TRAVIS_BRANCH)\"",
-                    )
+            triggered_by_string = string(
+                " ",
+                strip(
+                    string(
+                        ", triggered by Travis \"",
+                        strip(TRAVIS_EVENT_TYPE),
+                        "\" event on",
+                        " branch \"$(TRAVIS_BRANCH)\"",
+                        )
+                    ),
                 )
         end
         travis_string = string(
