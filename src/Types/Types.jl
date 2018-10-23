@@ -39,27 +39,42 @@ function _name_without_git(x::AbstractString)::String
 end
 
 function _is_interval(x::String)::Bool
-    result::Bool = _is_two_sided_interval(x) || _is_one_sided_interval(x)
+    result::Bool = _is_lower_bound_only_interval(x) ||
+        _is_upper_bound_only_interval(x) ||
+        _is_lower_and_upper_bound_interval(x) ||
     return result
 end
 
-function _get_two_sided_interval_regex()::Regex
-    two_sided_interval_regex::Regex = r"\[(\w*?)\,(\w\w*?)\)"
-    return two_sided_interval_regex
+function _get_lower_and_upper_bound_interval_regex()::Regex
+    lower_and_upper_bound_interval_regex::Regex =
+        r"\[(\w\w*?)\,(\w\w*?)\)"
+    return lower_and_upper_bound_interval_regex
 end
 
-function _get_one_sided_interval_regex()::Regex
-    one_sided_interval_regex::Regex = r"\[(\w*?)\,\)"
-    return one_sided_interval_regex
+function _get_lower_bound_only_interval_regex()::Regex
+    lower_bound_only_interval_regex::Regex =
+        r"\[(\w\w*?)\,\)"
+    return lower_bound_only_interval_regex
 end
 
-function _is_two_sided_interval(x::String)::Bool
-    result::Bool = occursin(_get_two_sided_interval_regex(), x)
+function _get_upper_bound_only_interval_regex()::Regex
+    upper_bound_only_interval_regex::Regex =
+        r"\[\,(\w\w*?)\)"
+    return upper_bound_only_interval_regex
+end
+
+function _is_lower_and_upper_bound_interval(x::String)::Bool
+    result::Bool = occursin(_get_lower_and_upper_bound_interval_regex(), x)
     return result
 end
 
-function _is_one_sided_interval(x::String)::Bool
-    result::Bool = occursin(_get_one_sided_interval_regex(), x)
+function _is_lower_bound_only_interval(x::String)::Bool
+    result::Bool = occursin(_get_lower_bound_only_interval_regex(), x)
+    return result
+end
+
+function _is_upper_bound_only_interval(x::String)::Bool
+    result::Bool = occursin(_get_upper_bound_only_interval_regex(), x)
     return result
 end
 
@@ -168,16 +183,16 @@ function SrcDestPair(
     return result
 end
 
-struct TwoSidedInterval <: AbstractInterval
+struct LowerAndUpperBoundInterval <: AbstractInterval
     left::String
     right::String
-    function TwoSidedInterval(
+    function LowerAndUpperBoundInterval(
             left::String,
             right::String,
-            )::TwoSidedInterval
+            )::LowerAndUpperBoundInterval
         correct_left = strip(left)
         correct_right = strip(right)
-        result::TwoSidedInterval = new(
+        result::LowerAndUpperBoundInterval = new(
             correct_left,
             correct_right,
             )
@@ -185,39 +200,66 @@ struct TwoSidedInterval <: AbstractInterval
     end
 end
 
-struct OneSidedInterval <: AbstractInterval
+struct LowerBoundOnlyInterval <: AbstractInterval
     left::String
-    function OneSidedInterval(
+    function LowerBoundOnlyInterval(
             left::String,
-            )::OneSidedInterval
+            )::LowerBoundOnlyInterval
         correct_left = strip(left)
-        result::OneSidedInterval = new(
+        result::LowerBoundOnlyInterval = new(
             correct_left,
             )
         return result
     end
 end
 
+struct UpperBoundOnlyInterval <: AbstractInterval
+    right::String
+    function UpperBoundOnlyInterval(
+            right::String,
+            )::UpperBoundOnlyInterval
+        correct_right = strip(right)
+        result::UpperBoundOnlyInterval = new(
+            correct_right,
+            )
+        return result
+    end
+end
+
 function _construct_interval(x::String)::AbstractInterval
-    if _is_two_sided_interval(x)
-        twosided_regexmatch::RegexMatch = match(
-            _get_two_sided_interval_regex(),
+    if _is_lower_bound_only_interval(x)
+        loweronly_regexmatch::RegexMatch = match(
+            _get_lower_bound_only_interval_regex(),
             x,
             )
-        twosided_left::String = strip(
-            convert(String, twosided_regexmatch[1])
+        loweronly_left::String = strip(
+            convert(String, loweronly_regexmatch[1])
             )
-        twosided_right::String = strip(
-            convert(String, twosided_regexmatch[2])
-            )
-        result = TwoSidedInterval(twosided_left, twosided_right)
-    elseif _is_one_sided_interval(x)
-        onesided_regexmatch::RegexMatch = match(
-            _get_one_sided_interval_regex(),
+        result = LowerBoundOnlyInterval(loweronly_left)
+    elseif _is_upper_bound_only_interval(x)
+        upperonly_regexmatch::RegexMatch = match(
+            _get_upper_bound_only_interval_regex(),
             x,
             )
-        one_sidedleft::String = strip(convert(String, onesided_regexmatch[1]))
-        result = OneSidedInterval(one_sidedleft)
+        upperonly_right::String = strip(
+            convert(String, upperonly_regexmatch[1])
+            )
+        result = UpperBoundOnlyInterval(upperonly_right)
+    elseif _is_lower_and_upper_bound_interval(x)
+        lowerandupper_regexmatch::RegexMatch = match(
+            _get_lower_and_upper_bound_interval_regex(),
+            x,
+            )
+        lowerandupper_left::String = strip(
+            convert(String, lowerandupper_regexmatch[1])
+            )
+        lowerandupper_right::String = strip(
+            convert(String, lowerandupper_regexmatch[2])
+            )
+        result = LowerAndUpperBoundInterval(
+            lowerandupper_left,
+            lowerandupper_right,
+            )
     else
         error("argument is not a valid interval")
     end
