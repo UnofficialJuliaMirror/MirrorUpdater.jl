@@ -9,6 +9,7 @@ import TimeZones
 
 @info("Reading config files...")
 
+include(joinpath("config","preferences","bitbucket.jl",))
 include(joinpath("config","preferences","enabled-providers.jl",))
 include(joinpath("config","preferences","gitlab.jl",))
 include(joinpath("config","preferences","github.jl",))
@@ -33,6 +34,26 @@ if GITHUB_ENABLED
             github_personal_access_token = GITHUB_PERSONAL_ACCESS_TOKEN,
             )
     push!(git_hosting_providers, github_provider)
+end
+
+if GITHUB_ENABLED
+    const gitlab_provider =
+        MirrorUpdater.Hosts.GitLabHost.new_gitlab_session(
+            ;
+            gitlab_group_organization = GITLAB_ORGANIZATION,
+            gitlab_personal_access_token = GITLAB_PERSONAL_ACCESS_TOKEN,
+            )
+    push!(git_hosting_providers, gitlab_provider)
+end
+
+if GITHUB_ENABLED
+    const bitbucket_provider =
+        MirrorUpdater.Hosts.GitHubHost.new_bitbucket_session(
+            ;
+            bitbucket_organization = BITBUCKET_ORGANIZATION,
+            bitbucket_app_password = BITBUCKET_APP_PASSWORD,
+            )
+    push!(git_hosting_providers, bitbucket_provider)
 end
 
 MirrorUpdater.CommandLine.run_mirror_updater_command_line!!(

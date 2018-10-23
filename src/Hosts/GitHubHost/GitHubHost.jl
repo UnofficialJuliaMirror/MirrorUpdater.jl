@@ -16,6 +16,7 @@ function new_github_session(
         github_organization::AbstractString,
         github_personal_access_token::AbstractString,
         )::Function
+
     _github_organization::String = strip(
         convert(String, github_organization)
         )
@@ -79,12 +80,11 @@ function new_github_session(
     end
 
     function _retrieve_gist(params::AbstractDict)::String
-        gist_description::String = params[:gist_description]
-        @info("Loading the list of all of my GitHub gists")
-        my_gists::Vector{GitHub.Gist} = GitHub.gists(github_user;auth = auth,)[1]
+        gist_description_to_match::String = params[:gist_description]
         correct_gist_id::String = ""
+        all_my_gists = _get_all_gists()
         for gist in my_gists
-            if gist.description == gist_description
+            if gist.description == gist_description_to_match
                 correct_gist_id = gist.id
             end
         end
@@ -107,16 +107,70 @@ function new_github_session(
         return result
     end
 
-    function _delete_gists(params::AbstractDict)::Nothing
-        gist_description::String = params[:gist_description]
-        list_of_gist_ids_to_delete::Vector{String} = String[]
+    function _get_all_gists()::Vector{GitHub.Gist}
         @info("Loading the list of all of my GitHub gists")
-        my_gists::Vector{GitHub.Gist} = GitHub.gists(
-            github_user;
-            auth = auth,)[1]
-        for gist in my_gists
-            if gist.description == gist_description
-                push!(list_of_gist_ids_to_delete, gist.id)
+        full_gist_list::Vector{GitHub.Gist} = GitHub.Gist[]
+        need_to_continue::Bool = true
+        current_page_number::Int = 0
+        while need_to_continue
+            gists, page_data = GitHub.gists(
+                github_user;
+                params = Dict(
+                    "per_page" => 100,
+                    "page" => current_page_number,
+                    ),
+                auth = auth,
+                )
+            if length(gists) == 0
+                need_to_continue = false
+            else
+                for x in gists
+                    if x in full_gist_list
+                    else
+                        push!(full_gist_list, x)
+                    end
+                end
+                need_to_continue = true
+                current_page_number += 1
+            end
+        end
+        unique_gist_list::Vector{GitHub.Gist} = unique(full_gist_list)
+        return unique_gist_list
+    end
+
+    function _delete_gists(params::AbstractDict)::Nothing
+        gist_description_to_match::String = params[:gist_description]
+        list_of_gist_ids_to_delete::Vector{String} = String[]
+        all_my_gists::Vector{GitHub.Gist} = _get_all_gists()
+        for gist in all_my_gists
+            if gist.description == gist_description_to_match
+                push!(list_of_gist_ids_to_delete, strip(gist.id),)
+            end
+        end
+        for gist_id_to_delete in list_of_gist_ids_to_delete
+            GitHub.delete_gist(gist_id_to_delete;auth = auth,)
+            @info(string("Deleted GitHub gist id $(gist_id_to_delete)"))
+        end
+        return nothing
+    end
+
+    function _delete_gists_older_than_minutes(params::AbstractDict)::Nothing
+        time::TimeZones.ZonedDateTime =
+            params[:time]
+        delete_gists_older_than_minutes::Int =
+            params[:delete_gists_older_than_minutes]
+        max_gist_age_milliseconds::Int = max_gist_age_minutes*60*1000
+        list_of_gist_ids_to_delete::Vector{String} = String[]
+        all_my_gists::Vector{GitHub.Gist} = _get_all_gists()
+        for gist in all_my_gists
+            gist_updated_at::Dates.DateTime = gist.updated_at
+            gist_updated_at_zoned = TimeZones.ZonedDateTime(
+                gist_updated_at,
+                TimeZones.localzone(),
+                )
+            gist_age::Dates.Millisecond = time - gist_updated_at_zoned
+            if z.value > max_gist_age_milliseconds
+                push!(list_of_gist_ids_to_delete, strip(gist.id),)
             end
         end
         for gist_id_to_delete in list_of_gist_ids_to_delete
@@ -396,6 +450,8 @@ function new_github_session(
             return _generate_new_repo_description
         elseif task == :update_repo_description
             return _update_repo_description
+        elseif task == :delete_gists_older_than_minutes
+            return _delete_gists_older_than_minutes
         else
             error("$(task) is not a valid task")
         end

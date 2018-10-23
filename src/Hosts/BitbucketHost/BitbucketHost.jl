@@ -1,6 +1,6 @@
 ##### Beginning of file
 
-module GitLabHost # Begin submodule MirrorUpdater.Hosts.GitLabHost
+module BitbucketHost # Begin submodule MirrorUpdater.Hosts.BitbucketHost
 
 __precompile__(true)
 
@@ -10,13 +10,13 @@ import ..Utils
 import Dates
 import TimeZones
 
-function new_gitlab_session(
+function new_bitbucket_session(
         ;
-        gitlab_group::String,
-        gitlab_personal_access_token::String,
+        bitbucket_team::String,
+        bitbucket_app_password::String,
         )::Function
 
-    function _gitlab_provider(task::Symbol)::Function
+    function _bitbucket_provider(task::Symbol)::Function
         if task == :create_gist
             return _create_gist
         elseif task == :retrieve_gist
@@ -38,9 +38,9 @@ function new_gitlab_session(
         end
     end
 
-    return _gitlab_provider
+    return _bitbucket_provider
 end
 
-end # End submodule MirrorUpdater.Hosts.GitLabHost
+end # End submodule MirrorUpdater.Hosts.BitbucketHost
 
 ##### End of file
