@@ -39,10 +39,15 @@ function _name_without_git(x::AbstractString)::String
 end
 
 function _is_interval(x::String)::Bool
-    result::Bool = _is_lower_bound_only_interval(x) ||
-        _is_upper_bound_only_interval(x) ||
-        _is_lower_and_upper_bound_interval(x) ||
-    return result
+    if _is_lower_bound_only_interval(x)
+        return true
+    elseif _is_upper_bound_only_interval(x)
+        return true
+    elseif _is_lower_and_upper_bound_interval(x)
+        return true
+    else
+        return false
+    end
 end
 
 function _get_lower_and_upper_bound_interval_regex()::Regex
@@ -64,17 +69,26 @@ function _get_upper_bound_only_interval_regex()::Regex
 end
 
 function _is_lower_and_upper_bound_interval(x::String)::Bool
-    result::Bool = occursin(_get_lower_and_upper_bound_interval_regex(), x)
+    result::Bool = occursin(
+        _get_lower_and_upper_bound_interval_regex(),
+        x,
+        )
     return result
 end
 
 function _is_lower_bound_only_interval(x::String)::Bool
-    result::Bool = occursin(_get_lower_bound_only_interval_regex(), x)
+    result::Bool = occursin(
+        _get_lower_bound_only_interval_regex(),
+        x,
+        )
     return result
 end
 
 function _is_upper_bound_only_interval(x::String)::Bool
-    result::Bool = occursin(_get_upper_bound_only_interval_regex(), x)
+    result::Bool = occursin(
+        _get_upper_bound_only_interval_regex(),
+        x,
+        )
     return result
 end
 
