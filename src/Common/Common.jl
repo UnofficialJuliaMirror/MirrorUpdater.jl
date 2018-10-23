@@ -593,16 +593,53 @@ function _push_mirrors!!(
                                 false
                             end
                             if push_to_provider_was_success
+                                when = Dates.now(TimeZones.localzone(),)
                                 args3 = Dict(
                                     :source_url => src_url,
-                                    :when => Dates.now(
-                                        TimeZones.localzone(),
-                                        ),
+                                    :when => when,
                                     :time_zone => time_zone,
                                     )
-                                new_repo_description = provider(
-                                    :generate_new_repo_description)(
-                                    args3)
+                                repo_description_default::String =
+                                    Utils.default_repo_description(
+                                        ;
+                                        from = src_url,
+                                        when = when,
+                                        time_zone = time_zone,
+                                        )
+                                repo_description_provider::String = try
+                                    provider(
+                                        :generate_new_repo_description)(
+                                        args3)
+                                catch exception
+                                    @warn(
+                                        string("ignoring exception: "),
+                                        exception,
+                                        )
+                                    ""
+                                end
+
+                                new_repo_description::String = ""
+                                if length(
+                                        strip(
+                                            repo_description_provider
+                                            )
+                                        ) == 0
+                                    new_repo_description = strip(
+                                        repo_description_default
+                                        )
+                                else
+                                    new_repo_description = strip(
+                                        repo_description_provider
+                                        )
+                                end
+
+                                @debug(
+                                    string("Repo descriptions: "),
+                                    repo_description_default,
+                                    repo_description_provider,
+                                    new_repo_description,
+                                    )
+
                                 args4 = Dict(
                                     :repo_name =>
                                         destination_repo_name,

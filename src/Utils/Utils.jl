@@ -7,7 +7,171 @@ __precompile__(true)
 import ..Types
 
 import Conda
+import Dates
 import HTTP
+import TimeZones
+
+function default_repo_description(
+        ;
+        env::AbstractDict = ENV,
+        from::Any = "",
+        when::Any = Dates.now(TimeZones.localzone(),),
+        time_zone::Dates.TimeZone = TimeZones.TimeZone("America/New_York"),
+        by::Any = "",
+        )::String
+
+    _from::String = strip(string(from))
+    from_string::String = ""
+    if length(_from) == 0
+        from_string = ""
+    else
+        from_string = string(
+            " ",
+            strip(string("from $(_from)",)),
+            )
+    end
+
+    _when::String = ""
+    date_time_string::String = ""
+    if isa(when, TimeZones.ZonedDateTime)
+        _when = strip(
+            string(TimeZones.astimezone(when,time_zone,))
+            )
+    else
+        _when = strip(
+            string(when)
+            )
+    end
+    if length(_when) == 0
+        date_time_string = ""
+    else
+        date_time_string = string(
+            " ",
+            strip(string("on ",_when,)),
+            )
+    end
+
+    by_string::String = ""
+    _by::String = strip(
+        string(by)
+        )
+    if length(_by) == 0
+        by_string = ""
+    else
+        by_string = string(
+            " ",
+            strip(string("by ",_by,)),
+            )
+    end
+
+    travis_string::String = ""
+    if _is_travis_ci(env)
+        TRAVIS_BUILD_NUMBER::String = strip(
+            get(env, "TRAVIS_BUILD_NUMBER", "")
+            )
+        TRAVIS_JOB_NUMBER::String = strip(
+            get(env, "TRAVIS_JOB_NUMBER", "")
+            )
+        TRAVIS_EVENT_TYPE::String = strip(
+            get(env, "TRAVIS_EVENT_TYPE", "unknown-travis-event")
+            )
+        TRAVIS_BRANCH = strip(
+            get(env, "TRAVIS_BRANCH", "unknown-branch")
+            )
+        TRAVIS_COMMIT = strip(
+            get(env, "TRAVIS_COMMIT", "unknown-commit")
+            )
+        TRAVIS_PULL_REQUEST = strip(
+            get(env,"TRAVIS_PULL_REQUEST","unknown-pull-request-number")
+            )
+
+        job_or_build_string::String = ""
+        if length(TRAVIS_JOB_NUMBER) > 0
+            job_or_build_string = string(
+                " ",
+                strip(string("job $(TRAVIS_JOB_NUMBER)")),
+                )
+        elseif length(TRAVIS_BUILD_NUMBER) > 0
+            job_or_build_string = string(
+                " ",
+                strip(string("build $(TRAVIS_BUILD_NUMBER)")),
+                )
+        else
+            job_or_build_string = ""
+        end
+
+        triggered_by_string::String = ""
+        if lowercase(TRAVIS_EVENT_TYPE) == "push"
+            triggered_by_string = string(
+                " ",
+                strip(
+                    string(
+                        ", triggered by the push of",
+                        " commit \"$(TRAVIS_COMMIT)\"",
+                        " to branch \"$(TRAVIS_BRANCH)\"",
+                        )
+                    ),
+                )
+        elseif lowercase(TRAVIS_EVENT_TYPE) == "pull_request"
+            triggered_by_string = string(
+                " ",
+                strip(
+                    string(
+                        ", triggered by",
+                        " pull request #$(TRAVIS_PULL_REQUEST)",
+                        )
+                    ),
+                )
+        elseif lowercase(TRAVIS_EVENT_TYPE) == "cron"
+            triggered_by_string = string(
+                " ",
+                strip(
+                    string(
+                        ", triggered by Travis",
+                        " cron job on",
+                        " branch \"$(TRAVIS_BRANCH)\"",
+                        )
+                    ),
+                )
+        else
+            triggered_by_string = string(
+                " ",
+                strip(
+                    string(
+                        ", triggered by Travis \"",
+                        strip(TRAVIS_EVENT_TYPE),
+                        "\" event on",
+                        " branch \"$(TRAVIS_BRANCH)\"",
+                        )
+                    ),
+                )
+        end
+        travis_string = string(
+            " ",
+            strip(
+                string(
+                    "via Travis",
+                    job_or_build_string,
+                    triggered_by_string,
+                    )
+                ),
+            )
+    else
+        travis_string = ""
+    end
+
+    new_description::String = strip(
+        string(
+            "Last mirrored",
+            from_string,
+            date_time_string,
+            by_string,
+            travis_string,
+            )
+        )
+
+    return new_description
+end
 
 function _url_exists(url::AbstractString)::Bool
     _url::String = strip(convert(String, url))
