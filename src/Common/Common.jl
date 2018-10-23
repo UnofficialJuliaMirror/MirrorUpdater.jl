@@ -766,7 +766,10 @@ function _interval_contains_x(
         interval::Types.AbstractInterval,
         pair::Types.SrcDestPair,
         )::Bool
-    result::Bool = _interval_contains_x(interval, pair.destination_repo_name)
+    result::Bool = _interval_contains_x(
+        interval,
+        pair.destination_repo_name,
+        )
     return result
 end
 
@@ -795,7 +798,7 @@ function _pairs_that_fall_in_interval(
 end
 
 function _interval_contains_x(
-        interval::Types.TwoSidedInterval,
+        interval::Types.LowerAndUpperBoundInterval,
         x::AbstractString,
         )::Bool
     x_stripped::String = strip(convert(String, x))
@@ -806,12 +809,22 @@ function _interval_contains_x(
 end
 
 function _interval_contains_x(
-        interval::Types.OneSidedInterval,
+        interval::Types.LowerBoundOnlyInterval,
         x::AbstractString,
         )::Bool
     x_stripped::String = strip(convert(String, x))
     left::String = strip(interval.left)
     result::Bool = left <= x_stripped
+    return result
+end
+
+function _interval_contains_x(
+        interval::Types.UpperBoundOnlyInterval,
+        x::AbstractString,
+        )
+    x_stripped::String = strip(convert(String, x))
+    right::String = strip(interval.right)
+    result::Bool = x_stripped < right
     return result
 end
 
