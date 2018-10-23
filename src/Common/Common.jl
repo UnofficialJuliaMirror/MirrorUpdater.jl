@@ -762,7 +762,7 @@ function _add_trailing_spaces(x::AbstractString, n::Integer)::String
     return result
 end
 
-function _i_contains_x(
+function _interval_contains_x(
         interval::Types.AbstractInterval,
         pair::Types.SrcDestPair,
         )::Bool
