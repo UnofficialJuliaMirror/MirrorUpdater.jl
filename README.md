@@ -249,39 +249,47 @@ While logged in as `MY_PERSONAL_BITBUCKET_USERNAME`, [create a free Bitbucket te
 
 ### Step 5
 
-Log out of the `MY_PERSONAL_BITBUCKET_USERNAME` account.
+While logged in as `MY_PERSONAL_BITBUCKET_USERNAME`, go to the `MY_BITBUCKET_TEAM` projects page (`https://bitbucket.org/MY_BITBUCKET_TEAM/profile/projects`).
+
+Then, create a new project inside the `MY_BITBUCKET_TEAM` team. For the remainder of this README, `MY_BITBUCKET_PROJECT` refers to the name of this project.
+
+*For example, for me, `MY_BITBUCKET_TEAM` is equal to `UnofficialJuliaMirrorProject`.*
 
 ### Step 6
+
+Log out of the `MY_PERSONAL_BITBUCKET_USERNAME` account.
+
+### Step 7
 
 [Create a new Bitbucket "bot" account](https://bitbucket.org/account/signup/) that you will use ONLY for maintaining the mirror. For the remainder of this README, `MY_BITBUCKET_BOT_USERNAME` refers to the username of this account.
 
 *For example, for me, `MY_BITBUCKET_BOT_USERNAME` is equal to `UnofficialJuliaMirrorBot`.*
 
-### Step 7
+### Step 8
 
 Log in to Bitbucket as `MY_BITBUCKET_BOT_USERNAME`.
 
-### Step 8
+### Step 9
 
 While logged in as `MY_BITBUCKET_BOT_USERNAME`, [enable two-factor authentication](https://confluence.atlassian.com/bitbucket/two-step-verification-777023203.html#Two-stepverification-Enabletwo-stepverification) on the `MY_BITBUCKET_BOT_USERNAME` account.
 
 **Make sure to store your two-factor recovery codes in a secure location!**
 
-### Step 9
+### Step 10
 
 While logged in as `MY_BITBUCKET_BOT_USERNAME`, [create an app password](https://confluence.atlassian.com/bitbucket/app-passwords-828781300.html#Apppasswords-Createanapppassword) for the `MY_BITBUCKET_BOT_USERNAME` account and store it in a secure place (such as a password manager). For the remainder of this README, `my-bitbucket-bot-app-password` refers to this app password.
 
 **The app password should be treated as securely as any other password. Do not share it with anyone. Do not save it in any unsecure location. Do not save it in a file. Do not commit it in a Git repository.**
 
-### Step 10
+### Step 11
 
 Log out of the `MY_BITBUCKET_BOT_USERNAME` account.
 
-### Step 11
+### Step 12
 
 Log in to Bitbucket as `MY_PERSONAL_BITBUCKET_USERNAME`.
 
-### Step 12
+### Step 13
 
 While logged in as `MY_PERSONAL_BITBUCKET_USERNAME`, go to the `MY_BITBUCKET_TEAM` team members page (`https://bitbucket.org/MY_BITBUCKET_TEAM/profile/members`).
 
@@ -289,11 +297,11 @@ Then, add `MY_BITBUCKET_BOT_USERNAME` as a `member` of the `MY_BITBUCKET_TEAM` t
 
 This will allow `MY_BITBUCKET_BOT_USERNAME` to create new repositories within the `MY_BITBUCKET_TEAM` team.
 
-### Step 13
+### Step 14
 
 Go to your **GitHub** fork of MirrorUpdater.jl: `https://github.com/MY_GITHUB_ORG/MirrorUpdater.jl`
 
-### Step 14
+### Step 15
 
 In your GitHub fork of MirrorUpdater.jl, update lines 1 and 2 of `config/bitbucket.jl` to look like:
 ```julia
@@ -303,7 +311,7 @@ const BITBUCKET_BOT_USERNAME = "MY_BITBUCKET_BOT_USERNAME"
 
 Leave the rest of `config/bitbucket.jl` unchanged. Please do not stored your personal access token in the file.
 
-### Step 15
+### Step 16
 
 In your GitHub fork of MirrorUpdater.jl, update line 3 of `config/enabled-providers.jl` to look like:
 ```julia

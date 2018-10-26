@@ -120,7 +120,7 @@ function new_gitlab_session(
     function _create_gist(params::AbstractDict)::Nothing
         gist_description::String = strip(params[:gist_description])
         gist_content::String = strip(params[:gist_content])
-        @info("Attempting to create gist on GitLab...")
+        @info("Attempting to create snippet on GitLab...")
         method::String = "POST"
         url::String = "https://gitlab.com/api/v4/snippets"
         headers::Dict{String, String} = Dict(
@@ -141,7 +141,7 @@ function new_gitlab_session(
             headers,
             body,
             )
-        @info("Successfully created gist on GitLab.")
+        @info("Successfully created snippet on GitLab.")
     end
 
     function _get_all_gists()::Vector{Dict}
