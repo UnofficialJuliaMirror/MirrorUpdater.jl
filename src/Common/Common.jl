@@ -797,6 +797,14 @@ function _pairs_that_fall_in_interval(
 end
 
 function _interval_contains_x(
+        interval::Types.NoBoundsInterval,
+        x::AbstractString,
+        )::Bool
+    result::Bool = true
+    return result
+end
+
+function _interval_contains_x(
         interval::Types.LowerAndUpperBoundInterval,
         x::AbstractString,
         )::Bool

@@ -111,9 +111,10 @@ Go to your fork of MirrorUpdater.jl: `https://github.com/MY_GITHUB_ORG/MirrorUpd
 
 ### Step 15
 
-In your fork, update line 1 of `config/github.jl` to look like:
+In your fork, update lines 1 and 2 of `config/github.jl` to look like:
 ```julia
 const GITHUB_ORGANIZATION = "MY_GITHUB_ORG"
+const GITHUB_BOT_USERNAME = "MY_GITHUB_BOT_USERNAME"
 ```
 
 Leave the rest of `config/github.jl` unchanged. Please do not stored your personal access token in the file.
@@ -206,9 +207,10 @@ Go to your **GitHub** fork of MirrorUpdater.jl: `https://github.com/MY_GITHUB_OR
 
 ### Step 14
 
-In your GitHub fork of MirrorUpdater.jl, update line 1 of `config/gitlab.jl` to look like:
+In your GitHub fork of MirrorUpdater.jl, update lines 1 and 2 of `config/gitlab.jl` to look like:
 ```julia
-const GITLAB_GROUPANIZATION = "MY_GITLAB_GROUP"
+const GITLAB_GROUP = "MY_GITLAB_GROUP"
+const GITLAB_BOT_USERNAME = "MY_GITLAB_BOT_USERNAME"
 ```
 
 Leave the rest of `config/gitlab.jl` unchanged. Please do not stored your personal access token in the file.
@@ -293,16 +295,17 @@ Go to your **GitHub** fork of MirrorUpdater.jl: `https://github.com/MY_GITHUB_OR
 
 ### Step 14
 
-In your GitHub fork of MirrorUpdater.jl, update line 1 of `config/bitbucket.jl` to look like:
+In your GitHub fork of MirrorUpdater.jl, update lines 1 and 2 of `config/bitbucket.jl` to look like:
 ```julia
 const BITBUCKET_TEAM = "MY_BITBUCKET_TEAM"
+const BITBUCKET_BOT_USERNAME = "MY_BITBUCKET_BOT_USERNAME"
 ```
 
 Leave the rest of `config/bitbucket.jl` unchanged. Please do not stored your personal access token in the file.
 
 ### Step 15
 
-In your GitHub fork of MirrorUpdater.jl, update line 1 of `config/enabled-providers.jl` to look like:
+In your GitHub fork of MirrorUpdater.jl, update line 3 of `config/enabled-providers.jl` to look like:
 ```julia
 const BITBUCKET_ENABLED = true
 
@@ -371,9 +374,11 @@ julia --project -e 'import Pkg; Pkg.build("MirrorUpdater");'
 Set the appropriate environment variables:
 
 ```bash
-export GITHUB_PERSONAL_ACCESS_TOKEN="my-github-bot-personal-access-token"
-export GITLAB_PERSONAL_ACCESS_TOKEN="my-gitlab-bot-personal-access-token"
-export BITBUCKET_APP_PASSWORD="my-bitbucket-bot-app-password"
+export GITHUB_BOT_PERSONAL_ACCESS_TOKEN="my-github-bot-personal-access-token"
+
+export GITLAB_BOT_PERSONAL_ACCESS_TOKEN="my-gitlab-bot-personal-access-token"
+
+export BITBUCKET_BOT_APP_PASSWORD="my-bitbucket-bot-app-password"
 ```
 
 ### Step 6

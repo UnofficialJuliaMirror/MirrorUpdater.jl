@@ -472,7 +472,7 @@ function new_gitlab_session(
         repo_name_without_org = _repo_name_without_org(
             ;
             repo = repo_name,
-            org = _github_organization,
+            org = _github_group,
             )
         repo_dest_url_with_auth = _get_destination_url(
             ;
