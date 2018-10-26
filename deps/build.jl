@@ -3,7 +3,7 @@
 # Parts of this file are based on:
 # 1. https://github.com/JuliaPackaging/Git.jl/blob/master/deps/build.jl
 
-import Conda
+import Pkg
 
 function _default_git_cmd()::String
     result::String = lowercase(strip("git"))
@@ -21,10 +21,23 @@ function _found_default_git()::Bool
 end
 
 function _install_git()::String
-    @info("Attempting to install Git using Conda...")
+    result::String = _install_git_conda()
+    return result
+end
+
+function _install_git_conda()::String
+    @info("Attempting to install Conda.jl...")
+    conda_package_spec = Pkg.PackageSpec(
+        name = "Conda",
+        version = "1.1.1",
+        )
+    Pkg.add(conda_package_spec)
+    import Conda
+    @info("Successfully installed Conda.jl...")
+    @info("Attempting to install Git using Conda.jl...")
     environment::Symbol = :MirrorUpdater
     Conda.add("git", environment)
-    @info("Successfully installed Git using Conda.")
+    @info("Successfully installed Git using Conda.jl.")
     git_cmd::String = strip(
         joinpath(
             Conda.bin_dir(environment),
