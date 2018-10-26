@@ -29,7 +29,7 @@ function new_gitlab_session(
         method::String = "GET"
         url::String = "https://gitlab.com/api/v4/user"
         headers::Dict{String, String} = Dict(
-            "PRIVATE-TOKEN" => GITLAB_PERSONAL_ACCESS_TOKEN,
+            "PRIVATE-TOKEN" => gitlab_personal_access_token,
             )
         r::HTTP.Messages.Response = HTTP.request(
             method,
@@ -47,7 +47,7 @@ function new_gitlab_session(
         method::String = "GET"
         url::String = "https://gitlab.com/api/v4/namespaces"
         headers::Dict{String, String} = Dict(
-            "PRIVATE-TOKEN" => GITLAB_PERSONAL_ACCESS_TOKEN,
+            "PRIVATE-TOKEN" => gitlab_personal_access_token,
             )
         r = HTTP.request(
             method,
@@ -98,7 +98,7 @@ function new_gitlab_session(
         method::String = "POST"
         url::String = "https://gitlab.com/api/v4/snippets"
         headers::Dict{String, String} = Dict(
-            "PRIVATE-TOKEN" => GITLAB_PERSONAL_ACCESS_TOKEN,
+            "PRIVATE-TOKEN" => gitlab_personal_access_token,
             "content-type" => "application/json",
             )
         params::Dict{String, String} = Dict(
@@ -126,7 +126,7 @@ function new_gitlab_session(
         current_page_number::Int = 1
         method::String = "GET"
         headers::Dict{String, String} = Dict(
-            "PRIVATE-TOKEN" => GITLAB_PERSONAL_ACCESS_TOKEN,
+            "PRIVATE-TOKEN" => gitlab_personal_access_token,
             )
         url::String = ""
         while need_to_continue
@@ -180,7 +180,7 @@ function new_gitlab_session(
             @info("Downloading the correct GitLab snippet")
             method::String = "GET"
             headers::Dict{String, String} = Dict(
-                "PRIVATE-TOKEN" => GITLAB_PERSONAL_ACCESS_TOKEN,
+                "PRIVATE-TOKEN" => gitlab_personal_access_token,
                 )
             url::String = strip(correct_gist_raw_url)
             r = HTTP.request(
@@ -213,7 +213,7 @@ function new_gitlab_session(
                 "https://gitlab.com/api/v4/snippets/$(gist_id_to_delete)",
                 )
             headers = Dict(
-                "PRIVATE-TOKEN" => GITLAB_PERSONAL_ACCESS_TOKEN,
+                "PRIVATE-TOKEN" => gitlab_personal_access_token,
                 )
             r = HTTP.request(
                 method,
@@ -253,7 +253,7 @@ function new_gitlab_session(
                 "https://gitlab.com/api/v4/snippets/$(gist_id_to_delete)",
                 )
             headers = Dict(
-                "PRIVATE-TOKEN" => GITLAB_PERSONAL_ACCESS_TOKEN,
+                "PRIVATE-TOKEN" => gitlab_personal_access_token,
                 )
             r = HTTP.request(
                 method,
@@ -383,7 +383,7 @@ function new_gitlab_session(
                 "projects/$(_gitlab_group)%2F$(repo_name)",
                 )
             headers = Dict(
-                "PRIVATE-TOKEN" => GITLAB_PERSONAL_ACCESS_TOKEN,
+                "PRIVATE-TOKEN" => gitlab_personal_access_token,
                 )
             r = HTTP.request(
                 method,
@@ -427,7 +427,7 @@ function new_gitlab_session(
                 method = "POST"
                 url = "https://gitlab.com/api/v4/projects"
                 headers = Dict(
-                    "PRIVATE-TOKEN" => GITLAB_PERSONAL_ACCESS_TOKEN,
+                    "PRIVATE-TOKEN" => gitlab_personal_access_token,
                     "content-type" => "application/json",
                     )
                 params = Dict(
@@ -550,7 +550,7 @@ function new_gitlab_session(
             "projects/$(_gitlab_group)%2F$(repo_name)",
             )
         headers_1 = Dict(
-            "PRIVATE-TOKEN" => GITLAB_PERSONAL_ACCESS_TOKEN,
+            "PRIVATE-TOKEN" => gitlab_personal_access_token,
             )
         r_1 = HTTP.request(
             method_1,
@@ -567,7 +567,7 @@ function new_gitlab_session(
             "projects/$(repo_id)",
             )
         headers_2 = Dict(
-            "PRIVATE-TOKEN" => GITLAB_PERSONAL_ACCESS_TOKEN,
+            "PRIVATE-TOKEN" => gitlab_personal_access_token,
             "content-type" => "application/json",
             )
         params_2 = Dict(

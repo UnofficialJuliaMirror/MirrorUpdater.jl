@@ -39,7 +39,7 @@ if GITLAB_ENABLED
     const gitlab_provider =
         MirrorUpdater.Hosts.GitLabHost.new_gitlab_session(
             ;
-            gitlab_group = GITLAB_ORGANIZATION,
+            gitlab_group = GITLAB_GROUP,
             gitlab_personal_access_token = GITLAB_PERSONAL_ACCESS_TOKEN,
             )
     push!(git_hosting_providers, gitlab_provider)
