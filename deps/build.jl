@@ -62,7 +62,7 @@ function _build_mirrorupdater()::Nothing
     build_jl_file_path = strip(
         abspath(
             strip(
-                @__FILE
+                @__FILE__
                 )
             )
         )
@@ -94,8 +94,8 @@ function _build_mirrorupdater()::Nothing
             )
         )
     @debug(
-        "deps/",
-        ,
+        "deps/deps.jl:",
+        deps_jl_file_path,
         )
     open(deps_jl_file_path, "w") do f
         line_1::String = "git_cmd = \"$(strip(string(git_cmd)))\""
