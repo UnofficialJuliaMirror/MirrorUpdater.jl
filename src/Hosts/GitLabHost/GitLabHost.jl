@@ -128,7 +128,7 @@ function new_gitlab_session(
             "content-type" => "application/json",
             )
         params::Dict{String, String} = Dict(
-            "title" => gist_description,
+            "title" => "list.txt",
             "file_name" => "list.txt",
             "content" => gist_content,
             "description" => gist_description,
