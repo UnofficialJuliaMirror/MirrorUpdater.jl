@@ -331,7 +331,7 @@ Go to the Travis settings page for your fork: `https://travis-ci.com/MY_GITHUB_O
 
 ### Step 5
 
-In the "Environment Variables" section of the Travis settings page, [add a new environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with name equal to `GITHUB_PERSONAL_ACCESS_TOKEN` and value equal to `my-github-bot-personal-access-token`. **Make sure that the "Display value in build log" option is turned OFF.**
+In the "Environment Variables" section of the Travis settings page, [add a new environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with name equal to `GITHUB_BOT_PERSONAL_ACCESS_TOKEN` and value equal to `my-github-bot-personal-access-token`. **Make sure that the "Display value in build log" option is turned OFF.**
 
 ### Step 6
 

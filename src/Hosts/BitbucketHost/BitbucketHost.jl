@@ -15,8 +15,19 @@ import TimeZones
 function new_bitbucket_session(
         ;
         bitbucket_team::String,
-        bitbucket_app_password::String,
+        bitbucket_bot_username::String,
+        bitbucket_bot_app_password::String,
         )::Function
+
+    _bitbucket_team::String = strip(
+        convert(String, bitbucket_team)
+        )
+    _alleged_bitbucket_bot_username::String = strip(
+        convert(String, bitbucket_bot_username)
+        )
+    _bitbucket_bot_app_password::String = strip(
+        convert(String, bitbucket_bot_app_password)
+        )
 
     function _bitbucket_provider(task::Symbol)::Function
         if task == :create_gist

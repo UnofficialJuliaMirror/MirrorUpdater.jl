@@ -15,21 +15,25 @@ import TimeZones
 function new_gitlab_session(
         ;
         gitlab_group::String,
-        gitlab_personal_access_token::String,
+        gitlab_bot_username::String,
+        gitlab_bot_personal_access_token::String,
         )::Function
 
     _gitlab_group::String = strip(
         convert(String, gitlab_group)
         )
-    _gitlab_personal_access_token::String = strip(
-        convert(String, gitlab_personal_access_token)
+    _alleged_gitlab_bot_username::String = strip(
+        convert(String, gitlab_bot_username,)
+        )
+    _gitlab_bot_personal_access_token::String = strip(
+        convert(String, gitlab_bot_personal_access_token)
         )
 
     function _get_gitlab_username()::String
         method::String = "GET"
         url::String = "https://gitlab.com/api/v4/user"
         headers::Dict{String, String} = Dict(
-            "PRIVATE-TOKEN" => gitlab_personal_access_token,
+            "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
             )
         r::HTTP.Messages.Response = HTTP.request(
             method,
@@ -47,7 +51,7 @@ function new_gitlab_session(
         method::String = "GET"
         url::String = "https://gitlab.com/api/v4/namespaces"
         headers::Dict{String, String} = Dict(
-            "PRIVATE-TOKEN" => gitlab_personal_access_token,
+            "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
             )
         r = HTTP.request(
             method,
@@ -75,7 +79,24 @@ function new_gitlab_session(
     end
 
     @info("Attempting to authenticate to GitLab...")
-    gitlab_user::String = _get_gitlab_username()
+    _gitlab_username::String = _get_gitlab_username()
+    if lowercase(strip(_gitlab_username)) !=
+            lowercase(strip(_alleged_gitlab_bot_username))
+        @warn(
+            string(
+                "lowercase(strip(_gitlab_username)) != ",
+                "lowercase(strip(_alleged_gitlab_bot_username))",
+                ),
+            _gitlab_username,
+            _alleged_gitlab_bot_username,
+            )
+        error(
+            string(
+                "lowercase(strip(_gitlab_username)) != ",
+                "lowercase(strip(_alleged_gitlab_bot_username))",
+                )
+            )
+    end
     @info("Successfully authenticated to GitLab")
 
     @info(
@@ -98,7 +119,7 @@ function new_gitlab_session(
         method::String = "POST"
         url::String = "https://gitlab.com/api/v4/snippets"
         headers::Dict{String, String} = Dict(
-            "PRIVATE-TOKEN" => gitlab_personal_access_token,
+            "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
             "content-type" => "application/json",
             )
         params::Dict{String, String} = Dict(
@@ -126,7 +147,7 @@ function new_gitlab_session(
         current_page_number::Int = 1
         method::String = "GET"
         headers::Dict{String, String} = Dict(
-            "PRIVATE-TOKEN" => gitlab_personal_access_token,
+            "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
             )
         url::String = ""
         while need_to_continue
@@ -180,7 +201,7 @@ function new_gitlab_session(
             @info("Downloading the correct GitLab snippet")
             method::String = "GET"
             headers::Dict{String, String} = Dict(
-                "PRIVATE-TOKEN" => gitlab_personal_access_token,
+                "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
                 )
             url::String = strip(correct_gist_raw_url)
             r = HTTP.request(
@@ -213,7 +234,7 @@ function new_gitlab_session(
                 "https://gitlab.com/api/v4/snippets/$(gist_id_to_delete)",
                 )
             headers = Dict(
-                "PRIVATE-TOKEN" => gitlab_personal_access_token,
+                "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
                 )
             r = HTTP.request(
                 method,
@@ -253,7 +274,7 @@ function new_gitlab_session(
                 "https://gitlab.com/api/v4/snippets/$(gist_id_to_delete)",
                 )
             headers = Dict(
-                "PRIVATE-TOKEN" => gitlab_personal_access_token,
+                "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
                 )
             r = HTTP.request(
                 method,
@@ -332,9 +353,9 @@ function new_gitlab_session(
         if credentials == :with_auth
             result = string(
                 "https://",
-                gitlab_user,
+                _gitlab_username,
                 ":",
-                _gitlab_personal_access_token,
+                _gitlab_bot_personal_access_token,
                 "@",
                 "gitlab.com/",
                 _gitlab_group,
@@ -344,7 +365,7 @@ function new_gitlab_session(
         elseif credentials == :with_redacted_auth
             result = string(
                 "https://",
-                gitlab_user,
+                _gitlab_username,
                 ":",
                 "*****",
                 "@",
@@ -383,7 +404,7 @@ function new_gitlab_session(
                 "projects/$(_gitlab_group)%2F$(repo_name)",
                 )
             headers = Dict(
-                "PRIVATE-TOKEN" => gitlab_personal_access_token,
+                "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
                 )
             r = HTTP.request(
                 method,
@@ -414,7 +435,8 @@ function new_gitlab_session(
             repo_name = repo_name_without_org,
             credentials = :without_auth,
             )
-        if Utils._url_exists(repo_destination_url_without_auth)
+        # if Utils._url_exists(repo_destination_url_without_auth)
+        if false
             @info("According to HTTP GET request, the repo exists.")
         else
             if _gitlab_repo_exists(; repo_name = repo_name_without_org)
@@ -427,7 +449,7 @@ function new_gitlab_session(
                 method = "POST"
                 url = "https://gitlab.com/api/v4/projects"
                 headers = Dict(
-                    "PRIVATE-TOKEN" => gitlab_personal_access_token,
+                    "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
                     "content-type" => "application/json",
                     )
                 params = Dict(
@@ -472,7 +494,7 @@ function new_gitlab_session(
         repo_name_without_org = _repo_name_without_org(
             ;
             repo = repo_name,
-            org = _github_group,
+            org = _gitlab_group,
             )
         repo_dest_url_with_auth = _get_destination_url(
             ;
@@ -497,7 +519,8 @@ function new_gitlab_session(
             ENV["PATH"],
             )
         mirrorpush_was_success = try
-            Utils.command_ran_successfully!!(mirrorpush_cmd_withauth)
+            # Utils.command_ran_successfully!!(mirrorpush_cmd_withauth)
+            success(mirrorpush_cmd_withauth)
         catch exception
             @warn("Ignoring exception: ", exception)
             false
@@ -517,7 +540,7 @@ function new_gitlab_session(
         source_url::String = params[:source_url]
         when::TimeZones.ZonedDateTime = params[:when]
         time_zone::TimeZones.TimeZone = params[:time_zone]
-        by::String = strip(string("@", gitlab_user))
+        by::String = strip(string("@", _gitlab_username))
 
         new_description::String = Utils.default_repo_description(
             ;
@@ -550,7 +573,7 @@ function new_gitlab_session(
             "projects/$(_gitlab_group)%2F$(repo_name)",
             )
         headers_1 = Dict(
-            "PRIVATE-TOKEN" => gitlab_personal_access_token,
+            "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
             )
         r_1 = HTTP.request(
             method_1,
@@ -567,7 +590,7 @@ function new_gitlab_session(
             "projects/$(repo_id)",
             )
         headers_2 = Dict(
-            "PRIVATE-TOKEN" => gitlab_personal_access_token,
+            "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
             "content-type" => "application/json",
             )
         params_2 = Dict(

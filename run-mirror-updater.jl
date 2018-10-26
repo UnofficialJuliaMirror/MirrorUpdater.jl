@@ -30,7 +30,8 @@ if GITHUB_ENABLED
         MirrorUpdater.Hosts.GitHubHost.new_github_session(
             ;
             github_organization = GITHUB_ORGANIZATION,
-            github_personal_access_token = GITHUB_PERSONAL_ACCESS_TOKEN,
+            github_bot_username = GITHUB_BOT_USERNAME,
+            github_bot_personal_access_token = GITHUB_BOT_PERSONAL_ACCESS_TOKEN,
             )
     push!(git_hosting_providers, github_provider)
 end
@@ -40,7 +41,8 @@ if GITLAB_ENABLED
         MirrorUpdater.Hosts.GitLabHost.new_gitlab_session(
             ;
             gitlab_group = GITLAB_GROUP,
-            gitlab_personal_access_token = GITLAB_PERSONAL_ACCESS_TOKEN,
+            gitlab_bot_username = GITLAB_BOT_USERNAME,
+            gitlab_bot_personal_access_token = GITLAB_BOT_PERSONAL_ACCESS_TOKEN,
             )
     push!(git_hosting_providers, gitlab_provider)
 end
@@ -50,7 +52,8 @@ if BITBUCKET_ENABLED
         MirrorUpdater.Hosts.GitHubHost.new_bitbucket_session(
             ;
             bitbucket_team = BITBUCKET_TEAM,
-            bitbucket_app_password = BITBUCKET_APP_PASSWORD,
+            bitbucket_bot_username = BITBUCKET_BOT_USERNAME,
+            bitbucket_bot_app_password = BITBUCKET_BOT_APP_PASSWORD,
             )
     push!(git_hosting_providers, bitbucket_provider)
 end

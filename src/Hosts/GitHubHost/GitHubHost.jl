@@ -14,14 +14,18 @@ import TimeZones
 function new_github_session(
         ;
         github_organization::AbstractString,
-        github_personal_access_token::AbstractString,
+        github_bot_username::AbstractString,
+        github_bot_personal_access_token::AbstractString,
         )::Function
 
     _github_organization::String = strip(
         convert(String, github_organization)
         )
-    _github_personal_access_token::String = strip(
-        convert(String, github_personal_access_token)
+    _alleged_github_bot_username::String = strip(
+        convert(String, github_bot_username,)
+        )
+    _github_bot_personal_access_token::String = strip(
+        convert(String, github_bot_personal_access_token)
         )
     function _get_github_username(auth::GitHub.Authorization)::String
         user_information::AbstractDict = GitHub.gh_get_json(
@@ -35,8 +39,26 @@ function new_github_session(
     end
 
     @info("Attempting to authenticate to GitHub...")
-    auth::GitHub.Authorization = GitHub.authenticate(_github_personal_access_token)
-    github_user::String = _get_github_username(auth)
+    auth::GitHub.Authorization =
+        GitHub.authenticate(_github_bot_personal_access_token)
+    _github_username::String = _get_github_username(auth)
+    if lowercase(strip(_github_username)) !=
+            lowercase(strip(_alleged_github_bot_username))
+        @warn(
+            string(
+                "lowercase(strip(_github_username)) != ",
+                "lowercase(strip(_alleged_github_bot_username))",
+                ),
+            _github_username,
+            _alleged_github_bot_username,
+            )
+        error(
+            string(
+                "lowercase(strip(_github_username)) != ",
+                "lowercase(strip(_alleged_github_bot_username))",
+                )
+            )
+    end
     @info("Successfully authenticated to GitHub")
 
     @info(
@@ -86,7 +108,7 @@ function new_github_session(
         current_page_number::Int = 1
         while need_to_continue
             gists, page_data = GitHub.gists(
-                github_user;
+                _github_username;
                 params = Dict(
                     "per_page" => 100,
                     "page" => current_page_number,
@@ -248,9 +270,9 @@ function new_github_session(
         if credentials == :with_auth
             result = string(
                 "https://",
-                github_user,
+                _github_username,
                 ":",
-                _github_personal_access_token,
+                _github_bot_personal_access_token,
                 "@",
                 "github.com/",
                 _github_organization,
@@ -260,7 +282,7 @@ function new_github_session(
         elseif credentials == :with_redacted_auth
             result = string(
                 "https://",
-                github_user,
+                _github_username,
                 ":",
                 "*****",
                 "@",
@@ -377,7 +399,8 @@ function new_github_session(
             ENV["PATH"],
             )
         mirrorpush_was_success = try
-            Utils.command_ran_successfully!!(mirrorpush_cmd_withauth)
+            # Utils.command_ran_successfully!!(mirrorpush_cmd_withauth)
+            success(mirrorpush_cmd_withauth)
         catch exception
             @warn("Ignoring exception: ", exception)
             false
@@ -397,7 +420,7 @@ function new_github_session(
         source_url::String = params[:source_url]
         when::TimeZones.ZonedDateTime = params[:when]
         time_zone::TimeZones.TimeZone = params[:time_zone]
-        by::String = strip(string("@", github_user))
+        by::String = strip(string("@", _github_username))
 
         new_description::String = Utils.default_repo_description(
             ;
