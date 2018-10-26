@@ -8,11 +8,11 @@ include("unregistered-packages.jl")
 const ADDITIONAL_REPOS = convert(
     Vector{MirrorUpdater.Types.SrcDestPair},
     vcat(
-        # JULIACOMPUTING_REPOS,
-        # JULIALANG_REPOS,
-        # MISCELLANEOUS_GPU_RELATED_REPOS,
-        # MISCELLANEOUS_JULIA_RELATED_REPOS,
-        # MISCELLANEOUS_ML_RELATED_REPOS,
+        JULIACOMPUTING_REPOS,
+        JULIALANG_REPOS,
+        MISCELLANEOUS_GPU_RELATED_REPOS,
+        MISCELLANEOUS_JULIA_RELATED_REPOS,
+        MISCELLANEOUS_ML_RELATED_REPOS,
         UNREGISTERED_PACKAGES,
         ),
     )
