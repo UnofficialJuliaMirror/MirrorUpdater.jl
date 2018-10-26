@@ -23,9 +23,12 @@
 
 MirrorUpdater is a Julia module that provides functionality for automatically
 mirroring Julia package repositories. It is used to maintain the Julia package
-mirrors at
-[https://github.com/UnofficialJuliaMirror](https://github.com/UnofficialJuliaMirror).
-You can also use it to host your own mirror.
+mirrors at:
+- [https://github.com/UnofficialJuliaMirror](https://github.com/UnofficialJuliaMirror)
+- [https://gitlab.com/UnofficialJuliaMirror](https://gitlab.com/UnofficialJuliaMirror)
+- [https://bitbucket.org/UnofficialJuliaMirror](https://bitbucket.org/UnofficialJuliaMirror)
+
+You can also use it to host your own mirrors.
 
 | Table of Contents |
 | ----------------- |
@@ -220,6 +223,7 @@ Leave the rest of `config/gitlab.jl` unchanged. Please do not stored your person
 In your GitHub fork of MirrorUpdater.jl, update line 2 of `config/enabled-providers.jl` to look like:
 ```julia
 const GITLAB_ENABLED = true
+```
 
 **Congratulations, you have finished this section.**
 
