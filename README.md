@@ -259,7 +259,7 @@ Then, create a new project inside the `MY_BITBUCKET_TEAM` team. **Make sure to U
 
 For the remainder of this README, `MY_BITBUCKET_PROJECT` refers to the name of this project.
 
-*For example, for me, `MY_BITBUCKET_TEAM` is equal to `UnofficialJuliaMirrorProject`.*
+*For example, for me, `MY_BITBUCKET_PROJECT` is equal to `UnofficialJuliaMirrorProject`.*
 
 ### Step 6
 
@@ -322,6 +322,7 @@ Leave the rest of `config/bitbucket.jl` unchanged. Please do not stored your per
 In your GitHub fork of MirrorUpdater.jl, update line 3 of `config/enabled-providers.jl` to look like:
 ```julia
 const BITBUCKET_ENABLED = true
+```
 
 **Congratulations, you have finished this section.**
 
