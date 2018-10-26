@@ -36,7 +36,7 @@ if GITHUB_ENABLED
     push!(git_hosting_providers, github_provider)
 end
 
-if GITHUB_ENABLED
+if GITLAB_ENABLED
     const gitlab_provider =
         MirrorUpdater.Hosts.GitLabHost.new_gitlab_session(
             ;
@@ -46,7 +46,7 @@ if GITHUB_ENABLED
     push!(git_hosting_providers, gitlab_provider)
 end
 
-if GITHUB_ENABLED
+if BITBUCKET_ENABLED
     const bitbucket_provider =
         MirrorUpdater.Hosts.GitHubHost.new_bitbucket_session(
             ;

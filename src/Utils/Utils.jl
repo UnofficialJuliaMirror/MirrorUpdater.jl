@@ -261,85 +261,19 @@ function _is_travis_ci(
     return answer
 end
 
-function _get_git_binary_path(
-        environment::Union{AbstractString,Symbol} = :MirrorUpdater,
-        )::String
-    path_git_conda_specified_env::String = try
-        joinpath(Conda.bin_dir(environment), "git",)
-    catch exception
-        @debug("ignoring exception: ", exception,)
-        ""
-    end
-    success_git_conda_specified_env::Bool = false
-    if length(path_git_conda_specified_env) > 0
-        success_git_conda_specified_env = try
-            success(`$(path_git_conda_specified_env) --version`)
-        catch exception
-            @debug("ignoring exception: ", exception,)
-            false
-        end
-    else
-        success_git_conda_specified_env = false
-    end
-
-    path_git_conda_root_env::String = try
-        joinpath(Conda.bin_dir(Conda.ROOTENV), "git",)
-    catch exception
-        @debug("ignoring exception: ", exception,)
-        ""
-    end
-    success_git_conda_root_env = false
-    if length(path_git_conda_root_env) > 0
-        success_git_conda_root_env = try
-            success(`$(path_git_conda_root_env) --version`)
-        catch exception
-            @debug("ignoring exception: ", exception,)
-            false
-        end
-    else
-        success_git_conda_root_env = false
-    end
-    path_git_default::String = "git"
-    success_git_default::Bool = try
-        success(`$(path_git_default) --version`)
-    catch
-        false
-    end
-    @debug(
-        "MirrorUpdater conda environment:",
-        environment,
-        success_git_conda_specified_env,
-        path_git_conda_specified_env,
-        )
-    @debug(
-        "Root conda environment:",
-        success_git_conda_root_env,
-        path_git_conda_root_env,
-        )
-    @debug(
-        "Default git:",
-        success_git_default,
-        path_git_default,
-        )
-    if success_git_conda_specified_env
-        git_path_to_use = path_git_conda_specified_env
-    elseif success_git_conda_root_env
-        git_path_to_use = path_git_conda_root_env
-    elseif success_git_default
-        git_path_to_use = path_git_default
+function _get_git_binary_path()::String
+    deps_jl_file_path = package_directory("deps", "deps.jl")
+    if isfile(deps_jl_file_path)
+        include(deps_jl_file_path)
+        result::String = strip(string(git_cmd))
     else
         error(
             string(
-                "I could not find a usable Git."
+                "MirrorUpdater.jl is not properly installed. ",
+                "Please run\nPkg.build(\"MirrorUpdater\")",
                 )
             )
     end
-    result::String = strip(git_path_to_use)
-    @debug(
-        string(
-            "Selected git: $(result)",
-            ),
-        )
     return result
 end
 

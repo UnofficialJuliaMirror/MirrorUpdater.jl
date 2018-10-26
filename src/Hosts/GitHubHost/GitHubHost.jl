@@ -59,8 +59,8 @@ function new_github_session(
         )
 
     function _create_gist(params::AbstractDict)::Nothing
-        gist_description::String = params[:gist_description]
-        gist_content::String = params[:gist_content]
+        gist_description::String = strip(params[:gist_description])
+        gist_content::String = strip(params[:gist_content])
         @info("Attempting to create gist on GitHub...")
         GitHub.create_gist(
             ;
@@ -79,39 +79,11 @@ function new_github_session(
         return nothing
     end
 
-    function _retrieve_gist(params::AbstractDict)::String
-        gist_description_to_match::String = params[:gist_description]
-        correct_gist_id::String = ""
-        all_my_gists = _get_all_gists()
-        for gist in my_gists
-            if gist.description == gist_description_to_match
-                correct_gist_id = gist.id
-            end
-        end
-        result::String = ""
-        if length(correct_gist_id) > 0
-            @info("Downloading the correct GitHub gist")
-            correct_gist::GitHub.Gist = GitHub.gist(
-                correct_gist_id;
-                auth = auth,
-                )
-            correct_gist_content::String = correct_gist.files[
-                "list.txt"]["content"]
-            result = correct_gist_content
-        else
-            result = ""
-        end
-        if length(result) == 0
-            error("Could not find the matching Gist")
-        end
-        return result
-    end
-
     function _get_all_gists()::Vector{GitHub.Gist}
         @info("Loading the list of all of my GitHub gists")
         full_gist_list::Vector{GitHub.Gist} = GitHub.Gist[]
         need_to_continue::Bool = true
-        current_page_number::Int = 0
+        current_page_number::Int = 1
         while need_to_continue
             gists, page_data = GitHub.gists(
                 github_user;
@@ -138,6 +110,34 @@ function new_github_session(
         return unique_gist_list
     end
 
+    function _retrieve_gist(params::AbstractDict)::String
+        gist_description_to_match::String = params[:gist_description]
+        correct_gist_id::String = ""
+        all_my_gists = _get_all_gists()
+        for gist in all_my_gists
+            if gist.description == gist_description_to_match
+                correct_gist_id = gist.id
+            end
+        end
+        result::String = ""
+        if length(correct_gist_id) > 0
+            @info("Downloading the correct GitHub gist")
+            correct_gist::GitHub.Gist = GitHub.gist(
+                correct_gist_id;
+                auth = auth,
+                )
+            correct_gist_content::String = correct_gist.files[
+                "list.txt"]["content"]
+            result = correct_gist_content
+        else
+            result = ""
+        end
+        if length(result) == 0
+            error("Could not find the matching Gist")
+        end
+        return result
+    end
+
     function _delete_gists(params::AbstractDict)::Nothing
         gist_description_to_match::String = params[:gist_description]
         list_of_gist_ids_to_delete::Vector{String} = String[]
@@ -159,17 +159,18 @@ function new_github_session(
             params[:time]
         delete_gists_older_than_minutes::Int =
             params[:delete_gists_older_than_minutes]
-        max_gist_age_milliseconds::Int = max_gist_age_minutes*60*1000
+        max_gist_age_milliseconds::Int =
+            delete_gists_older_than_minutes*60*1000
         list_of_gist_ids_to_delete::Vector{String} = String[]
         all_my_gists::Vector{GitHub.Gist} = _get_all_gists()
         for gist in all_my_gists
-            gist_updated_at::Dates.DateTime = gist.updated_at
+            gist_updated_at = gist.updated_at
             gist_updated_at_zoned = TimeZones.ZonedDateTime(
                 gist_updated_at,
                 TimeZones.localzone(),
                 )
-            gist_age::Dates.Millisecond = time - gist_updated_at_zoned
-            if z.value > max_gist_age_milliseconds
+            gist_age = time - gist_updated_at_zoned
+            if gist_age.value > max_gist_age_milliseconds
                 push!(list_of_gist_ids_to_delete, strip(gist.id),)
             end
         end

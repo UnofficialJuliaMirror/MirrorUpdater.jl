@@ -8,6 +8,8 @@ import ..Types
 import ..Utils
 
 import Dates
+import HTTP
+import JSON
 import TimeZones
 
 function new_bitbucket_session(

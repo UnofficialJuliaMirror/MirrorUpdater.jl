@@ -224,7 +224,9 @@ function run_mirror_updater!!(
         end
 
         if delete_gists_older_than_minutes > 0
-            time::TimeZones.ZonedDateTime = Dates.now(TimeZones.localzone())
+            time::TimeZones.ZonedDateTime = Dates.now(
+                TimeZones.localzone()
+                )
             args = Dict(
                 :delete_gists_older_than_minutes =>
                     delete_gists_older_than_minutes,
