@@ -39,7 +39,7 @@ if GITLAB_ENABLED
     const gitlab_provider =
         MirrorUpdater.Hosts.GitLabHost.new_gitlab_session(
             ;
-            gitlab_group_organization = GITLAB_ORGANIZATION,
+            gitlab_group = GITLAB_ORGANIZATION,
             gitlab_personal_access_token = GITLAB_PERSONAL_ACCESS_TOKEN,
             )
     push!(git_hosting_providers, gitlab_provider)
@@ -49,7 +49,7 @@ if BITBUCKET_ENABLED
     const bitbucket_provider =
         MirrorUpdater.Hosts.GitHubHost.new_bitbucket_session(
             ;
-            bitbucket_organization = BITBUCKET_ORGANIZATION,
+            bitbucket_team = BITBUCKET_TEAM,
             bitbucket_app_password = BITBUCKET_APP_PASSWORD,
             )
     push!(git_hosting_providers, bitbucket_provider)

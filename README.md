@@ -87,7 +87,7 @@ While logged in as `MY_GITHUB_BOT_USERNAME`, [create a personal access token](ht
 
 ### Step 10
 
-Log out of the `MY_GITHUB_BOT_USERNAME` account. 
+Log out of the `MY_GITHUB_BOT_USERNAME` account.
 
 ### Step 11
 
@@ -97,7 +97,7 @@ Log in to GitHub as `MY_PERSONAL_GITHUB_USERNAME`.
 
 While logged in as `MY_PERSONAL_GITHUB_USERNAME`, go to the `MY_GITHUB_ORG` organization members page (`https://github.com/orgs/UnofficialJuliaMirror/people`).
 
-Add `MY_GITHUB_BOT_USERNAME` as a `member` of the `MY_GITHUB_ORG` organization.
+Then, add `MY_GITHUB_BOT_USERNAME` as a `member` of the `MY_GITHUB_ORG` organization.
 
 This will allow `MY_GITHUB_BOT_USERNAME` to create new repositories within the `MY_GITHUB_ORG` organization.
 
@@ -136,11 +136,177 @@ Update the other configuration files in the `config/` folder of your fork as you
 
 ## Setting up GitLab (optional)
 
-GitLab support is coming soon!
+### Step 1
+
+If you do not already have a personal GitLab account, [create one](https://gitlab.com/users/sign_in#register-pane). For the remainder of this README, `MY_PERSONAL_GITLAB_USERNAME` refers to the username of your personal GitLab account.
+
+*For example, for me, `MY_PERSONAL_GITLAB_USERNAME` is equal to `DilumAluthge`.*
+
+### Step 2
+
+Log in to GitLab as `MY_PERSONAL_GITLAB_USERNAME`.
+
+### Step 3
+
+While logged in as `MY_PERSONAL_GITLAB_USERNAME`, [enable two-factor authentication](https://docs.gitlab.com/ce/user/profile/account/two_factor_authentication.html#enabling-2fa) on the `MY_PERSONAL_GITLAB_USERNAME` account.
+
+**Make sure to store your two-factor recovery codes in a secure location!**
+
+### Step 4
+
+While logged in as `MY_PERSONAL_GITLAB_USERNAME`, [create a free GitLab group](https://docs.gitlab.com/ce/user/group/#create-a-new-group) that you will use only for hosting the mirrored repositories. For the remainder of this README, `MY_GITLAB_GROUP` refers to the name of this group. `MY_PERSONAL_GITLAB_USERNAME` should be an `owner` of the `MY_GITLAB_GROUP` group.
+
+*For example, for me, `MY_GITLAB_GROUP` is equal to `UnofficialJuliaMirror`.*
+
+### Step 5
+
+Log out of the `MY_PERSONAL_GITLAB_USERNAME` account.
+
+### Step 6
+
+[Create a new GitLab "bot" account](https://gitlab.com/users/sign_in#register-pane) that you will use ONLY for maintaining the mirror. For the remainder of this README, `MY_GITLAB_BOT_USERNAME` refers to the username of this account.
+
+*For example, for me, `MY_GITLAB_BOT_USERNAME` is equal to `UnofficialJuliaMirrorBot`.*
+
+### Step 7
+
+Log in to GitLab as `MY_GITLAB_BOT_USERNAME`.
+
+### Step 8
+
+While logged in as `MY_GITLAB_BOT_USERNAME`, [enable two-factor authentication](https://docs.gitlab.com/ce/user/profile/account/two_factor_authentication.html#enabling-2fa) on the `MY_GITLAB_BOT_USERNAME` account.
+
+**Make sure to store your two-factor recovery codes in a secure location!**
+
+### Step 9
+
+While logged in as `MY_GITLAB_BOT_USERNAME`, [create a personal access token](https://docs.gitlab.com/ce/user/profile/personal_access_tokens.html#creating-a-personal-access-token) for the `MY_GITLAB_BOT_USERNAME` account and store it in a secure place (such as a password manager). For the remainder of this README, `my-gitlab-bot-personal-access-token` refers to this personal access token.
+
+**The personal access token should be treated as securely as a password. Do not share it with anyone. Do not save it in any unsecure location. Do not save it in a file. Do not commit it in a Git repository.**
+
+### Step 10
+
+Log out of the `MY_GITLAB_BOT_USERNAME` account.
+
+### Step 11
+
+Log in to GitLab as `MY_PERSONAL_GITLAB_USERNAME`.
+
+### Step 12
+
+While logged in as `MY_PERSONAL_GITLAB_USERNAME`, go to the `MY_GITLAB_GROUP` group members page (`https://gitlab.com/groups/MY_GITLAB_GROUP/-/group_members`).
+
+Then, add `MY_GITLAB_BOT_USERNAME` as a `member` of the `MY_GITLAB_GROUP` group.
+
+This will allow `MY_GITLAB_BOT_USERNAME` to create new repositories within the `MY_GITLAB_GROUP` group.
+
+### Step 13
+
+Go to your **GitHub** fork of MirrorUpdater.jl: `https://github.com/MY_GITHUB_ORG/MirrorUpdater.jl`
+
+### Step 14
+
+In your GitHub fork of MirrorUpdater.jl, update line 1 of `config/gitlab.jl` to look like:
+```julia
+const GITLAB_GROUPANIZATION = "MY_GITLAB_GROUP"
+```
+
+Leave the rest of `config/gitlab.jl` unchanged. Please do not stored your personal access token in the file.
+
+### Step 15
+
+In your GitHub fork of MirrorUpdater.jl, update line 2 of `config/enabled-providers.jl` to look like:
+```julia
+const GITLAB_ENABLED = true
+
+**Congratulations, you have finished this section.**
 
 ## Setting up BitBucket (optional)
 
-BitBucket support is coming soon!
+### Step 1
+
+If you do not already have a personal Bitbucket account, [create one](https://bitbucket.org/account/signup/). For the remainder of this README, `MY_PERSONAL_BITBUCKET_USERNAME` refers to the username of your personal Bitbucket account.
+
+*For example, for me, `MY_PERSONAL_BITBUCKET_USERNAME` is equal to `DilumAluthge`.*
+
+### Step 2
+
+Log in to Bitbucket as `MY_PERSONAL_BITBUCKET_USERNAME`.
+
+### Step 3
+
+While logged in as `MY_PERSONAL_BITBUCKET_USERNAME`, [enable two-factor authentication](https://confluence.atlassian.com/bitbucket/two-step-verification-777023203.html#Two-stepverification-Enabletwo-stepverification) on the `MY_PERSONAL_BITBUCKET_USERNAME` account.
+
+**Make sure to store your two-factor recovery codes in a secure location!**
+
+### Step 4
+
+While logged in as `MY_PERSONAL_BITBUCKET_USERNAME`, [create a free Bitbucket team](https://confluence.atlassian.com/bitbucket/create-and-administer-your-team-665225537.html) that you will use only for hosting the mirrored repositories. For the remainder of this README, `MY_BITBUCKET_TEAM` refers to the name of this team. `MY_PERSONAL_BITBUCKET_USERNAME` should be an `owner` of the `MY_BITBUCKET_TEAM` team.
+
+*For example, for me, `MY_BITBUCKET_TEAM` is equal to `UnofficialJuliaMirror`.*
+
+### Step 5
+
+Log out of the `MY_PERSONAL_BITBUCKET_USERNAME` account.
+
+### Step 6
+
+[Create a new Bitbucket "bot" account](https://bitbucket.org/account/signup/) that you will use ONLY for maintaining the mirror. For the remainder of this README, `MY_BITBUCKET_BOT_USERNAME` refers to the username of this account.
+
+*For example, for me, `MY_BITBUCKET_BOT_USERNAME` is equal to `UnofficialJuliaMirrorBot`.*
+
+### Step 7
+
+Log in to Bitbucket as `MY_BITBUCKET_BOT_USERNAME`.
+
+### Step 8
+
+While logged in as `MY_BITBUCKET_BOT_USERNAME`, [enable two-factor authentication](https://confluence.atlassian.com/bitbucket/two-step-verification-777023203.html#Two-stepverification-Enabletwo-stepverification) on the `MY_BITBUCKET_BOT_USERNAME` account.
+
+**Make sure to store your two-factor recovery codes in a secure location!**
+
+### Step 9
+
+While logged in as `MY_BITBUCKET_BOT_USERNAME`, [create an app password](https://confluence.atlassian.com/bitbucket/app-passwords-828781300.html#Apppasswords-Createanapppassword) for the `MY_BITBUCKET_BOT_USERNAME` account and store it in a secure place (such as a password manager). For the remainder of this README, `my-bitbucket-bot-app-password` refers to this app password.
+
+**The app password should be treated as securely as any other password. Do not share it with anyone. Do not save it in any unsecure location. Do not save it in a file. Do not commit it in a Git repository.**
+
+### Step 10
+
+Log out of the `MY_BITBUCKET_BOT_USERNAME` account.
+
+### Step 11
+
+Log in to Bitbucket as `MY_PERSONAL_BITBUCKET_USERNAME`.
+
+### Step 12
+
+While logged in as `MY_PERSONAL_BITBUCKET_USERNAME`, go to the `MY_BITBUCKET_TEAM` team members page (`https://bitbucket.org/MY_BITBUCKET_TEAM/profile/members`).
+
+Then, add `MY_BITBUCKET_BOT_USERNAME` as a `member` of the `MY_BITBUCKET_TEAM` team.
+
+This will allow `MY_BITBUCKET_BOT_USERNAME` to create new repositories within the `MY_BITBUCKET_TEAM` team.
+
+### Step 13
+
+Go to your **GitHub** fork of MirrorUpdater.jl: `https://github.com/MY_GITHUB_ORG/MirrorUpdater.jl`
+
+### Step 14
+
+In your GitHub fork of MirrorUpdater.jl, update line 1 of `config/bitbucket.jl` to look like:
+```julia
+const BITBUCKET_TEAM = "MY_BITBUCKET_TEAM"
+```
+
+Leave the rest of `config/bitbucket.jl` unchanged. Please do not stored your personal access token in the file.
+
+### Step 15
+
+In your GitHub fork of MirrorUpdater.jl, update line 1 of `config/enabled-providers.jl` to look like:
+```julia
+const BITBUCKET_ENABLED = true
+
+**Congratulations, you have finished this section.**
 
 ## Setting up Travis (required)
 
@@ -188,7 +354,7 @@ cd MirrorUpdater.jl
 
 ### Step 3
 
-Update the dependencies of the project:
+Install the dependencies of the project:
 ```bash
 julia --project -e 'import Pkg; Pkg.resolve();'
 ```
@@ -197,15 +363,17 @@ julia --project -e 'import Pkg; Pkg.resolve();'
 
 Build the project:
 ```bash
-julia --project deps/build.jl
+julia --project -e 'import Pkg; Pkg.build("MirrorUpdater");'
 ```
 
 ### Step 5
 
-Set the `GITHUB_PERSONAL_ACCESS_TOKEN` environment variable equal to your GitHub personal access token:
+Set the appropriate environment variables:
 
 ```bash
 export GITHUB_PERSONAL_ACCESS_TOKEN="my-github-bot-personal-access-token"
+export GITLAB_PERSONAL_ACCESS_TOKEN="my-gitlab-bot-personal-access-token"
+export BITBUCKET_APP_PASSWORD="my-bitbucket-bot-app-password"
 ```
 
 ### Step 6
