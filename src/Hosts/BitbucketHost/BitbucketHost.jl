@@ -209,7 +209,7 @@ function new_bitbucket_session(
                 "bitbucket.org/",
                 _bitbucket_team,
                 "/",
-                repo_name_without_org,
+                lowercase(repo_name_without_org),
                 )
         elseif credentials == :with_redacted_auth
             result = string(
@@ -221,7 +221,7 @@ function new_bitbucket_session(
                 "bitbucket.org/",
                 _bitbucket_team,
                 "/",
-                repo_name_without_org,
+                lowercase(repo_name_without_org),
                 )
         elseif credentials == :without_auth
             result =string(
@@ -229,7 +229,7 @@ function new_bitbucket_session(
                 "bitbucket.org/",
                 _bitbucket_team,
                 "/",
-                repo_name_without_org,
+                lowercase(repo_name_without_org),
                 )
         else
             error("$(credentials) is not a supported value for credentials")
@@ -256,7 +256,7 @@ function new_bitbucket_session(
             "/2.0",
             "/repositories",
             "/$(_bitbucket_team)",
-            "/$(repo_name_without_org)",
+            "/$(lowercase(repo_name_without_org))",
             )
         result::Bool = try
             r = HTTP.request(
@@ -308,7 +308,7 @@ function new_bitbucket_session(
                     "/2.0",
                     "/repositories",
                     "/$(_bitbucket_team)",
-                    "/$(repo_name_without_org)",
+                    "/$(lowercase(repo_name_without_org))",
                     )
                 headers = Dict(
                     "content-type" => "application/json",
@@ -317,7 +317,7 @@ function new_bitbucket_session(
                     "scm" => "git",
                     "is_private" => false,
                     "name" => repo_name_without_org,
-                    "slug" => repo_name_without_org,
+                    "slug" => lowercase(repo_name_without_org),
                     "has_issues" => false,
                     "has_wiki" => false,
                     )
@@ -423,7 +423,7 @@ function new_bitbucket_session(
             "/2.0",
             "/repositories",
             "/$(_bitbucket_team)",
-            "/$(repo_name_without_org)",
+            "/$(lowercase(repo_name_without_org))",
             )
         headers = Dict(
             "content-type" => "application/json",
