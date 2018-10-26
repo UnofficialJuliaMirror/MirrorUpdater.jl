@@ -251,7 +251,9 @@ While logged in as `MY_PERSONAL_BITBUCKET_USERNAME`, [create a free Bitbucket te
 
 While logged in as `MY_PERSONAL_BITBUCKET_USERNAME`, go to the `MY_BITBUCKET_TEAM` projects page (`https://bitbucket.org/MY_BITBUCKET_TEAM/profile/projects`).
 
-Then, create a new project inside the `MY_BITBUCKET_TEAM` team. For the remainder of this README, `MY_BITBUCKET_PROJECT` refers to the name of this project.
+Then, create a new project inside the `MY_BITBUCKET_TEAM` team. **Make sure to UNCHECK the box next to "This is a private project." We want this project to be a public project.**
+
+For the remainder of this README, `MY_BITBUCKET_PROJECT` refers to the name of this project.
 
 *For example, for me, `MY_BITBUCKET_TEAM` is equal to `UnofficialJuliaMirrorProject`.*
 

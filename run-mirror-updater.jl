@@ -49,7 +49,7 @@ end
 
 if BITBUCKET_ENABLED
     const bitbucket_provider =
-        MirrorUpdater.Hosts.GitHubHost.new_bitbucket_session(
+        MirrorUpdater.Hosts.BitbucketHost.new_bitbucket_session(
             ;
             bitbucket_team = BITBUCKET_TEAM,
             bitbucket_bot_username = BITBUCKET_BOT_USERNAME,

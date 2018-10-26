@@ -237,7 +237,7 @@ function new_bitbucket_session(
         return result
     end
 
-    function _bitbucket_repo_exists((
+    function _bitbucket_repo_exists(
             ;
             repo_name::String,
             )::Bool
@@ -276,12 +276,12 @@ function new_bitbucket_session(
         repo_name_with_org::String = _repo_name_with_org(
             ;
             repo = repo_name,
-            org = _gitlab_group,
+            org = _bitbucket_team,
             )
         repo_name_without_org::String = _repo_name_without_org(
             ;
             repo = repo_name,
-            org = _gitlab_group,
+            org = _bitbucket_team,
             )
         repo_destination_url_without_auth = _get_destination_url(
             ;
