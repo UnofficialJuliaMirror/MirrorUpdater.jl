@@ -6,8 +6,6 @@ __precompile__(true)
 
 import ..Types
 
-import ..package_directory
-
 import Dates
 import HTTP
 import TimeZones
