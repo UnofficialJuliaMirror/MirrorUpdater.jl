@@ -80,6 +80,11 @@ function new_gitlab_session(
 
     @info("Attempting to authenticate to GitLab...")
     _gitlab_username::String = _get_gitlab_username()
+    @debug(
+        string("Provided username vs. actual username: "),
+        _alleged_gitlab_bot_username,
+        _gitlab_username,
+        )
     if lowercase(strip(_gitlab_username)) !=
             lowercase(strip(_alleged_gitlab_bot_username))
         @warn(
@@ -107,7 +112,7 @@ function new_gitlab_session(
         )
     @info(
         string(
-            "GitLab group (a.k.a. group): ",
+            "GitLab group (a.k.a. organization): ",
             "$(_gitlab_group)",
             )
         )

@@ -29,6 +29,67 @@ function new_bitbucket_session(
         convert(String, bitbucket_bot_app_password)
         )
 
+    function _get_bitbucket_username_from_alleged()::String
+        method::String = "GET"
+        url::String = string(
+            "https://",
+            "$(_alleged_bitbucket_bot_username)",
+            ":",
+            "$(_bitbucket_bot_app_password)",
+            "@api.bitbucket.org/2.0",
+            "/user",
+            )
+        r::HTTP.Messages.Response = HTTP.request(
+            method,
+            url;
+            basic_authorization = true
+            )
+        r_body::String = String(r.body)
+        parsed_body::Dict = JSON.parse(r_body)
+        username::String = parsed_body["username"]
+        username_stripped::String = strip(username)
+        return username_stripped
+    end
+
+    @info("Attempting to authenticate to Bitbucket...")
+    _bitbucket_username::String = _get_bitbucket_username_from_alleged()
+    @debug(
+        string("Provided username vs. actual username: "),
+        _alleged_bitbucket_bot_username,
+        _bitbucket_username,
+        )
+    if lowercase(strip(_bitbucket_username)) !=
+            lowercase(strip(_alleged_bitbucket_bot_username))
+        @warn(
+            string(
+                "lowercase(strip(_bitbucket_username)) != ",
+                "lowercase(strip(_alleged_bitbucket_bot_username))",
+                ),
+            _bitbucket_username,
+            _alleged_bitbucket_bot_username,
+            )
+        error(
+            string(
+                "lowercase(strip(_bitbucket_username)) != ",
+                "lowercase(strip(_alleged_bitbucket_bot_username))",
+                )
+            )
+    end
+    @info("Successfully authenticated to Bitbucket")
+
+    @info(
+        string(
+            "Bitbucket username: ",
+            "$(_get_bitbucket_username_from_alleged())",
+            )
+        )
+    @info(
+        string(
+            "Bitbucket team (a.k.a. organization): ",
+            "$(_bitbucket_team)",
+            )
+        )
+
     function _bitbucket_provider(task::Symbol)::Function
         if task == :create_gist
             return _create_gist

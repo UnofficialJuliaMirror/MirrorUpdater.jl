@@ -42,6 +42,11 @@ function new_github_session(
     auth::GitHub.Authorization =
         GitHub.authenticate(_github_bot_personal_access_token)
     _github_username::String = _get_github_username(auth)
+    @debug(
+        string("Provided username vs. actual username: "),
+        _alleged_github_bot_username,
+        _github_username,
+        )
     if lowercase(strip(_github_username)) !=
             lowercase(strip(_alleged_github_bot_username))
         @warn(

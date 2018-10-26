@@ -30,7 +30,7 @@ echo "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST"
 
 julia $JULIA_FLAGS -e 'import Pkg; Pkg.resolve();'
 julia $JULIA_FLAGS deps/build.jl
-julia $JULIA_FLAGS run-mirror-updater.jl --gist-description "$GIST_DESCRIPTION" --task "$TASK" $DRY_RUN
+julia $JULIA_FLAGS run-mirror-updater.jl --delete-gists-older-than-minutes 10080 --gist-description "$GIST_DESCRIPTION" --task "$TASK" $DRY_RUN
 
 cat Project.toml
 cat Manifest.toml
