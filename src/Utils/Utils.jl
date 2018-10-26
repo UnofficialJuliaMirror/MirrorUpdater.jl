@@ -6,7 +6,6 @@ __precompile__(true)
 
 import ..Types
 
-import Conda
 import Dates
 import HTTP
 import TimeZones
