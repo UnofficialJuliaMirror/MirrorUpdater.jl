@@ -29,6 +29,17 @@ function new_bitbucket_session(
         convert(String, bitbucket_bot_app_password)
         )
 
+    function _bitbucket_slug(x::AbstractString)::String
+        x_stripped::String = strip(convert(String, x))
+        x_lowercase = lowercase(x_stripped)
+        if length(x_lowercase) <= 62
+            result = x_lowercase
+        else
+            result = x_lowercase[1:62]
+        end
+        return result
+    end
+
     function _get_bitbucket_username_from_alleged()::String
         method::String = "GET"
         url::String = string(
@@ -209,7 +220,7 @@ function new_bitbucket_session(
                 "bitbucket.org/",
                 _bitbucket_team,
                 "/",
-                lowercase(repo_name_without_org),
+                _bitbucket_slug(repo_name_without_org),
                 )
         elseif credentials == :with_redacted_auth
             result = string(
@@ -221,7 +232,7 @@ function new_bitbucket_session(
                 "bitbucket.org/",
                 _bitbucket_team,
                 "/",
-                lowercase(repo_name_without_org),
+                _bitbucket_slug(repo_name_without_org),
                 )
         elseif credentials == :without_auth
             result =string(
@@ -229,7 +240,7 @@ function new_bitbucket_session(
                 "bitbucket.org/",
                 _bitbucket_team,
                 "/",
-                lowercase(repo_name_without_org),
+                _bitbucket_slug(repo_name_without_org),
                 )
         else
             error("$(credentials) is not a supported value for credentials")
@@ -256,7 +267,7 @@ function new_bitbucket_session(
             "/2.0",
             "/repositories",
             "/$(_bitbucket_team)",
-            "/$(lowercase(repo_name_without_org))",
+            "/$(_bitbucket_slug(repo_name_without_org))",
             )
         result::Bool = try
             r = HTTP.request(
@@ -308,7 +319,7 @@ function new_bitbucket_session(
                     "/2.0",
                     "/repositories",
                     "/$(_bitbucket_team)",
-                    "/$(lowercase(repo_name_without_org))",
+                    "/$(_bitbucket_slug(repo_name_without_org))",
                     )
                 headers = Dict(
                     "content-type" => "application/json",
@@ -317,7 +328,7 @@ function new_bitbucket_session(
                     "scm" => "git",
                     "is_private" => false,
                     "name" => repo_name_without_org,
-                    "slug" => lowercase(repo_name_without_org),
+                    "slug" => _bitbucket_slug(repo_name_without_org),
                     "has_issues" => false,
                     "has_wiki" => false,
                     )
@@ -423,7 +434,7 @@ function new_bitbucket_session(
             "/2.0",
             "/repositories",
             "/$(_bitbucket_team)",
-            "/$(lowercase(repo_name_without_org))",
+            "/$(_bitbucket_slug(repo_name_without_org))",
             )
         headers = Dict(
             "content-type" => "application/json",

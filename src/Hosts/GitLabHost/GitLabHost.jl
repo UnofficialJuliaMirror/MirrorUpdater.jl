@@ -135,13 +135,24 @@ function new_gitlab_session(
             "visibility" => "public",
             )
         body::String = JSON.json(params)
-        r::HTTP.Messages.Response = HTTP.request(
-            method,
-            url,
-            headers,
-            body,
-            )
-        @info("Successfully created snippet on GitLab.")
+        try
+            r::HTTP.Messages.Response = HTTP.request(
+                method,
+                url,
+                headers,
+                body,
+                )
+            @info("Successfully created snippet on GitLab.")
+        catch exception
+            @warn("ignoring exception: ", exception,)
+        end
+        # r::HTTP.Messages.Response = HTTP.request(
+        #     method,
+        #     url,
+        #     headers,
+        #     body,
+        #     )
+        # @info("Successfully created snippet on GitLab.")
     end
 
     function _get_all_gists()::Vector{Dict}
