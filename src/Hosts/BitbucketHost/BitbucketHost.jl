@@ -432,6 +432,7 @@ function new_bitbucket_session(
             "description" => strip(new_repo_description),
             )
         body = JSON.json(params)
+        @info("Attempting to update repo description on Bitbucket...")
         r = HTTP.request(
             method,
             url,
@@ -439,6 +440,7 @@ function new_bitbucket_session(
             body;
             basic_authorization = true,
             )
+        @info("Successfully updated repo description on Bitbucket")
         return nothing
     end
 

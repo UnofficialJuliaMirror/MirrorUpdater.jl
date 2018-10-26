@@ -602,12 +602,14 @@ function new_gitlab_session(
             "description" => new_repo_description,
             )
         body_2 = JSON.json(params_2)
+        @info("Attempting to update repo description on GitLab...")
         r_2 = HTTP.request(
             method_2,
             url_2,
             headers_2,
             body_2,
             )
+        @info("Successfully updated repo description on GitLab")
         return nothing
     end
 

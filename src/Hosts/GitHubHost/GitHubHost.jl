@@ -452,6 +452,7 @@ function new_github_session(
             org = _github_organization,
             )
         repo = GitHub.repo(repo_name_with_org; auth = auth,)
+        @info("Attempting to update repo description on GitHub...")
         result = GitHub.gh_patch_json(
             GitHub.DEFAULT_API,
             "/repos/$(GitHub.name(repo.owner))/$(GitHub.name(repo.name))";
@@ -461,6 +462,7 @@ function new_github_session(
                 "description" => new_repo_description,
                 ),
             )
+        @info("Successfully updated repo description on GitHub")
         return nothing
     end
 
