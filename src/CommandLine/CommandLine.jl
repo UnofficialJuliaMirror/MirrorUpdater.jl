@@ -5,7 +5,6 @@ module CommandLine # Begin submodule MirrorUpdater.CommandLine
 __precompile__(true)
 
 import ArgParse
-import Conda
 import Dates
 import HTTP
 import Pkg

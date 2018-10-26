@@ -5,7 +5,6 @@ module Run # Begin submodule MirrorUpdater.Run
 __precompile__(true)
 
 import ArgParse
-import Conda
 import Dates
 import HTTP
 import Pkg

@@ -15,7 +15,6 @@ TimeZones = "f269a46b-ccf7-5d73-abea-4c690281aa53"
 
 [compat]
 ArgParse = "^0.6.1"
-Conda = "^1.1.1"
 Coverage = "^0.6.0"
 GitHub = "^5.0.2"
 HTTP = "^0.7.1"
