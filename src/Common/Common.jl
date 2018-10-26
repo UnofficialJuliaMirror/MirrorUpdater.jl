@@ -8,7 +8,6 @@ import ..Types
 import ..Utils
 
 import ArgParse
-import Conda
 import Dates
 import HTTP
 import Pkg

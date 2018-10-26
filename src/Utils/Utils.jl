@@ -262,10 +262,7 @@ end
 
 function _get_git_binary_path()::String
     deps_jl_file_path = package_directory("deps", "deps.jl")
-    if isfile(deps_jl_file_path)
-        include(deps_jl_file_path)
-        result::String = strip(string(git_cmd))
-    else
+    if !isfile(deps_jl_file_path)
         error(
             string(
                 "MirrorUpdater.jl is not properly installed. ",
@@ -273,7 +270,14 @@ function _get_git_binary_path()::String
                 )
             )
     end
-    return result
+    include(deps_jl_file_path)
+    git::String = strip(string(git_cmd))
+    run(`$(git) --version`)
+    @debug(
+        "git command: ",
+        git,
+        )
+    return git
 end
 
 end # End submodule MirrorUpdater.Utils

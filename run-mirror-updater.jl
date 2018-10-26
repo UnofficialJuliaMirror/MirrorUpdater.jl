@@ -2,7 +2,6 @@
 
 @info("Importing the MirrorUpdater module...")
 
-pushfirst!(Base.LOAD_PATH, joinpath(@__DIR__, "src"))
 import MirrorUpdater
 
 import TimeZones
