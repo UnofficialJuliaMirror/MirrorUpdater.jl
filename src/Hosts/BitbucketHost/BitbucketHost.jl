@@ -37,7 +37,8 @@ function new_bitbucket_session(
         else
             result = x_lowercase[1:62]
         end
-        return result
+        result_converted = convert(String, result)
+        return result_converted
     end
 
     function _get_bitbucket_username_from_alleged()::String
@@ -306,7 +307,7 @@ function new_bitbucket_session(
                 @info("According to the Bitbucket API, the repo exists.")
             else
                 @info(
-                    string("Creating new repo on Bitbucket"),
+                    string("Attempting to create new repo on Bitbucket"),
                     repo_destination_url_without_auth,
                     )
                 method = "POST"
@@ -327,7 +328,7 @@ function new_bitbucket_session(
                 params = Dict(
                     "scm" => "git",
                     "is_private" => false,
-                    "name" => repo_name_without_org,
+                    "name" => _bitbucket_slug(repo_name_without_org),
                     "slug" => _bitbucket_slug(repo_name_without_org),
                     "has_issues" => false,
                     "has_wiki" => false,
@@ -340,6 +341,7 @@ function new_bitbucket_session(
                     body;
                     basic_authorization = true,
                     )
+                @info("Successfully created new repo on Bitbucket")
             end
         end
         return nothing
@@ -440,7 +442,7 @@ function new_bitbucket_session(
             "content-type" => "application/json",
             )
         params = Dict(
-            "description" => strip(new_repo_description),
+            "description" => String(strip(new_repo_description)),
             )
         body = JSON.json(params)
         @info("Attempting to update repo description on Bitbucket...")
