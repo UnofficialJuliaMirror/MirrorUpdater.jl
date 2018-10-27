@@ -534,18 +534,13 @@ function new_gitlab_session(
             pwd(),
             ENV["PATH"],
             )
-        mirrorpush_was_success = try
-            # Utils.command_ran_successfully!!(mirrorpush_cmd_withauth)
-            success(mirrorpush_cmd_withauth)
-        catch exception
-            @warn("Ignoring exception: ", exception)
-            false
-        end
-        if mirrorpush_was_success
-            @info("Successfully pushed repo to GitLab.")
-        else
-            error("An error occured while attempting to push to GitLab.")
-        end
+        run(mirrorpush_cmd_withauth)
+        @info(
+            string("Successfully pushed repo to GitLab."),
+            mirrorpush_cmd_withredactedauth,
+            pwd(),
+            ENV["PATH"],
+            )
         cd(previous_directory)
         return nothing
     end

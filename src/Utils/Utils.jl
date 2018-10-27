@@ -197,10 +197,11 @@ function command_ran_successfully!!(
         max_attempts::Integer = 10,
         max_seconds_per_attempt::Real = 540,
         seconds_to_wait_between_attempts::Real = 30,
+        error_on_failure::Bool = true,
         )::Bool
-    result_bool::Bool = false
+    success_bool::Bool = false
     for attempt = 1:max_attempts
-        if result_bool
+        if success_bool
         else
             @debug(string("Attempt $(attempt)"))
             if attempt > 1
@@ -215,7 +216,7 @@ function command_ran_successfully!!(
                 float(max_seconds_per_attempt),
                 )
             if process_running(p)
-                result_bool = false
+                success_bool = false
                 try
                     kill(p, Base.SIGTERM)
                 catch exception
@@ -227,7 +228,7 @@ function command_ran_successfully!!(
                     @warn("Ignoring exception: ", exception)
                 end
             else
-                result_bool = try
+                success_bool = try
                     success(p)
                 catch exception
                     @warn("Ignoring exception: ", exception)
@@ -236,9 +237,16 @@ function command_ran_successfully!!(
             end
         end
     end
-    result_string::String = result_bool ? "success" : "failure"
-    @debug(string("Result: $(result_string)"))
-    return result_bool
+    if success_bool
+        @debug(string("Command ran successfully."),)
+    else
+        if error_on_failure
+            error(string("Command did not run successfully."),)
+        else
+            @warn(string("Command did not run successfully."),)
+        end
+    end
+    return success_bool
 end
 
 function _is_travis_ci(
