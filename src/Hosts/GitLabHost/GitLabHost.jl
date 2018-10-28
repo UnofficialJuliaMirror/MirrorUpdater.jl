@@ -507,10 +507,17 @@ function new_gitlab_session(
         repo_name::String = params[:repo_name]
         repo_directory::String = params[:directory]
         git_path::String = params[:git]
+        try_but_allow_failures_url_list =
+            params[:try_but_allow_failures_url_list]
         repo_name_without_org = _repo_name_without_org(
             ;
             repo = repo_name,
             org = _gitlab_group,
+            )
+        repo_dest_url_without_auth = _get_destination_url(
+            ;
+            repo_name = repo_name_without_org,
+            credentials = :without_auth,
             )
         repo_dest_url_with_auth = _get_destination_url(
             ;
@@ -534,13 +541,30 @@ function new_gitlab_session(
             pwd(),
             ENV["PATH"],
             )
-        run(mirrorpush_cmd_withauth)
-        @info(
-            string("Successfully pushed repo to GitLab."),
-            mirrorpush_cmd_withredactedauth,
-            pwd(),
-            ENV["PATH"],
-            )
+        try
+            run(mirrorpush_cmd_withauth)
+            @info(
+                string("Successfully pushed repo to GitLab."),
+                mirrorpush_cmd_withredactedauth,
+                pwd(),
+                ENV["PATH"],
+                )
+        catch exception
+            @warn("caught exception: ", exception)
+            if repo_dest_url_without_auth in try_but_allow_failures_url_list
+                @warn(
+                    string(
+                        "repo_dest_url_without_auth is in the ",
+                        "try_but_allow_failures_url_list, so ignoring ",
+                        "exception.",
+                        ),
+                    repo_dest_url_without_auth,
+                    exception,
+                    )
+            else
+                rethrow(exception)
+            end
+        end
         cd(previous_directory)
         return nothing
     end

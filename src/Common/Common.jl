@@ -574,6 +574,8 @@ function _push_mirrors!!(
                                 :repo_name => destination_repo_name,
                                 :directory => pwd(),
                                 :git => git,
+                                :try_but_allow_failures_url_list =>
+                                    try_but_allow_failures_url_list,
                                 )
                             @info(
                                 string(

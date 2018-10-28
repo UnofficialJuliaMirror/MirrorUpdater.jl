@@ -71,8 +71,14 @@ jobs:
       name: "[R,S)"
       script: "./ci/travis/script.sh \"[R,S)\""
     -
-      name: "[S,T)"
-      script: "./ci/travis/script.sh \"[S,T)\""
+      name: ""
+      script: "./ci/travis/script.sh \"[S,Sj)\""
+    -
+      name: ""
+      script: "./ci/travis/script.sh \"[Sj,St)\""
+    -
+      name: ""
+      script: "./ci/travis/script.sh \"[St,T)\""
     -
       name: "[T,U)"
       script: "./ci/travis/script.sh \"[T,U)\""

@@ -37,6 +37,7 @@ You can also use it to host your own mirrors.
 | [3. Setting up BitBucket (optional)](#setting-up-bitbucket-optional) |
 | [4. Setting up Travis (required)](#setting-up-travis-required) |
 | [5. Running the updater manually](#running-the-updater-manually) |
+| [6. Troubleshooting common issues](#troubleshooting-common-issues) |
 
 ## Setting up GitHub (required)
 
@@ -405,3 +406,9 @@ julia --project run-github-mirror-updater.jl
 ```
 
 **Congratulations, you have finished this section.**
+
+## Troubleshooting common issues
+
+| Issue | Solution |
+| ----- | -------- |
+| You get an error of the form "remote: GitLab: You are not allowed to force push code to a protected branch on this project" when trying to push to a remote of the form `https://MY_GITLAB_BOT_USERNAME:[secure]@gitlab.com/MY_GITLAB_GROUP/EXAMPLE-REPO-NAME` | Go to `https://gitlab.com/MY_GITLAB_GROUP/EXAMPLE-REPO-NAME/settings/repository`, click on the "Expand" button next to "Protected Branches", and unprotect all of the protected branches. |
