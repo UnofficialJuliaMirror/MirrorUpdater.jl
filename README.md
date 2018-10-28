@@ -347,11 +347,17 @@ Go to the Travis settings page for your fork: `https://travis-ci.com/MY_GITHUB_O
 
 ### Step 5
 
-In the "Environment Variables" section of the Travis settings page, [add a new environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with name equal to `GITHUB_BOT_PERSONAL_ACCESS_TOKEN` and value equal to `my-github-bot-personal-access-token`. **Make sure that the "Display value in build log" option is turned OFF.**
+In the "General" section of the Travis settings page, turn ON the switch to the left of "Limit concurrent jobs." Then, enter `1` in the box to the right of "Limit concurrent jobs."
+
+*This step is important. You must limit the concurrent jobs to 1. If you do not, then you will probably trigger the API rate limits for GitHub, GitLab, and/or Bitbucket, which will cause your Travis jobs to fail.*
 
 ### Step 6
 
-In the "Cron Jobs" section of the Travis settings page, [create a new cron job for your fork](https://docs.travis-ci.com/user/cron-jobs/#adding-cron-jobs). For "Branch", select `master`. For "Interval", select whatever you like (I recommend `daily` or `weekly`). For "Options", select `Always run`.
+In the "Environment Variables" section of the Travis settings page, [add a new environment variable](https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings) with name equal to `GITHUB_BOT_PERSONAL_ACCESS_TOKEN` and value equal to `my-github-bot-personal-access-token`. **Make sure that the "Display value in build log" option is turned OFF.**
+
+### Step 7
+
+In the "Cron Jobs" section of the Travis settings page, [create a new cron job for your fork](https://docs.travis-ci.com/user/cron-jobs/#adding-cron-jobs). For "Branch", select `master`. For "Interval", select `daily`. For "Options", select `Always run`.
 
 **Congratulations, you have finished this section.**
 

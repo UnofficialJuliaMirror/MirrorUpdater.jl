@@ -71,13 +71,13 @@ jobs:
       name: "[R,S)"
       script: "./ci/travis/script.sh \"[R,S)\""
     -
-      name: ""
+      name: "[S,Sj)"
       script: "./ci/travis/script.sh \"[S,Sj)\""
     -
-      name: ""
+      name: "[Sj,St)"
       script: "./ci/travis/script.sh \"[Sj,St)\""
     -
-      name: ""
+      name: "[St,T)"
       script: "./ci/travis/script.sh \"[St,T)\""
     -
       name: "[T,U)"
@@ -101,8 +101,11 @@ jobs:
       name: "[Z,a)"
       script: "./ci/travis/script.sh \"[Z,a)\""
     -
-      name: "[a,)"
-      script: "./ci/travis/script.sh \"[a,)\""
+      name: "[a,m)"
+      script: "./ci/travis/script.sh \"[a,m)\""
+    -
+      name: "[m,)"
+      script: "./ci/travis/script.sh \"[m,)\""
     -
       name: clean-up
       script: "./ci/travis/script.sh \"clean-up\""
