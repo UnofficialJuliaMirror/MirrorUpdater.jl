@@ -347,7 +347,7 @@ Go to the Travis settings page for your fork: `https://travis-ci.com/MY_GITHUB_O
 
 ### Step 5
 
-In the "General" section of the Travis settings page, turn ON the switch to the left of "Limit concurrent jobs." Then, enter `1` in the box to the right of "Limit concurrent jobs."
+In the "General" section of the Travis settings page, turn ON the switch next to "Limit concurrent jobs". Then, enter `1` in the box to the right.
 
 *This step is important. You must limit the concurrent jobs to 1. If you do not, then you will probably trigger the API rate limits for GitHub, GitLab, and/or Bitbucket, which will cause your Travis jobs to fail.*
 
@@ -357,7 +357,7 @@ In the "Environment Variables" section of the Travis settings page, [add a new e
 
 ### Step 7
 
-In the "Cron Jobs" section of the Travis settings page, [create a new cron job for your fork](https://docs.travis-ci.com/user/cron-jobs/#adding-cron-jobs). For "Branch", select `master`. For "Interval", select `daily`. For "Options", select `Always run`.
+In the "Cron Jobs" section of the Travis settings page, [create a new cron job for your fork](https://docs.travis-ci.com/user/cron-jobs/#adding-cron-jobs). For "Branch", select `master`. For "Interval", select `daily`. For "Options", select `Do not run if there has been a build in the last 24h`.
 
 **Congratulations, you have finished this section.**
 

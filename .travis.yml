@@ -11,10 +11,14 @@ jobs:
       stage: stage-1
     -
       name: runtests-compiled-modules-no
-      script: ./ci/travis/runtests-compiled-modules-no.sh
+      script: "./ci/travis/runtests.sh \"no\""
     -
       name: runtests-compiled-modules-yes
-      script: ./ci/travis/runtests-compiled-modules-yes.sh
+      script: "./ci/travis/runtests.sh \"yes\""
+    -
+      name: "dry run [,B)"
+      script: "./ci/travis/script.sh \"[,B)\" \"FORCE_DRY_RUN\""
+      stage: stage-2
     -
       name: "[,B)"
       script: "./ci/travis/script.sh \"[,B)\""
@@ -101,11 +105,11 @@ jobs:
       name: "[Z,a)"
       script: "./ci/travis/script.sh \"[Z,a)\""
     -
-      name: "[a,m)"
-      script: "./ci/travis/script.sh \"[a,m)\""
+      name: "[a,l)"
+      script: "./ci/travis/script.sh \"[a,l)\""
     -
-      name: "[m,)"
-      script: "./ci/travis/script.sh \"[m,)\""
+      name: "[l,)"
+      script: "./ci/travis/script.sh \"[l,)\""
     -
       name: clean-up
       script: "./ci/travis/script.sh \"clean-up\""
