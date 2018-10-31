@@ -1,6 +1,6 @@
 ##### Beginning of file
 
-module GitHubHost # Begin submodule MirrorUpdater.Hosts.GitHubHost
+module BitbucketHost # Begin submodule MirrorUpdater.Hosts.BitbucketHost
 
 __precompile__(true)
 
@@ -8,203 +8,142 @@ import ..Types
 import ..Utils
 
 import Dates
-import GitHub
+import HTTP
+import JSON
 import TimeZones
 
-function new_github_session(
+function new_bitbucket_session(
         ;
-        github_organization::AbstractString,
-        github_bot_username::AbstractString,
-        github_bot_personal_access_token::AbstractString,
+        bitbucket_team::String,
+        bitbucket_bot_username::String,
+        bitbucket_bot_app_password::String,
         )::Function
 
-    _github_organization::String = strip(
-        convert(String, github_organization)
+    _bitbucket_team::String = strip(
+        convert(String, bitbucket_team)
         )
-    _alleged_github_bot_username::String = strip(
-        convert(String, github_bot_username,)
+    _alleged_bitbucket_bot_username::String = strip(
+        convert(String, bitbucket_bot_username)
         )
-    _github_bot_personal_access_token::String = strip(
-        convert(String, github_bot_personal_access_token)
+    _bitbucket_bot_app_password::String = strip(
+        convert(String, bitbucket_bot_app_password)
         )
-    function _get_github_username(auth::GitHub.Authorization)::String
-        user_information::AbstractDict = GitHub.gh_get_json(
-            GitHub.DEFAULT_API,
-            "/user";
-            auth = auth,
+
+    function _bitbucket_slug(x::AbstractString)::String
+        x_stripped::String = strip(convert(String, x))
+        x_lowercase = lowercase(x_stripped)
+        if length(x_lowercase) <= 62
+            result = x_lowercase
+        else
+            result = x_lowercase[1:62]
+        end
+        result_converted = convert(String, result)
+        return result_converted
+    end
+
+    function _get_bitbucket_username_from_alleged()::String
+        method::String = "GET"
+        url::String = string(
+            "https://",
+            "$(_alleged_bitbucket_bot_username)",
+            ":",
+            "$(_bitbucket_bot_app_password)",
+            "@api.bitbucket.org",
+            "/2.0",
+            "/user",
             )
-        username::String = user_information["name"]
+        r::HTTP.Messages.Response = HTTP.request(
+            method,
+            url;
+            basic_authorization = true
+            )
+        r_body::String = String(r.body)
+        parsed_body::Dict = JSON.parse(r_body)
+        username::String = parsed_body["username"]
         username_stripped::String = strip(username)
         return username_stripped
     end
 
-    @info("Attempting to authenticate to GitHub...")
-    auth::GitHub.Authorization =
-        GitHub.authenticate(_github_bot_personal_access_token)
-    _github_username::String = _get_github_username(auth)
+    @info("Attempting to authenticate to Bitbucket...")
+    _bitbucket_username::String = _get_bitbucket_username_from_alleged()
     @debug(
         string("Provided username vs. actual username: "),
-        _alleged_github_bot_username,
-        _github_username,
+        _alleged_bitbucket_bot_username,
+        _bitbucket_username,
         )
-    if lowercase(strip(_github_username)) !=
-            lowercase(strip(_alleged_github_bot_username))
+    if lowercase(strip(_bitbucket_username)) !=
+            lowercase(strip(_alleged_bitbucket_bot_username))
         @warn(
             string(
-                "lowercase(strip(_github_username)) != ",
-                "lowercase(strip(_alleged_github_bot_username))",
+                "lowercase(strip(_bitbucket_username)) != ",
+                "lowercase(strip(_alleged_bitbucket_bot_username))",
                 ),
-            _github_username,
-            _alleged_github_bot_username,
+            _bitbucket_username,
+            _alleged_bitbucket_bot_username,
             )
         error(
             string(
-                "lowercase(strip(_github_username)) != ",
-                "lowercase(strip(_alleged_github_bot_username))",
+                "lowercase(strip(_bitbucket_username)) != ",
+                "lowercase(strip(_alleged_bitbucket_bot_username))",
                 )
             )
     end
-    @info("Successfully authenticated to GitHub")
+    @info("Successfully authenticated to Bitbucket")
 
     @info(
         string(
-            "GitHub username: ",
-            "$(_get_github_username(auth))",
+            "Bitbucket username: ",
+            "$(_get_bitbucket_username_from_alleged())",
             )
         )
     @info(
         string(
-            "GitHub organization: ",
-            "$(_github_organization)",
+            "Bitbucket team (a.k.a. organization): ",
+            "$(_bitbucket_team)",
             )
-        )
-
-    repository_owner = GitHub.owner(
-        _github_organization,
-        true;
-        auth = auth,
         )
 
     function _create_gist(params::AbstractDict)::Nothing
-        gist_description::String = strip(params[:gist_description])
-        gist_content::String = strip(params[:gist_content])
-        @info("Attempting to create gist on GitHub...")
-        GitHub.create_gist(
-            ;
-            auth = auth,
-            params = Dict(
-                :public => true,
-                :description => gist_description,
-                :files => Dict(
-                    "list.txt" => Dict(
-                        "content" => gist_content,
-                        ),
-                    ),
-                ),
+        @warn(
+            string(
+                "At this time, snippet (a.k.a. gist) ",
+                "functionality is not yet supported ",
+                "for the Bitbucket backend.",
+                )
             )
-        @info("Successfully created gist on GitHub.")
         return nothing
     end
 
-    function _get_all_gists()::Vector{GitHub.Gist}
-        @info("Loading the list of all of my GitHub gists")
-        full_gist_list::Vector{GitHub.Gist} = GitHub.Gist[]
-        need_to_continue::Bool = true
-        current_page_number::Int = 1
-        while need_to_continue
-            gists, page_data = GitHub.gists(
-                _github_username;
-                params = Dict(
-                    "per_page" => 100,
-                    "page" => current_page_number,
-                    ),
-                auth = auth,
-                )
-            if length(gists) == 0
-                need_to_continue = false
-            else
-                for x in gists
-                    if x in full_gist_list
-                    else
-                        push!(full_gist_list, x)
-                    end
-                end
-                need_to_continue = true
-                current_page_number += 1
-            end
-        end
-        unique_gist_list::Vector{GitHub.Gist} = unique(full_gist_list)
-        return unique_gist_list
-    end
-
     function _retrieve_gist(params::AbstractDict)::String
-        gist_description_to_match::String = params[:gist_description]
-        correct_gist_id::String = ""
-        all_my_gists = _get_all_gists()
-        for gist in all_my_gists
-            if gist.description == gist_description_to_match
-                correct_gist_id = gist.id
-            end
-        end
-        result::String = ""
-        if length(correct_gist_id) > 0
-            @info("Downloading the correct GitHub gist")
-            correct_gist::GitHub.Gist = GitHub.gist(
-                correct_gist_id;
-                auth = auth,
+        @warn(
+            string(
+                "At this time, snippet (a.k.a. gist) ",
+                "functionality is not yet supported ",
+                "for the Bitbucket backend.",
                 )
-            correct_gist_content::String = correct_gist.files[
-                "list.txt"]["content"]
-            result = correct_gist_content
-        else
-            result = ""
-        end
-        if length(result) == 0
-            error("Could not find the matching Gist")
-        end
-        return result
+            )
+        error("Could not find the matching Bitbucket snippet")
     end
 
     function _delete_gists(params::AbstractDict)::Nothing
-        gist_description_to_match::String = params[:gist_description]
-        list_of_gist_ids_to_delete::Vector{String} = String[]
-        all_my_gists::Vector{GitHub.Gist} = _get_all_gists()
-        for gist in all_my_gists
-            if gist.description == gist_description_to_match
-                push!(list_of_gist_ids_to_delete, strip(gist.id),)
-            end
-        end
-        for gist_id_to_delete in list_of_gist_ids_to_delete
-            GitHub.delete_gist(gist_id_to_delete;auth = auth,)
-            @info(string("Deleted GitHub gist id $(gist_id_to_delete)"))
-        end
+        @warn(
+            string(
+                "At this time, snippet (a.k.a. gist) ",
+                "functionality is not yet supported ",
+                "for the Bitbucket backend.",
+                )
+            )
         return nothing
     end
 
     function _delete_gists_older_than_minutes(params::AbstractDict)::Nothing
-        time::TimeZones.ZonedDateTime =
-            params[:time]
-        delete_gists_older_than_minutes::Int =
-            params[:delete_gists_older_than_minutes]
-        max_gist_age_milliseconds::Int =
-            delete_gists_older_than_minutes*60*1000
-        list_of_gist_ids_to_delete::Vector{String} = String[]
-        all_my_gists::Vector{GitHub.Gist} = _get_all_gists()
-        for gist in all_my_gists
-            gist_updated_at = gist.updated_at
-            gist_updated_at_zoned = TimeZones.ZonedDateTime(
-                gist_updated_at,
-                TimeZones.localzone(),
+        @warn(
+            string(
+                "At this time, snippet (a.k.a. gist) ",
+                "functionality is not yet supported ",
+                "for the Bitbucket backend.",
                 )
-            gist_age = time - gist_updated_at_zoned
-            if gist_age.value > max_gist_age_milliseconds
-                push!(list_of_gist_ids_to_delete, strip(gist.id),)
-            end
-        end
-        for gist_id_to_delete in list_of_gist_ids_to_delete
-            GitHub.delete_gist(gist_id_to_delete;auth = auth,)
-            @info(string("Deleted GitHub gist id $(gist_id_to_delete)"))
-        end
+            )
         return nothing
     end
 
@@ -269,40 +208,40 @@ function new_github_session(
         repo_name_without_org::String = _repo_name_without_org(
             ;
             repo = repo_name,
-            org = _github_organization,
+            org = _bitbucket_team,
             )
         result::String = ""
         if credentials == :with_auth
             result = string(
                 "https://",
-                _github_username,
+                _bitbucket_username,
                 ":",
-                _github_bot_personal_access_token,
+                _bitbucket_bot_app_password,
                 "@",
-                "github.com/",
-                _github_organization,
+                "bitbucket.org/",
+                _bitbucket_team,
                 "/",
-                repo_name_without_org,
+                _bitbucket_slug(repo_name_without_org),
                 )
         elseif credentials == :with_redacted_auth
             result = string(
                 "https://",
-                _github_username,
+                _bitbucket_username,
                 ":",
                 "*****",
                 "@",
-                "github.com/",
-                _github_organization,
+                "bitbucket.org/",
+                _bitbucket_team,
                 "/",
-                repo_name_without_org,
+                _bitbucket_slug(repo_name_without_org),
                 )
         elseif credentials == :without_auth
             result =string(
                 "https://",
-                "github.com/",
-                _github_organization,
+                "bitbucket.org/",
+                _bitbucket_team,
                 "/",
-                repo_name_without_org,
+                _bitbucket_slug(repo_name_without_org),
                 )
         else
             error("$(credentials) is not a supported value for credentials")
@@ -310,19 +249,32 @@ function new_github_session(
         return result
     end
 
-    function _github_repo_exists(
+    function _bitbucket_repo_exists(
             ;
             repo_name::String,
             )::Bool
-        repo_name_with_org = _repo_name_with_org(
+        repo_name_without_org = _repo_name_without_org(
             ;
             repo = repo_name,
-            org = _github_organization,
+            org = _bitbucket_team,
+            )
+        method = "GET"
+        url = string(
+            "https://",
+            "$(_bitbucket_username)",
+            ":",
+            "$(_bitbucket_bot_app_password)",
+            "@api.bitbucket.org",
+            "/2.0",
+            "/repositories",
+            "/$(_bitbucket_team)",
+            "/$(_bitbucket_slug(repo_name_without_org))",
             )
         result::Bool = try
-            repo = GitHub.repo(
-                repo_name_with_org;
-                auth = auth,
+            r = HTTP.request(
+                method,
+                url;
+                basic_authorization = true,
                 )
             true
         catch
@@ -332,16 +284,16 @@ function new_github_session(
     end
 
     function _create_repo(params::AbstractDict)::Nothing
-        repo_name::String = params[:repo_name]
+        repo_name::String = strip(params[:repo_name])
         repo_name_with_org::String = _repo_name_with_org(
             ;
             repo = repo_name,
-            org = _github_organization,
+            org = _bitbucket_team,
             )
         repo_name_without_org::String = _repo_name_without_org(
             ;
             repo = repo_name,
-            org = _github_organization,
+            org = _bitbucket_team,
             )
         repo_destination_url_without_auth = _get_destination_url(
             ;
@@ -351,22 +303,45 @@ function new_github_session(
         if Utils._url_exists(repo_destination_url_without_auth)
             @info("According to HTTP GET request, the repo exists.")
         else
-            if _github_repo_exists(; repo_name = repo_name_with_org)
-                @info("According to the GitHub API, the repo exists.")
+            if _bitbucket_repo_exists(; repo_name = repo_name_without_org)
+                @info("According to the Bitbucket API, the repo exists.")
             else
                 @info(
-                    string("Creating new repo on GitHub"),
+                    string("Attempting to create new repo on Bitbucket"),
                     repo_destination_url_without_auth,
                     )
-                repo = GitHub.create_repo(
-                    repository_owner,
-                    repo_name_without_org,
-                    Dict{String, Any}(
-                        "has_issues" => "false",
-                        "has_wiki" => "false",
-                        );
-                    auth = auth,
+                method = "POST"
+                url = string(
+                    "https://",
+                    "$(_bitbucket_username)",
+                    ":",
+                    "$(_bitbucket_bot_app_password)",
+                    "@api.bitbucket.org",
+                    "/2.0",
+                    "/repositories",
+                    "/$(_bitbucket_team)",
+                    "/$(_bitbucket_slug(repo_name_without_org))",
                     )
+                headers = Dict(
+                    "content-type" => "application/json",
+                    )
+                params = Dict(
+                    "scm" => "git",
+                    "is_private" => false,
+                    "name" => _bitbucket_slug(repo_name_without_org),
+                    "slug" => _bitbucket_slug(repo_name_without_org),
+                    "has_issues" => false,
+                    "has_wiki" => false,
+                    )
+                body = JSON.json(params)
+                r = HTTP.request(
+                    method,
+                    url,
+                    headers,
+                    body;
+                    basic_authorization = true,
+                    )
+                @info("Successfully created new repo on Bitbucket")
             end
         end
         return nothing
@@ -381,7 +356,7 @@ function new_github_session(
         repo_name_without_org = _repo_name_without_org(
             ;
             repo = repo_name,
-            org = _github_organization,
+            org = _bitbucket_team,
             )
         repo_dest_url_without_auth = _get_destination_url(
             ;
@@ -405,7 +380,7 @@ function new_github_session(
         mirrorpush_cmd_withredactedauth =
             `$(git_path) push --mirror $(repo_dest_url_with_redacted_auth)`
         @info(
-            string("Attempting to push repo to GitHub..."),
+            string("Attempting to push repo to Bitbucket..."),
             mirrorpush_cmd_withredactedauth,
             pwd(),
             ENV["PATH"],
@@ -413,7 +388,7 @@ function new_github_session(
         try
             run(mirrorpush_cmd_withauth)
             @info(
-                string("Successfully pushed repo to GitHub."),
+                string("Successfully pushed repo to Bitbucket."),
                 mirrorpush_cmd_withredactedauth,
                 pwd(),
                 ENV["PATH"],
@@ -444,7 +419,7 @@ function new_github_session(
         source_url::String = params[:source_url]
         when::TimeZones.ZonedDateTime = params[:when]
         time_zone::TimeZones.TimeZone = params[:time_zone]
-        by::String = strip(string("@", _github_username))
+        by::String = strip(string("@", _bitbucket_username))
 
         new_description::String = Utils.default_repo_description(
             ;
@@ -458,34 +433,50 @@ function new_github_session(
     end
 
     function _update_repo_description(params::AbstractDict)::Nothing
-        repo_name::String = params[:repo_name]
-        new_repo_description = params[:new_repo_description]
+        repo_name::String = strip(params[:repo_name])
+        new_repo_description = strip(params[:new_repo_description])
         _create_repo(
             Dict(
                 :repo_name => repo_name,
                 ),
             )
-        repo_name_with_org::String = _repo_name_with_org(
+        repo_name_without_org::String = _repo_name_without_org(
             ;
             repo = repo_name,
-            org = _github_organization,
+            org = _bitbucket_team,
             )
-        repo = GitHub.repo(repo_name_with_org; auth = auth,)
-        @info("Attempting to update repo description on GitHub...")
-        result = GitHub.gh_patch_json(
-            GitHub.DEFAULT_API,
-            "/repos/$(GitHub.name(repo.owner))/$(GitHub.name(repo.name))";
-            auth = auth,
-            params = Dict(
-                "name" => GitHub.name(repo.name),
-                "description" => new_repo_description,
-                ),
+        method = "PUT"
+        url = string(
+            "https://",
+            "$(_bitbucket_username)",
+            ":",
+            "$(_bitbucket_bot_app_password)",
+            "@api.bitbucket.org",
+            "/2.0",
+            "/repositories",
+            "/$(_bitbucket_team)",
+            "/$(_bitbucket_slug(repo_name_without_org))",
             )
-        @info("Successfully updated repo description on GitHub")
+        headers = Dict(
+            "content-type" => "application/json",
+            )
+        params = Dict(
+            "description" => String(strip(new_repo_description)),
+            )
+        body = JSON.json(params)
+        @info("Attempting to update repo description on Bitbucket...")
+        r = HTTP.request(
+            method,
+            url,
+            headers,
+            body;
+            basic_authorization = true,
+            )
+        @info("Successfully updated repo description on Bitbucket")
         return nothing
     end
 
-    function _github_provider(task::Symbol)::Function
+    function _bitbucket_provider(task::Symbol)::Function
         if task == :create_gist
             return _create_gist
         elseif task == :retrieve_gist
@@ -507,9 +498,9 @@ function new_github_session(
         end
     end
 
-    return _github_provider
+    return _bitbucket_provider
 end
 
-end # End submodule MirrorUpdater.Hosts.GitHubHost
+end # End submodule MirrorUpdater.Hosts.BitbucketHost
 
 ##### End of file

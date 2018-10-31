@@ -5,7 +5,6 @@ module CommandLine # Begin submodule MirrorUpdater.CommandLine
 __precompile__(true)
 
 import ArgParse
-import Conda
 import Dates
 import HTTP
 import Pkg
@@ -49,6 +48,8 @@ function run_mirror_updater_command_line!!(
     has_gist_description::Bool =  processed_arguments[:has_gist_description]
     gist_description::String = processed_arguments[:gist_description]
     is_dry_run::Bool = processed_arguments[:is_dry_run]
+    delete_gists_older_than_minutes::Int =
+        processed_arguments[:delete_gists_older_than_minutes]
     Run.run_mirror_updater!!(
         ;
         git_hosting_providers = git_hosting_providers,
@@ -64,6 +65,8 @@ function run_mirror_updater_command_line!!(
             do_not_try_url_list,
         try_but_allow_failures_url_list =
             try_but_allow_failures_url_list,
+        delete_gists_older_than_minutes =
+            delete_gists_older_than_minutes,
         )
     return nothing
 end
@@ -82,6 +85,10 @@ function _parse_arguments(arguments::Vector{String})::Dict
         "--dry-run"
             help = "do everything except actually pushing the repos"
             action = :store_true
+        "--delete-gists-older-than-minutes"
+            help = "delete all gists older than N minutes"
+            arg_type = Int
+            default = 0
     end
     result::Dict = ArgParse.parse_args(arguments, s)
     return result
@@ -107,11 +114,15 @@ function _process_parsed_arguments(parsed_arguments::Dict)::Dict{Symbol, Any}
     end
 
     is_dry_run::Bool = parsed_arguments["dry-run"]
+    delete_gists_older_than_minutes::Int =
+        parsed_arguments["delete-gists-older-than-minutes"]
+
     result::Dict{Symbol, Any} = Dict{Symbol, Any}()
     result[:task] = task
-    result[:has_gist_description] = has_gist_description
-    result[:gist_description] = gist_description
-    result[:is_dry_run] = is_dry_run
+    result[:has_gist_description]=has_gist_description
+    result[:gist_description]=gist_description
+    result[:is_dry_run]=is_dry_run
+    result[:delete_gists_older_than_minutes]=delete_gists_older_than_minutes
 
     return result
 end

@@ -5,7 +5,6 @@ module Run # Begin submodule MirrorUpdater.Run
 __precompile__(true)
 
 import ArgParse
-import Conda
 import Dates
 import HTTP
 import Pkg
@@ -18,6 +17,7 @@ import ..Common
 function run_mirror_updater!!(
         ;
         registry_list::Vector{Types.Registry},
+        delete_gists_older_than_minutes::Int = 0,
         git_hosting_providers::AbstractVector =
             Any[],
         task::String =
@@ -216,6 +216,26 @@ function run_mirror_updater!!(
                 @info("Deleting gist from git hosting provider $(p).")
                 try
                     provider(:delete_gists)(args)
+                catch exception
+                    @warn("ignoring exception: ", exception)
+                end
+            end
+        end
+
+        if delete_gists_older_than_minutes > 0
+            time::TimeZones.ZonedDateTime = Dates.now(
+                TimeZones.localzone()
+                )
+            args = Dict(
+                :delete_gists_older_than_minutes =>
+                    delete_gists_older_than_minutes,
+                :time =>
+                    time,
+                )
+            for p = 1:length(git_hosting_providers)
+                provider = git_hosting_providers[p]
+                try
+                    provider(:delete_gists_older_than_minutes)(args)
                 catch exception
                     @warn("ignoring exception: ", exception)
                 end

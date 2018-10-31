@@ -6,7 +6,8 @@ __precompile__(true)
 
 import ..Types
 
-import Conda
+import ..package_directory
+
 import Dates
 import HTTP
 import TimeZones
@@ -196,10 +197,11 @@ function command_ran_successfully!!(
         max_attempts::Integer = 10,
         max_seconds_per_attempt::Real = 540,
         seconds_to_wait_between_attempts::Real = 30,
+        error_on_failure::Bool = true,
         )::Bool
-    result_bool::Bool = false
+    success_bool::Bool = false
     for attempt = 1:max_attempts
-        if result_bool
+        if success_bool
         else
             @debug(string("Attempt $(attempt)"))
             if attempt > 1
@@ -214,7 +216,7 @@ function command_ran_successfully!!(
                 float(max_seconds_per_attempt),
                 )
             if process_running(p)
-                result_bool = false
+                success_bool = false
                 try
                     kill(p, Base.SIGTERM)
                 catch exception
@@ -226,7 +228,7 @@ function command_ran_successfully!!(
                     @warn("Ignoring exception: ", exception)
                 end
             else
-                result_bool = try
+                success_bool = try
                     success(p)
                 catch exception
                     @warn("Ignoring exception: ", exception)
@@ -235,9 +237,16 @@ function command_ran_successfully!!(
             end
         end
     end
-    result_string::String = result_bool ? "success" : "failure"
-    @debug(string("Result: $(result_string)"))
-    return result_bool
+    if success_bool
+        @debug(string("Command ran successfully."),)
+    else
+        if error_on_failure
+            error(string("Command did not run successfully."),)
+        else
+            @warn(string("Command did not run successfully."),)
+        end
+    end
+    return success_bool
 end
 
 function _is_travis_ci(
@@ -261,86 +270,24 @@ function _is_travis_ci(
     return answer
 end
 
-function _get_git_binary_path(
-        environment::Union{AbstractString,Symbol} = :MirrorUpdater,
-        )::String
-    path_git_conda_specified_env::String = try
-        joinpath(Conda.bin_dir(environment), "git",)
-    catch exception
-        @debug("ignoring exception: ", exception,)
-        ""
-    end
-    success_git_conda_specified_env::Bool = false
-    if length(path_git_conda_specified_env) > 0
-        success_git_conda_specified_env = try
-            success(`$(path_git_conda_specified_env) --version`)
-        catch exception
-            @debug("ignoring exception: ", exception,)
-            false
-        end
-    else
-        success_git_conda_specified_env = false
-    end
-
-    path_git_conda_root_env::String = try
-        joinpath(Conda.bin_dir(Conda.ROOTENV), "git",)
-    catch exception
-        @debug("ignoring exception: ", exception,)
-        ""
-    end
-    success_git_conda_root_env = false
-    if length(path_git_conda_root_env) > 0
-        success_git_conda_root_env = try
-            success(`$(path_git_conda_root_env) --version`)
-        catch exception
-            @debug("ignoring exception: ", exception,)
-            false
-        end
-    else
-        success_git_conda_root_env = false
-    end
-    path_git_default::String = "git"
-    success_git_default::Bool = try
-        success(`$(path_git_default) --version`)
-    catch
-        false
-    end
-    @debug(
-        "MirrorUpdater conda environment:",
-        environment,
-        success_git_conda_specified_env,
-        path_git_conda_specified_env,
-        )
-    @debug(
-        "Root conda environment:",
-        success_git_conda_root_env,
-        path_git_conda_root_env,
-        )
-    @debug(
-        "Default git:",
-        success_git_default,
-        path_git_default,
-        )
-    if success_git_conda_specified_env
-        git_path_to_use = path_git_conda_specified_env
-    elseif success_git_conda_root_env
-        git_path_to_use = path_git_conda_root_env
-    elseif success_git_default
-        git_path_to_use = path_git_default
-    else
+function _get_git_binary_path()::String
+    deps_jl_file_path = package_directory("deps", "deps.jl")
+    if !isfile(deps_jl_file_path)
         error(
             string(
-                "I could not find a usable Git."
+                "MirrorUpdater.jl is not properly installed. ",
+                "Please run\nPkg.build(\"MirrorUpdater\")",
                 )
             )
     end
-    result::String = strip(git_path_to_use)
+    include(deps_jl_file_path)
+    git::String = strip(string(git_cmd))
+    run(`$(git) --version`)
     @debug(
-        string(
-            "Selected git: $(result)",
-            ),
+        "git command: ",
+        git,
         )
-    return result
+    return git
 end
 
 end # End submodule MirrorUpdater.Utils

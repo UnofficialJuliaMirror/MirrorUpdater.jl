@@ -8,7 +8,6 @@ import ..Types
 import ..Utils
 
 import ArgParse
-import Conda
 import Dates
 import HTTP
 import Pkg
@@ -575,6 +574,8 @@ function _push_mirrors!!(
                                 :repo_name => destination_repo_name,
                                 :directory => pwd(),
                                 :git => git,
+                                :try_but_allow_failures_url_list =>
+                                    try_but_allow_failures_url_list,
                                 )
                             @info(
                                 string(
@@ -795,6 +796,14 @@ function _pairs_that_fall_in_interval(
         unique(full_sublist)
         )
     return unique_sorted_sublist
+end
+
+function _interval_contains_x(
+        interval::Types.NoBoundsInterval,
+        x::AbstractString,
+        )::Bool
+    result::Bool = true
+    return result
 end
 
 function _interval_contains_x(

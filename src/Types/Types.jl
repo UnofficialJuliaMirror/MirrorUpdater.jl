@@ -39,7 +39,9 @@ function _name_without_git(x::AbstractString)::String
 end
 
 function _is_interval(x::String)::Bool
-    if _is_lower_bound_only_interval(x)
+    if _is_no_bounds_interval(x)
+        return true
+    elseif _is_lower_bound_only_interval(x)
         return true
     elseif _is_upper_bound_only_interval(x)
         return true
@@ -66,6 +68,20 @@ function _get_upper_bound_only_interval_regex()::Regex
     upper_bound_only_interval_regex::Regex =
         r"\[\,(\w\w*?)\)"
     return upper_bound_only_interval_regex
+end
+
+function _get_no_bounds_interval_regex()::Regex
+    no_bounds_interval_regex::Regex =
+        r"\[\,\)"
+    return no_bounds_interval_regex
+end
+
+function _is_no_bounds_interval(x::String)::Bool
+    result::Bool = occursin(
+        _get_no_bounds_interval_regex(),
+        x,
+        )
+    return result
 end
 
 function _is_lower_and_upper_bound_interval(x::String)::Bool
@@ -197,6 +213,9 @@ function SrcDestPair(
     return result
 end
 
+struct NoBoundsInterval <: AbstractInterval
+end
+
 struct LowerAndUpperBoundInterval <: AbstractInterval
     left::String
     right::String
@@ -241,7 +260,9 @@ struct UpperBoundOnlyInterval <: AbstractInterval
 end
 
 function _construct_interval(x::String)::AbstractInterval
-    if _is_lower_bound_only_interval(x)
+    if _is_no_bounds_interval(x)
+        result = NoBoundsInterval()
+    elseif _is_lower_bound_only_interval(x)
         loweronly_regexmatch::RegexMatch = match(
             _get_lower_bound_only_interval_regex(),
             x,

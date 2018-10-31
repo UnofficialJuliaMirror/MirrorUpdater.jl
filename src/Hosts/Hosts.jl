@@ -7,6 +7,7 @@ __precompile__(true)
 import ..Types
 import ..Utils
 
+include(joinpath("BitbucketHost", "BitbucketHost.jl"))
 include(joinpath("GitHubHost", "GitHubHost.jl"))
 include(joinpath("GitLabHost", "GitLabHost.jl"))
 
