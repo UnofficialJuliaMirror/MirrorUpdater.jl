@@ -22,7 +22,7 @@ function new_bitbucket_session(
     _bitbucket_team::String = strip(
         convert(String, bitbucket_team)
         )
-    _alleged_bitbucket_bot_username::String = strip(
+    _provided_bitbucket_bot_username::String = strip(
         convert(String, bitbucket_bot_username)
         )
     _bitbucket_bot_app_password::String = strip(
@@ -41,11 +41,11 @@ function new_bitbucket_session(
         return result_converted
     end
 
-    function _get_bitbucket_username_from_alleged()::String
+    function _get_bitbucket_username_from_provided()::String
         method::String = "GET"
         url::String = string(
             "https://",
-            "$(_alleged_bitbucket_bot_username)",
+            "$(_provided_bitbucket_bot_username)",
             ":",
             "$(_bitbucket_bot_app_password)",
             "@api.bitbucket.org",
@@ -65,35 +65,34 @@ function new_bitbucket_session(
     end
 
     @info("Attempting to authenticate to Bitbucket...")
-    _bitbucket_username::String = _get_bitbucket_username_from_alleged()
-    @debug(
-        string("Provided username vs. actual username: "),
-        _alleged_bitbucket_bot_username,
-        _bitbucket_username,
-        )
+    _bitbucket_username::String = _get_bitbucket_username_from_provided()
     if lowercase(strip(_bitbucket_username)) !=
-            lowercase(strip(_alleged_bitbucket_bot_username))
-        @warn(
-            string(
-                "lowercase(strip(_bitbucket_username)) != ",
-                "lowercase(strip(_alleged_bitbucket_bot_username))",
-                ),
-            _bitbucket_username,
-            _alleged_bitbucket_bot_username,
-            )
+            lowercase(strip(_provided_bitbucket_bot_username))
         error(
             string(
-                "lowercase(strip(_bitbucket_username)) != ",
-                "lowercase(strip(_alleged_bitbucket_bot_username))",
+                "Provided Bitbucket username ",
+                "(\"$(_provided_bitbucket_bot_username)\") ",
+                "does not match ",
+                "actual Bitbucket username ",
+                "(\"$(_bitbucket_username)\").",
                 )
             )
+    else
+        @info(
+            string(
+                "Provided Bitbucket username matches ",
+                "actual Bitbucket username.",
+                ),
+            _provided_bitbucket_bot_username,
+            _bitbucket_username,
+            )
     end
-    @info("Successfully authenticated to Bitbucket")
+    @info("Successfully authenticated to Bitbucket :)")
 
     @info(
         string(
             "Bitbucket username: ",
-            "$(_get_bitbucket_username_from_alleged())",
+            "$(_get_bitbucket_username_from_provided())",
             )
         )
     @info(
