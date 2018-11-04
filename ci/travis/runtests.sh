@@ -18,6 +18,6 @@ cat Project.toml
 cat Manifest.toml
 
 julia $JULIA_FLAGS -e 'import Pkg; try Pkg.add("Coverage") catch end;'
-julia $JULIA_FLAGS codecov-catch-errors.jl
+julia $JULIA_FLAGS ci/travis/codecov-catch-errors.jl
 
 ##### End of file
