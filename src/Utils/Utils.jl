@@ -200,20 +200,32 @@ function command_ran_successfully!!(
         error_on_failure::Bool = true,
         )::Bool
     success_bool::Bool = false
+    function _my_false()::Bool
+        @debug(string("Dummy output to keep Travis from failing"))
+        result::Bool = false
+        return result
+    end
+    function _my_process_exited(process_arg)::Bool
+        @debug(string("Dummy output to keep Travis from failing"))
+        result = process_exited(process_arg)
+        return result
+    end
     for attempt = 1:max_attempts
         if success_bool
         else
             @debug(string("Attempt $(attempt)"))
             if attempt > 1
                 timedwait(
-                    () -> false,
-                    float(seconds_to_wait_between_attempts),
+                    () -> _my_false(),
+                    float(seconds_to_wait_between_attempts);
+                    pollint = float(1.0);
                     )
             end
             p = run(cmds, args...; wait = false,)
             timedwait(
-                () -> process_exited(p),
+                () -> _my_process_exited(p),
                 float(max_seconds_per_attempt),
+                pollint = float(1.0);
                 )
             if process_running(p)
                 success_bool = false
