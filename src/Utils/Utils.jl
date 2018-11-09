@@ -218,14 +218,14 @@ function command_ran_successfully!!(
                 timedwait(
                     () -> _my_false(),
                     float(seconds_to_wait_between_attempts);
-                    pollint = float(1.0);
+                    pollint = float(1.0),
                     )
             end
             p = run(cmds, args...; wait = false,)
             timedwait(
                 () -> _my_process_exited(p),
                 float(max_seconds_per_attempt),
-                pollint = float(1.0);
+                pollint = float(1.0),
                 )
             if process_running(p)
                 success_bool = false
