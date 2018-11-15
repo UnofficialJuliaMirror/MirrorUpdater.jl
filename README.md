@@ -23,10 +23,10 @@
 
 MirrorUpdater is a Julia module that provides functionality for automatically
 mirroring Julia package repositories. It is used to maintain the Julia package
-mirrors at:
-- [https://github.com/UnofficialJuliaMirror](https://github.com/UnofficialJuliaMirror)
-- [https://gitlab.com/UnofficialJuliaMirror](https://gitlab.com/UnofficialJuliaMirror)
-- [https://bitbucket.org/UnofficialJuliaMirror](https://bitbucket.org/UnofficialJuliaMirror)
+mirrors hosted at:
+- GitHub: [https://github.com/UnofficialJuliaMirror](https://github.com/UnofficialJuliaMirror)
+- GitLab: [https://gitlab.com/UnofficialJuliaMirror](https://gitlab.com/UnofficialJuliaMirror)
+- Bitbucket: [https://bitbucket.org/UnofficialJuliaMirror](https://bitbucket.org/UnofficialJuliaMirror)
 
 You can also use it to host your own mirrors.
 

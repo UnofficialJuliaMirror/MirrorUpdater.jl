@@ -22,7 +22,7 @@ function new_gitlab_session(
     _gitlab_group::String = strip(
         convert(String, gitlab_group)
         )
-    _alleged_gitlab_bot_username::String = strip(
+    _provided_gitlab_bot_username::String = strip(
         convert(String, gitlab_bot_username,)
         )
     _gitlab_bot_personal_access_token::String = strip(
@@ -80,29 +80,28 @@ function new_gitlab_session(
 
     @info("Attempting to authenticate to GitLab...")
     _gitlab_username::String = _get_gitlab_username()
-    @debug(
-        string("Provided username vs. actual username: "),
-        _alleged_gitlab_bot_username,
-        _gitlab_username,
-        )
     if lowercase(strip(_gitlab_username)) !=
-            lowercase(strip(_alleged_gitlab_bot_username))
-        @warn(
-            string(
-                "lowercase(strip(_gitlab_username)) != ",
-                "lowercase(strip(_alleged_gitlab_bot_username))",
-                ),
-            _gitlab_username,
-            _alleged_gitlab_bot_username,
-            )
+            lowercase(strip(_provided_gitlab_bot_username))
         error(
             string(
-                "lowercase(strip(_gitlab_username)) != ",
-                "lowercase(strip(_alleged_gitlab_bot_username))",
+                "Provided GitLab username ",
+                "(\"$(_provided_gitlab_bot_username)\") ",
+                "does not match ",
+                "actual GitLab username ",
+                "(\"$(_gitlab_username)\").",
                 )
             )
+    else
+        @info(
+            string(
+                "Provided GitLab username matches ",
+                "actual GitLab username.",
+                ),
+            _provided_gitlab_bot_username,
+            _gitlab_username,
+            )
     end
-    @info("Successfully authenticated to GitLab")
+    @info("Successfully authenticated to GitLab :)")
 
     @info(
         string(

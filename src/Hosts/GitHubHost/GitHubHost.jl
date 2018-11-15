@@ -21,7 +21,7 @@ function new_github_session(
     _github_organization::String = strip(
         convert(String, github_organization)
         )
-    _alleged_github_bot_username::String = strip(
+    _provided_github_bot_username::String = strip(
         convert(String, github_bot_username,)
         )
     _github_bot_personal_access_token::String = strip(
@@ -39,32 +39,32 @@ function new_github_session(
     end
 
     @info("Attempting to authenticate to GitHub...")
-    auth::GitHub.Authorization =
-        GitHub.authenticate(_github_bot_personal_access_token)
-    _github_username::String = _get_github_username(auth)
-    @debug(
-        string("Provided username vs. actual username: "),
-        _alleged_github_bot_username,
-        _github_username,
+    auth::GitHub.Authorization = GitHub.authenticate(
+        _github_bot_personal_access_token
         )
+    _github_username::String = _get_github_username(auth)
     if lowercase(strip(_github_username)) !=
-            lowercase(strip(_alleged_github_bot_username))
-        @warn(
-            string(
-                "lowercase(strip(_github_username)) != ",
-                "lowercase(strip(_alleged_github_bot_username))",
-                ),
-            _github_username,
-            _alleged_github_bot_username,
-            )
+            lowercase(strip(_provided_github_bot_username))
         error(
             string(
-                "lowercase(strip(_github_username)) != ",
-                "lowercase(strip(_alleged_github_bot_username))",
+                "Provided GitHub username ",
+                "(\"$(_provided_github_bot_username)\") ",
+                "does not match ",
+                "actual GitHub username ",
+                "(\"$(_github_username)\").",
                 )
             )
+    else
+        @info(
+            string(
+                "Provided GitHub username matches ",
+                "actual GitHub username.",
+                ),
+            _provided_github_bot_username,
+            _github_username,
+            )
     end
-    @info("Successfully authenticated to GitHub")
+    @info("Successfully authenticated to GitHub :)")
 
     @info(
         string(
