@@ -22,6 +22,7 @@ const DO_NOT_TRY_URL_LIST = String[
     "https://github.com/bramtayl/TypedBools.jl.git",
     "https://github.com/bramtayl/ValuedTuples.jl.git",
     "https://github.com/bramtayl/ZippedArrays.jl.git",
+    "https://github.com/jakebolewski/LibGit2.jl.git",
     "https://github.com/dourouc05/CombinatorialBandits.jl.git",
     "https://github.com/miguelraz/OrthogonalPolynomials.jl.git",
     "https://github.com/rennis250/Arduino.jl.git",
