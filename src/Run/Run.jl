@@ -213,7 +213,14 @@ function run_mirror_updater!!(
                         ),
                     )
                 provider = git_hosting_providers[p]
-                @info("Deleting gist from git hosting provider $(p).")
+                @info(
+                    string(
+                        "Deleting gists from git hosting provider $(p) ",
+                        "that match the provided ",
+                        "gist description.",
+                        ),
+                    gist_description,
+                    )
                 try
                     provider(:delete_gists)(args)
                 catch exception
@@ -234,6 +241,14 @@ function run_mirror_updater!!(
                 )
             for p = 1:length(git_hosting_providers)
                 provider = git_hosting_providers[p]
+                @info(
+                    string(
+                        "Deleting gists from git hosting provider $(p) ",
+                        "that are older than the provided ",
+                        "age in minutes.",
+                        ),
+                    delete_gists_older_than_minutes,
+                    )
                 try
                     provider(:delete_gists_older_than_minutes)(args)
                 catch exception

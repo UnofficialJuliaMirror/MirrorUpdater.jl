@@ -1,6 +1,5 @@
 ##### Beginning of file
 
-import InteractiveUtils
 import MirrorUpdater
 import Test
 
