@@ -89,18 +89,22 @@ function new_github_session(
         gist_description::String = strip(params[:gist_description])
         gist_content::String = strip(params[:gist_content])
         @info("Attempting to create gist on GitHub...")
-        GitHub.create_gist(
-            ;
-            auth = auth,
-            params = Dict(
-                :public => true,
-                :description => gist_description,
-                :files => Dict(
-                    "list.txt" => Dict(
-                        "content" => gist_content,
+        create_gist_function = () ->
+            GitHub.create_gist(
+                ;
+                auth = auth,
+                params = Dict(
+                    :public => true,
+                    :description => gist_description,
+                    :files => Dict(
+                        "list.txt" => Dict("content" => gist_content,),
                         ),
                     ),
-                ),
+                )
+        Utils.retry_function_until_success(
+            create_gist_function;
+            max_attempts = 10,
+            seconds_to_wait_between_attempts = 180,
             )
         @info("Successfully created gist on GitHub.")
         return nothing
@@ -472,14 +476,20 @@ function new_github_session(
             )
         repo = GitHub.repo(repo_name_with_org; auth = auth,)
         @info("Attempting to update repo description on GitHub...")
-        result = GitHub.gh_patch_json(
-            GitHub.DEFAULT_API,
-            "/repos/$(GitHub.name(repo.owner))/$(GitHub.name(repo.name))";
-            auth = auth,
-            params = Dict(
-                "name" => GitHub.name(repo.name),
-                "description" => new_repo_description,
-                ),
+        github_update_description_function = () ->
+            GitHub.gh_patch_json(
+                GitHub.DEFAULT_API,
+                "/repos/$(GitHub.name(repo.owner))/$(GitHub.name(repo.name))";
+                auth = auth,
+                params = Dict(
+                    "name" => GitHub.name(repo.name),
+                    "description" => new_repo_description,
+                    ),
+                )
+        result = Utils.retry_function_until_success(
+            github_update_description_function;
+            max_attempts = 10,
+            seconds_to_wait_between_attempts = 180,
             )
         @info("Successfully updated repo description on GitHub")
         return nothing

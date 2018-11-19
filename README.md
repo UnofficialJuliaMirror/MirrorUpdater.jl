@@ -393,8 +393,14 @@ julia --project -e 'import Pkg; Pkg.build("MirrorUpdater");'
 
 ### Step 5
 
-Set the appropriate environment variables:
+Run the package tests:
+```bash
+julia --project -e 'import Pkg; Pkg.test("MirrorUpdater");'
+```
 
+### Step 6
+
+Set the appropriate environment variables:
 ```bash
 export GITHUB_BOT_PERSONAL_ACCESS_TOKEN="my-github-bot-personal-access-token"
 
@@ -403,10 +409,9 @@ export GITLAB_BOT_PERSONAL_ACCESS_TOKEN="my-gitlab-bot-personal-access-token"
 export BITBUCKET_BOT_APP_PASSWORD="my-bitbucket-bot-app-password"
 ```
 
-### Step 6
+### Step 7
 
 Run the updater:
-
 ```bash
 julia --project run-github-mirror-updater.jl
 ```
