@@ -65,39 +65,47 @@ While logged in as `MY_PERSONAL_GITHUB_USERNAME`, [create a free GitHub organiza
 
 ### Step 5
 
-Log out of the `MY_PERSONAL_GITHUB_USERNAME` account.
+While logged in as `MY_PERSONAL_GITHUB_USERNAME`, go to the `MY_GITHUB_ORG` organization security settings page (`https://github.com/organizations/MY_GITHUB_ORG/settings/security`).
+
+Next, make sure that the checkbox next to "Require two-factor authentication for everyone..." is CHECKED.
+
+Finally, click the "Save" button.
 
 ### Step 6
+
+Log out of the `MY_PERSONAL_GITHUB_USERNAME` account.
+
+### Step 7
 
 [Create a new GitHub "bot" account](https://help.github.com/articles/signing-up-for-a-new-github-account/) that you will use ONLY for maintaining the mirror. For the remainder of this README, `MY_GITHUB_BOT_USERNAME` refers to the username of this account.
 
 *For example, for me, `MY_GITHUB_BOT_USERNAME` is equal to `UnofficialJuliaMirrorBot`.*
 
-### Step 7
+### Step 8
 
 Log in to GitHub as `MY_GITHUB_BOT_USERNAME`.
 
-### Step 8
+### Step 9
 
 While logged in as `MY_GITHUB_BOT_USERNAME`, [enable two-factor authentication](https://help.github.com/articles/configuring-two-factor-authentication/) on the `MY_GITHUB_BOT_USERNAME` account.
 
 **Make sure to store your two-factor recovery codes in a secure location!**
 
-### Step 9
+### Step 10
 
 While logged in as `MY_GITHUB_BOT_USERNAME`, [create a personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) for the `MY_GITHUB_BOT_USERNAME` account and store it in a secure place (such as a password manager). For the remainder of this README, `my-github-bot-personal-access-token` refers to this personal access token.
 
 **The personal access token should be treated as securely as a password. Do not share it with anyone. Do not save it in any unsecure location. Do not save it in a file. Do not commit it in a Git repository.**
 
-### Step 10
+### Step 11
 
 Log out of the `MY_GITHUB_BOT_USERNAME` account.
 
-### Step 11
+### Step 12
 
 Log in to GitHub as `MY_PERSONAL_GITHUB_USERNAME`.
 
-### Step 12
+### Step 13
 
 While logged in as `MY_PERSONAL_GITHUB_USERNAME`, go to the `MY_GITHUB_ORG` organization members page (`https://github.com/orgs/UnofficialJuliaMirror/people`).
 
@@ -105,15 +113,15 @@ Then, add `MY_GITHUB_BOT_USERNAME` as a `member` of the `MY_GITHUB_ORG` organiza
 
 This will allow `MY_GITHUB_BOT_USERNAME` to create new repositories within the `MY_GITHUB_ORG` organization.
 
-### Step 13
+### Step 14
 
 While logged in as `MY_PERSONAL_GITHUB_USERNAME`, [fork the MirrorUpdater.jl repository](https://github.com/UnofficialJuliaMirror/MirrorUpdater.jl/fork) to the `MY_GITHUB_ORG` organization.
 
-### Step 14
+### Step 15
 
 Go to your fork of MirrorUpdater.jl: `https://github.com/MY_GITHUB_ORG/MirrorUpdater.jl`
 
-### Step 15
+### Step 16
 
 In your fork, update lines 1 and 2 of `config/github.jl` to look like:
 ```julia
@@ -123,17 +131,17 @@ const GITHUB_BOT_USERNAME = "MY_GITHUB_BOT_USERNAME"
 
 Leave the rest of `config/github.jl` unchanged. Please do not stored your personal access token in the file.
 
-### Step 16
+### Step 17
 
 In your fork, update line 1 of `config/enabled-providers.jl` to look like:
 ```julia
 const GITHUB_ENABLED = true
 ```
-### Step 17 (optional)
+### Step 18 (optional)
 
 If there are other registries of Julia packages that you would like to mirror, add them to the `config/registries.jl` file in your fork:
 
-### Step 18 (optional)
+### Step 19 (optional)
 
 Update the other configuration files in the `config/` folder of your fork as you see fit.
 
@@ -165,39 +173,49 @@ While logged in as `MY_PERSONAL_GITLAB_USERNAME`, [create a free GitLab group](h
 
 ### Step 5
 
-Log out of the `MY_PERSONAL_GITLAB_USERNAME` account.
+While logged in as `MY_PERSONAL_GITLAB_USERNAME`, go to the `MY_GITLAB_GROUP` group general settings page (`https://gitlab.com/groups/MY_GITLAB_GROUP/-/edit`).
+
+Next, scroll down to the "Permissions, LFS, 2FA" section. Click the "Expand" button next to "Permissions, LFS, 2FA" to expand the section.
+
+Then, make sure that the checkbox next to "Require all users in this group to setup Two-factor authentication" is CHECKED.
+
+Finally, click the "Save changes" button.
 
 ### Step 6
+
+Log out of the `MY_PERSONAL_GITLAB_USERNAME` account.
+
+### Step 7
 
 [Create a new GitLab "bot" account](https://gitlab.com/users/sign_in#register-pane) that you will use ONLY for maintaining the mirror. For the remainder of this README, `MY_GITLAB_BOT_USERNAME` refers to the username of this account.
 
 *For example, for me, `MY_GITLAB_BOT_USERNAME` is equal to `UnofficialJuliaMirrorBot`.*
 
-### Step 7
+### Step 8
 
 Log in to GitLab as `MY_GITLAB_BOT_USERNAME`.
 
-### Step 8
+### Step 9
 
 While logged in as `MY_GITLAB_BOT_USERNAME`, [enable two-factor authentication](https://docs.gitlab.com/ce/user/profile/account/two_factor_authentication.html#enabling-2fa) on the `MY_GITLAB_BOT_USERNAME` account.
 
 **Make sure to store your two-factor recovery codes in a secure location!**
 
-### Step 9
+### Step 10
 
 While logged in as `MY_GITLAB_BOT_USERNAME`, [create a personal access token](https://docs.gitlab.com/ce/user/profile/personal_access_tokens.html#creating-a-personal-access-token) for the `MY_GITLAB_BOT_USERNAME` account and store it in a secure place (such as a password manager). For the remainder of this README, `my-gitlab-bot-personal-access-token` refers to this personal access token.
 
 **The personal access token should be treated as securely as a password. Do not share it with anyone. Do not save it in any unsecure location. Do not save it in a file. Do not commit it in a Git repository.**
 
-### Step 10
+### Step 11
 
 Log out of the `MY_GITLAB_BOT_USERNAME` account.
 
-### Step 11
+### Step 12
 
 Log in to GitLab as `MY_PERSONAL_GITLAB_USERNAME`.
 
-### Step 12
+### Step 13
 
 While logged in as `MY_PERSONAL_GITLAB_USERNAME`, go to the `MY_GITLAB_GROUP` group members page (`https://gitlab.com/groups/MY_GITLAB_GROUP/-/group_members`).
 
@@ -205,11 +223,11 @@ Then, add `MY_GITLAB_BOT_USERNAME` as a `member` of the `MY_GITLAB_GROUP` group.
 
 This will allow `MY_GITLAB_BOT_USERNAME` to create new repositories within the `MY_GITLAB_GROUP` group.
 
-### Step 13
+### Step 14
 
 Go to your **GitHub** fork of MirrorUpdater.jl: `https://github.com/MY_GITHUB_ORG/MirrorUpdater.jl`
 
-### Step 14
+### Step 15
 
 In your GitHub fork of MirrorUpdater.jl, update lines 1 and 2 of `config/gitlab.jl` to look like:
 ```julia
@@ -219,7 +237,7 @@ const GITLAB_BOT_USERNAME = "MY_GITLAB_BOT_USERNAME"
 
 Leave the rest of `config/gitlab.jl` unchanged. Please do not stored your personal access token in the file.
 
-### Step 15
+### Step 16
 
 In your GitHub fork of MirrorUpdater.jl, update line 2 of `config/enabled-providers.jl` to look like:
 ```julia
