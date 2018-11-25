@@ -21,14 +21,19 @@
     </tbody>
 </table>
 
-MirrorUpdater is a Julia module that provides functionality for automatically
-mirroring Julia package repositories. It is used to maintain the Julia package
-mirrors hosted at:
-- GitHub: [https://github.com/UnofficialJuliaMirror](https://github.com/UnofficialJuliaMirror)
-- GitLab: [https://gitlab.com/UnofficialJuliaMirror](https://gitlab.com/UnofficialJuliaMirror)
-- Bitbucket: [https://bitbucket.org/UnofficialJuliaMirror](https://bitbucket.org/UnofficialJuliaMirror)
+MirrorUpdater is a Julia application that provides functionality for
+automatically mirroring Julia package repositories.
 
-You can also use it to host your own mirrors.
+MirrorUpdater (and its sibling project, [RepositorySnapshots](https://github.com/UnofficialJuliaMirrorSnapshots/RepositorySnapshots.jl)) are used to maintain the
+Julia package mirrors and snapshots hosted at:
+
+| | Mirrors | Snapshots |
+| ------ | ------- | --------- |
+| GitHub | [https://github.com/UnofficialJuliaMirror](https://github.com/UnofficialJuliaMirror) | [https://github.com/UnofficialJuliaMirrorSnapshots](https://github.com/UnofficialJuliaMirrorSnapshots) |
+| GitLab | [https://gitlab.com/UnofficialJuliaMirror](https://gitlab.com/UnofficialJuliaMirror) | [https://gitlab.com/UnofficialJuliaMirrorSnapshots](https://gitlab.com/UnofficialJuliaMirrorSnapshots) |
+| Bitbucket | [https://bitbucket.org/UnofficialJuliaMirror](https://bitbucket.org/UnofficialJuliaMirror) | [https://bitbucket.org/UnofficialJuliaMirrorSnapshots](https://bitbucket.org/UnofficialJuliaMirrorSnapshots) |
+
+You can host your own mirrors for free by following these instructions:
 
 | Table of Contents |
 | ----------------- |
