@@ -35,11 +35,16 @@ function new_gitlab_session(
         headers::Dict{String, String} = Dict(
             "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
             )
-        r::HTTP.Messages.Response = HTTP.request(
+        http_request = () -> HTTP.request(
             method,
             url,
             headers,
             )
+        r::HTTP.Messages.Response = Utils.retry_function_until_success(
+            http_request;
+            max_attempts = 10,
+            seconds_to_wait_between_attempts = 180,
+        )
         r_body::String = String(r.body)
         parsed_r_body::Dict = JSON.parse(r_body)
         username::String = parsed_r_body["name"]
@@ -53,11 +58,16 @@ function new_gitlab_session(
         headers::Dict{String, String} = Dict(
             "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
             )
-        r = HTTP.request(
+        http_request = () -> HTTP.request(
             method,
             url,
             headers,
             )
+        r = Utils.retry_function_until_success(
+            http_request;
+            max_attempts = 10,
+            seconds_to_wait_between_attempts = 180,
+        )
         r_body = String(r.body)
         parsed_body = JSON.parse(r_body)
         return parsed_body
@@ -145,13 +155,6 @@ function new_gitlab_session(
         catch exception
             @warn("ignoring exception: ", exception,)
         end
-        # r::HTTP.Messages.Response = HTTP.request(
-        #     method,
-        #     url,
-        #     headers,
-        #     body,
-        #     )
-        # @info("Successfully created snippet on GitLab.")
     end
 
     function _get_all_gists()::Vector{Dict}
@@ -609,11 +612,16 @@ function new_gitlab_session(
         headers_1 = Dict(
             "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
             )
-        r_1 = HTTP.request(
+        http_request_1 = () -> HTTP.request(
             method_1,
             url_1,
             headers_1,
             )
+        r_1 = Utils.retry_function_until_success(
+            http_request_1;
+            max_attempts = 10,
+            seconds_to_wait_between_attempts = 180,
+        )
         r_body_1 = String(r_1.body)
         parsed_body_1 = JSON.parse(r_body_1)
         repo_id = parsed_body_1["id"]
@@ -632,11 +640,16 @@ function new_gitlab_session(
             )
         body_2 = JSON.json(params_2)
         @info("Attempting to update repo description on GitLab...")
-        r_2 = HTTP.request(
+        http_request_2 = () -> HTTP.request(
             method_2,
             url_2,
             headers_2,
             body_2,
+            )
+        r_2 = Utils.retry_function_until_success(
+            http_request_2;
+            max_attempts = 10,
+            seconds_to_wait_between_attempts = 180,
             )
         @info("Successfully updated repo description on GitLab")
         return nothing
