@@ -24,7 +24,7 @@
 MirrorUpdater is a Julia application that provides functionality for
 automatically mirroring Julia package repositories.
 
-MirrorUpdater (and its sibling project, [RepositorySnapshots](https://github.com/UnofficialJuliaMirrorSnapshots/RepositorySnapshots.jl)) are used to maintain the
+MirrorUpdater (and its sibling project, [BranchSnapshots](https://github.com/UnofficialJuliaMirrorSnapshots/BranchSnapshots.jl)) are used to maintain the
 Julia package mirrors and snapshots hosted at:
 
 | | Mirrors | Snapshots |
