@@ -269,8 +269,8 @@ function _remove_problematic_refs_before_github!!(
         split(strip(original_packed_refs_content), "\n")
         )
     function _line_is_ok_to_keep(x::String)::Bool
-        result::Bool = (!(occursin(" refs/pull/", x))) &&
-            (!(occursin(" cache/pull/", x)))
+        result::Bool = (!(occursin("refs/pull/", x))) &&
+            (!(occursin("cache/pull/", x)))
         return result
     end
     function _determine_new_gh_pages_branch_name(
