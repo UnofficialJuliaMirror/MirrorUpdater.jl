@@ -271,6 +271,7 @@ function command_ran_successfully!!(
         max_seconds_per_attempt::Real = 540,
         seconds_to_wait_between_attempts::Real = 30,
         error_on_failure::Bool = true,
+        last_resort_run::Bool = true,
         )::Bool
     success_bool::Bool = false
 
@@ -329,6 +330,9 @@ function command_ran_successfully!!(
                 end
             end
         end
+    end
+    if !success_bool && last_resort_run
+        success_bool = success(cmds, args...)
     end
     if success_bool
         @debug(string("Command ran successfully."),)

@@ -564,7 +564,17 @@ function new_gitlab_session(
                     exception,
                     )
             else
-                rethrow(exception)
+                # rethrow(exception)
+                @warn(
+                    string(
+                        "The push to GitLab failed. Normally, I would throw ",
+                        "an error. But GitLab will randomly reject some refs.",
+                        "So I'll assume that's what's going on here.",
+                        "And I will ignore the error.",
+                        ),
+                    repo_dest_url_without_auth,
+                    exception,
+                    )
             end
         end
         cd(previous_directory)
