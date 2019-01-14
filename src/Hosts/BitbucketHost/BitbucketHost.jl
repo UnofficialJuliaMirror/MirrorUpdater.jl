@@ -385,7 +385,7 @@ function new_bitbucket_session(
             ENV["PATH"],
             )
         try
-            command_ran_successfully!!(
+            Utils.command_ran_successfully!!(
                 mirrorpush_cmd_withauth;
                 error_on_failure = true,
                 last_resort_run = true,
