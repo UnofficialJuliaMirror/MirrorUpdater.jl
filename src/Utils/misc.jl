@@ -199,42 +199,42 @@ function _DummyOutputWrapperStruct(
         dummy_output::S = "This is a dummy line of output",
         io::O = Base.stdout,
         )::_DummyOutputWrapperStruct{I, F, S, O} where
-        	I <: Integer where
-        	F <: Function where
-        	S <: AbstractString where
-        	O <: IO
+            I <: Integer where
+            F <: Function where
+            S <: AbstractString where
+            O <: IO
     current_time_seconds::I = floor(I, time())
     initial_time_seconds::I = current_time_seconds + initial_offset_seconds
     wrapper_struct::_DummyOutputWrapperStruct{I, F, S} =
-    	_DummyOutputWrapperStruct(
-    		initial_time_seconds,
-    		f,
-    		interval_seconds,
-    		dummy_output,
-    		io,
-    		)
+        _DummyOutputWrapperStruct(
+            initial_time_seconds,
+            f,
+            interval_seconds,
+            dummy_output,
+            io,
+            )
     return wrapper_struct
 end
 
 function (x::_DummyOutputWrapperStruct{I, F, S, O})() where
-		I <: Integer where
-		F <: Function where
-		S <: AbstractString where
-		O <: IO
-	current_time_seconds::I = floor(I, time())
-	previous_time_seconds::I = x.previous_time_seconds
-	f::F = x.f
-	interval_seconds::I = x.interval_seconds
-	dummy_output::S = x.dummy_output
-	io::O = x.io
-	elapsed_seconds::Int = current_time_seconds - previous_time_seconds
-	print_dummy_output::Bool = elapsed_seconds > interval_seconds
-	if print_dummy_output
-	    println(io, dummy_output)
-	    x.previous_time_seconds = current_time_seconds
-	end
-	f_result = f()
-	return f_result
+        I <: Integer where
+        F <: Function where
+        S <: AbstractString where
+        O <: IO
+    current_time_seconds::I = floor(I, time())
+    previous_time_seconds::I = x.previous_time_seconds
+    f::F = x.f
+    interval_seconds::I = x.interval_seconds
+    dummy_output::S = x.dummy_output
+    io::O = x.io
+    elapsed_seconds::Int = current_time_seconds - previous_time_seconds
+    print_dummy_output::Bool = elapsed_seconds > interval_seconds
+    if print_dummy_output
+        println(io, dummy_output)
+        x.previous_time_seconds = current_time_seconds
+    end
+    f_result = f()
+    return f_result
 end
 
 function dummy_output_wrapper(
@@ -245,28 +245,27 @@ function dummy_output_wrapper(
         dummy_output::S = "This is a dummy line of output",
         io::O = Base.stdout,
         ) where
-			I <: Integer where
-			F <: Function where
-			S <: AbstractString where
-			O <: IO
+            I <: Integer where
+            F <: Function where
+            S <: AbstractString where
+            O <: IO
     wrapper_struct::_DummyOutputWrapperStruct{I, F, S, O} =
-    	_DummyOutputWrapperStruct(
-    		;
-    		f = f,
-    		interval_seconds = interval_seconds,
-    		initial_offset_seconds = initial_offset_seconds,
-    		dummy_output = dummy_output,
-    		)
+        _DummyOutputWrapperStruct(
+            ;
+            f = f,
+            interval_seconds = interval_seconds,
+            initial_offset_seconds = initial_offset_seconds,
+            dummy_output = dummy_output,
+            )
     function my_wrapper_function()
-    	result = wrapper_struct()
-    	return result
+        result = wrapper_struct()
+        return result
     end
     return my_wrapper_function
 end
 
 function command_ran_successfully!!(
-        cmds::Base.AbstractCmd,
-        args...;
+        cmd::Base.AbstractCmd;
         max_attempts::Integer = 10,
         max_seconds_per_attempt::Real = 540,
         seconds_to_wait_between_attempts::Real = 30,
@@ -295,7 +294,7 @@ function command_ran_successfully!!(
                     pollint = float(1.0),
                     )
             end
-            p = run(cmds, args...; wait = false,)
+            p = run(cmd; wait = false,)
             my_process_exited = dummy_output_wrapper(
                 ;
                 f = () -> process_exited(p),
@@ -332,7 +331,9 @@ function command_ran_successfully!!(
         end
     end
     if !success_bool && last_resort_run
-        success_bool = success(cmds, args...)
+        @debug(string("Attempting the last resort run..."))
+        run(cmd)
+        success_bool = true
     end
     if success_bool
         @debug(string("Command ran successfully."),)

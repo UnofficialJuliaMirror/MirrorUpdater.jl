@@ -1,7 +1,5 @@
 ##### Beginning of file
 
-import Test # stdlib
-
 Test.@test( isdir(MirrorUpdater.package_directory()) )
 
 Test.@test( isdir(MirrorUpdater.package_directory("ci")) )

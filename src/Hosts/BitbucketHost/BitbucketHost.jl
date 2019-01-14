@@ -385,7 +385,11 @@ function new_bitbucket_session(
             ENV["PATH"],
             )
         try
-            run(mirrorpush_cmd_withauth)
+            command_ran_successfully!!(
+                mirrorpush_cmd_withauth;
+                error_on_failure = true,
+                last_resort_run = true,
+                )
             @info(
                 string("Successfully pushed repo to Bitbucket."),
                 mirrorpush_cmd_withredactedauth,

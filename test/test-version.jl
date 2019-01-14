@@ -1,7 +1,5 @@
 ##### Beginning of file
 
-import Test # stdlib
-
 Test.@test( Base.VERSION >= VersionNumber("1.0") )
 
 Test.@test( MirrorUpdater.version() > VersionNumber(0) )
