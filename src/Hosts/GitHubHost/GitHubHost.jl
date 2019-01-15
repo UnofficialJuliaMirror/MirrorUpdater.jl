@@ -415,7 +415,11 @@ function new_github_session(
             ENV["PATH"],
             )
         try
-            run(mirrorpush_cmd_withauth)
+            Utils.command_ran_successfully!!(
+                mirrorpush_cmd_withauth;
+                error_on_failure = true,
+                last_resort_run = true,
+                )
             @info(
                 string("Successfully pushed repo to GitHub."),
                 mirrorpush_cmd_withredactedauth,
