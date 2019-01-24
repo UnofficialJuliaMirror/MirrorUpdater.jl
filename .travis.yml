@@ -48,8 +48,14 @@ jobs:
       name: "[I,J)"
       script: "./ci/travis/script.sh \"[I,J)\""
     -
-      name: "[J,K)"
-      script: "./ci/travis/script.sh \"[J,K)\""
+      name: "[J,Jj)"
+      script: "./ci/travis/script.sh \"[J,Jj)\""
+    -
+      name: "[Jj,Jt)"
+      script: "./ci/travis/script.sh \"[Jj,Jt)\""
+    -
+      name: "[Jt,K)"
+      script: "./ci/travis/script.sh \"[Jt,K)\""
     -
       name: "[K,L)"
       script: "./ci/travis/script.sh \"[K,L)\""
