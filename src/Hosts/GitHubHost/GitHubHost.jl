@@ -478,7 +478,15 @@ function new_github_session(
             repo = repo_name,
             org = _github_organization,
             )
-        repo = GitHub.repo(repo_name_with_org; auth = auth,)
+        github_repo_function = () -> GitHub.repo(
+            repo_name_with_org;
+            auth = auth,
+            )
+        repo = Utils.retry_function_until_success(
+            github_repo_function;
+            max_attempts = 10,
+            seconds_to_wait_between_attempts = 180,
+            )
         @info("Attempting to update repo description on GitHub...")
         github_update_description_function = () ->
             GitHub.gh_patch_json(
