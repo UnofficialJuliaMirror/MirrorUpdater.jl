@@ -121,7 +121,6 @@ jobs:
       script: "./ci/travis/script.sh \"clean-up\""
       stage: stage-3
 julia:
-  - "1.0"
   - "1.1"
 language: julia
 matrix:
