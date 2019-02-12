@@ -30,8 +30,11 @@ jobs:
       name: "[C,D)"
       script: "./ci/travis/script.sh \"[C,D)\""
     -
-      name: "[D,E)"
-      script: "./ci/travis/script.sh \"[D,E)\""
+      name: "[D,Dn)"
+      script: "./ci/travis/script.sh \"[D,Dn)\""
+    -
+      name: "[Dn,E)"
+      script: "./ci/travis/script.sh \"[Dn,E)\""
     -
       name: "[E,F)"
       script: "./ci/travis/script.sh \"[E,F)\""
@@ -48,11 +51,11 @@ jobs:
       name: "[I,J)"
       script: "./ci/travis/script.sh \"[I,J)\""
     -
-      name: "[J,Jj)"
-      script: "./ci/travis/script.sh \"[J,Jj)\""
+      name: "[J,Ji)"
+      script: "./ci/travis/script.sh \"[J,Ji)\""
     -
-      name: "[Jj,Jt)"
-      script: "./ci/travis/script.sh \"[Jj,Jt)\""
+      name: "[Ji,Jt)"
+      script: "./ci/travis/script.sh \"[Ji,Jt)\""
     -
       name: "[Jt,K)"
       script: "./ci/travis/script.sh \"[Jt,K)\""
@@ -63,8 +66,11 @@ jobs:
       name: "[L,M)"
       script: "./ci/travis/script.sh \"[L,M)\""
     -
-      name: "[M,N)"
-      script: "./ci/travis/script.sh \"[M,N)\""
+      name: "[M,Mn)"
+      script: "./ci/travis/script.sh \"[M,Mn)\""
+    -
+      name: "[Mn,N)"
+      script: "./ci/travis/script.sh \"[Mn,N)\""
     -
       name: "[N,O)"
       script: "./ci/travis/script.sh \"[N,O)\""
@@ -72,8 +78,11 @@ jobs:
       name: "[O,P)"
       script: "./ci/travis/script.sh \"[O,P)\""
     -
-      name: "[P,Q)"
-      script: "./ci/travis/script.sh \"[P,Q)\""
+      name: "[P,Pn)"
+      script: "./ci/travis/script.sh \"[P,Pn)\""
+    -
+      name: "[Pn,Q)"
+      script: "./ci/travis/script.sh \"[Pn,Q)\""
     -
       name: "[Q,R)"
       script: "./ci/travis/script.sh \"[Q,R)\""
@@ -81,14 +90,14 @@ jobs:
       name: "[R,S)"
       script: "./ci/travis/script.sh \"[R,S)\""
     -
-      name: "[S,Sj)"
-      script: "./ci/travis/script.sh \"[S,Sj)\""
+      name: "[S,Si)"
+      script: "./ci/travis/script.sh \"[S,Si)\""
     -
-      name: "[Sj,St)"
-      script: "./ci/travis/script.sh \"[Sj,St)\""
+      name: "[Si,Sq)"
+      script: "./ci/travis/script.sh \"[Si,Sq)\""
     -
-      name: "[St,T)"
-      script: "./ci/travis/script.sh \"[St,T)\""
+      name: "[Sq,T)"
+      script: "./ci/travis/script.sh \"[Sq,T)\""
     -
       name: "[T,U)"
       script: "./ci/travis/script.sh \"[T,U)\""
@@ -111,11 +120,11 @@ jobs:
       name: "[Z,a)"
       script: "./ci/travis/script.sh \"[Z,a)\""
     -
-      name: "[a,l)"
-      script: "./ci/travis/script.sh \"[a,l)\""
+      name: "[a,n)"
+      script: "./ci/travis/script.sh \"[a,n)\""
     -
-      name: "[l,)"
-      script: "./ci/travis/script.sh \"[l,)\""
+      name: "[n,)"
+      script: "./ci/travis/script.sh \"[n,)\""
     -
       name: clean-up
       script: "./ci/travis/script.sh \"clean-up\""
