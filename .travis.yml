@@ -96,8 +96,11 @@ jobs:
       name: "[Si,Sq)"
       script: "./ci/travis/script.sh \"[Si,Sq)\""
     -
-      name: "[Sq,T)"
-      script: "./ci/travis/script.sh \"[Sq,T)\""
+      name: "[Sq,Sx)"
+      script: "./ci/travis/script.sh \"[Sq,Sx)\""
+    -
+      name: "[Sx,T)"
+      script: "./ci/travis/script.sh \"[Sx,T)\""
     -
       name: "[T,U)"
       script: "./ci/travis/script.sh \"[T,U)\""
