@@ -511,6 +511,8 @@ function _push_mirrors!!(
             repo_mirror_clone_was_success =
                 Utils.command_ran_successfully!!(
                 cmd_git_repo_clone_mirror;
+                max_attempts = 5,
+                max_seconds_per_attempt = 1800,
                 )
             if repo_mirror_clone_was_success
                 @info("Command ran successfully",)
