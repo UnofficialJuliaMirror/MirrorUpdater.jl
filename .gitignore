@@ -13,8 +13,6 @@ deps/deps.jl
 
 *.log
 
-Manifest.toml
-
 compiled/
 
 ##### End of file
