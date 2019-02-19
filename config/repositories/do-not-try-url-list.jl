@@ -12,6 +12,7 @@ const DO_NOT_TRY_URL_LIST = String[
     "https://github.com/bramtayl/Chunks.jl.git",
     "https://github.com/bramtayl/DotOverloading.jl.git",
     "https://github.com/bramtayl/KeyedTables.jl.git",
+    "https://github.com/bramtayl/Keys.jl.git",
     "https://github.com/bramtayl/LazyCall.jl.git",
     "https://github.com/bramtayl/LazyContext.jl.git",
     "https://github.com/bramtayl/LazyQuery.jl.git",
