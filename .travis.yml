@@ -123,11 +123,17 @@ jobs:
       name: "[Z,a)"
       script: "./ci/travis/script.sh \"[Z,a)\""
     -
-      name: "[a,n)"
-      script: "./ci/travis/script.sh \"[a,n)\""
+      name: "[a,g)"
+      script: "./ci/travis/script.sh \"[a,g)\""
     -
-      name: "[n,)"
-      script: "./ci/travis/script.sh \"[n,)\""
+      name: "[g,n)"
+      script: "./ci/travis/script.sh \"[g,n)\""
+    -
+      name: "[n,t)"
+      script: "./ci/travis/script.sh \"[n,t)\""
+    -
+      name: "[t,)"
+      script: "./ci/travis/script.sh \"[t,)\""
     -
       name: clean-up
       script: "./ci/travis/script.sh \"clean-up\""
@@ -143,4 +149,3 @@ notifications:
     on_success: never
 os:
   - linux
-
