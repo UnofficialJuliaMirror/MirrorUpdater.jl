@@ -1,6 +1,10 @@
 const MISCELLANEOUS_JULIA_RELATED_REPOS = MirrorUpdater.Types.SrcDestPair[
     MirrorUpdater.Types.SrcDestPair(
         ;
+        source_url = "https://github.com/bors-ng/bors-ng",
+        destination_repo_name = "bors-ng-bors-ng",),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
         source_url = "https://github.com/libuv/libuv",
         destination_repo_name = "libuv-libuv",),
     MirrorUpdater.Types.SrcDestPair(
