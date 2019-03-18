@@ -15,4 +15,6 @@ deps/deps.jl
 
 compiled/
 
+Manifest.toml
+
 ##### End of file
