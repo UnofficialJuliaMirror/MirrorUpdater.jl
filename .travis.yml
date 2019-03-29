@@ -1,3 +1,12 @@
+branches:
+    only:
+    - develop
+    - master
+    - staging
+    - trying
+    - /^release\/.*$/ # release branches
+    - /^v[0-9]+\.[0-9]+\.[0-9]+$/ # version tags
+
 env:
   global:
     - JULIA_DEBUG="all"
@@ -27,8 +36,11 @@ jobs:
       name: "[B,C)"
       script: "./ci/travis/script.sh \"[B,C)\""
     -
-      name: "[C,D)"
-      script: "./ci/travis/script.sh \"[C,D)\""
+      name: "[C,Cm)"
+      script: "./ci/travis/script.sh \"[C,Cm)\""
+    -
+      name: "[Cm,D)"
+      script: "./ci/travis/script.sh \"[Cm,D)\""
     -
       name: "[D,Dn)"
       script: "./ci/travis/script.sh \"[D,Dn)\""
