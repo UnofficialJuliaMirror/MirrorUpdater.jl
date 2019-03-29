@@ -36,8 +36,11 @@ jobs:
       name: "[B,C)"
       script: "./ci/travis/script.sh \"[B,C)\""
     -
-      name: "[C,D)"
-      script: "./ci/travis/script.sh \"[C,D)\""
+      name: "[C,Cm)"
+      script: "./ci/travis/script.sh \"[C,Cm)\""
+    -
+      name: "[Cm,D)"
+      script: "./ci/travis/script.sh \"[Cm,D)\""
     -
       name: "[D,Dn)"
       script: "./ci/travis/script.sh \"[D,Dn)\""
