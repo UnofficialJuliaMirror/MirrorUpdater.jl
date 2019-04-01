@@ -23,10 +23,30 @@ else
         then
             export DRY_RUN=""
         else
-            export DRY_RUN=""
+            export DRY_RUN="--dry-run"
         fi
     else
-        export DRY_RUN="--dry-run"
+        if [[ "$TRAVIS_BRANCH" == "staging" ]]
+        then
+            if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]
+            then
+                export DRY_RUN=""
+            else
+                export DRY_RUN="--dry-run"
+            fi
+        else
+            if [[ "$TRAVIS_BRANCH" == "trying" ]]
+            then
+                if [[ "$TRAVIS_PULL_REQUEST" == "false" ]]
+                then
+                    export DRY_RUN="--dry-run"
+                else
+                    export DRY_RUN="--dry-run"
+                fi
+            else
+                export DRY_RUN="--dry-run"
+            fi
+        fi
     fi
 fi
 
