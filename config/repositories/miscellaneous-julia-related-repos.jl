@@ -53,4 +53,14 @@ const MISCELLANEOUS_JULIA_RELATED_REPOS = MirrorUpdater.Types.SrcDestPair[
         source_url = "https://github.com/staticfloat/julia-docker",
         destination_repo_name = "staticfloat-julia-docker",
         ),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
+        source_url = "https://github.com/tpapp/texlive-julia-minimal-docker",
+        destination_repo_name = "tpapp-texlive-julia-minimal-docker",
+        ),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
+        source_url = "https://github.com/wildart/TOML.jl",
+        destination_repo_name = "wildart-TOML.jl-191fdcea-f9f2-43e0-b922-d33f71e2abc3",
+        ),
     ]
