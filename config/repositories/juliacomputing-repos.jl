@@ -15,4 +15,10 @@ const JULIACOMPUTING_REPOS = MirrorUpdater.Types.SrcDestPair[
         destination_repo_name =
             "NewPkgEval.jl-9f2e2246-6dce-11e8-3d98-4b291446da6e",
         ),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
+        source_url = "https://github.com/JuliaComputing/Registrator.jl",
+        destination_repo_name =
+            "Registrator.jl-4418983a-e44d-11e8-3aec-9789530b3b3e",
+        ),
     ]
