@@ -271,6 +271,7 @@ function command_ran_successfully!!(
         seconds_to_wait_between_attempts::Real = 30,
         error_on_failure::Bool = true,
         last_resort_run::Bool = true,
+        before::Function = () -> (),
         )::Bool
     success_bool::Bool = false
 
@@ -294,6 +295,7 @@ function command_ran_successfully!!(
                     pollint = float(1.0),
                     )
             end
+            before()
             p = run(cmd; wait = false,)
             my_process_exited = dummy_output_wrapper(
                 ;
