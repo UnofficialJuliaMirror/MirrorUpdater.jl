@@ -381,9 +381,24 @@ function _push_mirrors!!(
                     pwd(),
                     ENV["PATH"],
                     )
+                before = () -> rm(
+                    joinpath(
+                        temp_dir_repo_git_clone_mirror,
+                        "GITCLONEREPOREGULAR",
+                        );
+                    force = true,
+                    recursive = true,
+                    )
                 repo_regular_clone_was_success =
                     Utils.command_ran_successfully!!(
-                    cmd_git_clone_repo_regular;
+                        cmd_git_clone_repo_regular;
+                        before = before,
+                        )
+                mkpath(
+                    joinpath(
+                        temp_dir_repo_git_clone_mirror,
+                        "GITCLONEREPOREGULAR",
+                        )
                     )
                 if repo_regular_clone_was_success
                     @info("Command ran successfully",)
@@ -508,11 +523,26 @@ function _push_mirrors!!(
                 pwd(),
                 ENV["PATH"],
                 )
+            before = () -> rm(
+                joinpath(
+                    temp_dir_repo_git_clone_mirror,
+                    "GITCLONEREPOMIRROR",
+                    );
+                force = true,
+                recursive = true,
+                )
             repo_mirror_clone_was_success =
                 Utils.command_ran_successfully!!(
-                cmd_git_repo_clone_mirror;
-                max_attempts = 5,
-                max_seconds_per_attempt = 1800,
+                    cmd_git_repo_clone_mirror;
+                    max_attempts = 5,
+                    max_seconds_per_attempt = 1800,
+                    before = before,
+                    )
+            mkpath(
+                joinpath(
+                    temp_dir_repo_git_clone_mirror,
+                    "GITCLONEREPOMIRROR",
+                    )
                 )
             if repo_mirror_clone_was_success
                 @info("Command ran successfully",)
