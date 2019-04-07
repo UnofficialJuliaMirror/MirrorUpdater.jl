@@ -1,4 +1,4 @@
-# MirrorUpdater - Provides functionality for automatically mirroring Julia package repositories
+# MirrorUpdater.jl - Provides functionality for automatically mirroring Julia package repositories
 
 <table>
     <tbody>
