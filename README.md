@@ -21,10 +21,10 @@
     </tbody>
 </table>
 
-MirrorUpdater is a Julia application that provides functionality for
+MirrorUpdater.jl is a Julia application that provides functionality for
 automatically mirroring Julia package repositories.
 
-MirrorUpdater (and its sibling project, [BranchSnapshots](https://github.com/UnofficialJuliaMirrorSnapshots/BranchSnapshots.jl)) are used to maintain the
+MirrorUpdater.jl (and its sibling project, [Snapshots.jl](https://github.com/UnofficialJuliaMirrorSnapshots/Snapshots.jl)) are used to maintain the
 Julia package mirrors and snapshots hosted at:
 
 | | Mirrors | Snapshots |
