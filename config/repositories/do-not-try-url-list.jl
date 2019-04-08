@@ -9,6 +9,7 @@ const DO_NOT_TRY_URL_LIST = String[
     "https://github.com/JuliaMPC/MichiganAutonomousVehicles.jl.git",
     "https://github.com/KTH-AC/ControlCore.jl.git",
     "https://github.com/OpenGene/HTSLIB.jl.git",
+    "https://github.com/agbondy/DriftDiffusion.jl.git",
     "https://github.com/bramtayl/ChainRecursive.jl.git",
     "https://github.com/bramtayl/Chunks.jl.git",
     "https://github.com/bramtayl/DotOverloading.jl.git",
