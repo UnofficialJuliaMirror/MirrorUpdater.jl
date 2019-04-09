@@ -16,7 +16,7 @@
         </tr>
         <tr>
             <td>License</td>
-            <td><a href="https://github.com/UnofficialJuliaMirror/MirrorUpdater.jl/blob/master/LICENSE"><img title="MIT License" alt="MIT License" src="https://img.shields.io/github/license/mashape/apistatus.svg"></a></td>
+            <td><a href="LICENSE"><img title="MIT License" alt="MIT License" src="https://img.shields.io/github/license/mashape/apistatus.svg"></a></td>
         </tr>
     </tbody>
 </table>
