@@ -1,4 +1,4 @@
-# MirrorUpdater - Provides functionality for automatically mirroring Julia package repositories
+# MirrorUpdater.jl - Provides functionality for automatically mirroring Julia package repositories
 
 <table>
     <tbody>
@@ -16,15 +16,15 @@
         </tr>
         <tr>
             <td>License</td>
-            <td><a href="https://github.com/UnofficialJuliaMirror/MirrorUpdater.jl/blob/master/LICENSE"><img title="MIT License" alt="MIT License" src="https://img.shields.io/github/license/mashape/apistatus.svg"></a></td>
+            <td><a href="LICENSE"><img title="MIT License" alt="MIT License" src="https://img.shields.io/github/license/mashape/apistatus.svg"></a></td>
         </tr>
     </tbody>
 </table>
 
-MirrorUpdater is a Julia application that provides functionality for
+MirrorUpdater.jl is a Julia application that provides functionality for
 automatically mirroring Julia package repositories.
 
-MirrorUpdater (and its sibling project, [BranchSnapshots](https://github.com/UnofficialJuliaMirrorSnapshots/BranchSnapshots.jl)) are used to maintain the
+MirrorUpdater.jl (and its sibling project, [Snapshots.jl](https://github.com/UnofficialJuliaMirrorSnapshots/Snapshots.jl)) are used to maintain the
 Julia package mirrors and snapshots hosted at:
 
 | | Mirrors | Snapshots |
