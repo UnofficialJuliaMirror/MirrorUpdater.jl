@@ -99,7 +99,7 @@ function _make_list(
                     )
                 if lowercase(strip(registry_uuid)) !=
                         lowercase(strip(registry_toml_file_uuid))
-                    error(
+                    delayederror(
                         string(
                             "The UUID ($(registry_toml_file_uuid)) ",
                             "I found in the Registry.toml file does not ",
@@ -152,7 +152,7 @@ function _make_list(
                         ENV["PATH"],
                         )
                 else
-                    error(
+                    delayederror(
                         string(
                             "Encountered error when running command: ",
                             cmd_git_clone_registry_regular,
@@ -495,7 +495,7 @@ function _push_mirrors!!(
                             ENV["PATH"],
                             )
                     else
-                        error(
+                        delayederror(
                             string(
                                 "Encountered error when running command: ",
                                 cmd_git_clone_repo_regular,
@@ -691,7 +691,7 @@ function _push_mirrors!!(
                                     )
                                 provider(:update_repo_description)(args4)
                             else
-                                error(
+                                delayederror(
                                     string(
                                         "Push to provider $(p) ",
                                         "was not a success.",
@@ -718,7 +718,7 @@ function _push_mirrors!!(
                         ENV["PATH"],
                         )
                 else
-                    error(
+                    delayederror(
                         string(
                             "Encountered error when running command: ",
                             cmd_git_repo_clone_mirror,

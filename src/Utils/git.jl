@@ -5,7 +5,7 @@ import ..package_directory
 function _get_git_binary_path()::String
     deps_jl_file_path = package_directory("deps", "deps.jl")
     if !isfile(deps_jl_file_path)
-        error(
+        delayederror(
             string(
                 "MirrorUpdater.jl is not properly installed. ",
                 "Please run\nPkg.build(\"MirrorUpdater\")",
@@ -94,7 +94,7 @@ function get_current_branch()::String
             clean_up_branch_name(first(my_match.captures))
         return just_the_branch
     else
-        error("could not determine current branch")
+        delayederror("could not determine current branch")
     end
 end
 
@@ -144,7 +144,7 @@ function checkout_branch!(
 
     if !success
         if error_on_failure
-            error("could not checkout the specified branch")
+            delayederror("could not checkout the specified branch")
         else
             @warn("could not checkout the specified branch")
         end

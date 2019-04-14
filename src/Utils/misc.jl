@@ -341,7 +341,7 @@ function command_ran_successfully!!(
         @debug(string("Command ran successfully."),)
     else
         if error_on_failure
-            error(string("Command did not run successfully."),)
+            delayederror(string("Command did not run successfully."),)
         else
             @warn(string("Command did not run successfully."),)
         end
@@ -393,7 +393,7 @@ function retry_function_until_success(
         @debug(string("Function ran successfully."),)
         return f_result
     else
-        error(string("Function did not run successfully."),)
+        delayederror(string("Function did not run successfully."),)
     end
 end
 

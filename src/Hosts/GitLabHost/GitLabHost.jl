@@ -83,7 +83,7 @@ function new_gitlab_session(
             end
         end
         if result == 0
-            error("Could not find the id for my group")
+            delayederror("Could not find the id for my group")
         end
         return result
     end
@@ -92,7 +92,7 @@ function new_gitlab_session(
     _gitlab_username::String = _get_gitlab_username()
     if lowercase(strip(_gitlab_username)) !=
             lowercase(strip(_provided_gitlab_bot_username))
-        error(
+        delayederror(
             string(
                 "Provided GitLab username ",
                 "(\"$(_provided_gitlab_bot_username)\") ",
@@ -232,7 +232,7 @@ function new_gitlab_session(
             result = ""
         end
         if length(result) == 0
-            error("Could not find the matching GitLab snippet")
+            delayederror("Could not find the matching GitLab snippet")
         end
         return result
     end
@@ -401,7 +401,7 @@ function new_gitlab_session(
                 repo_name_without_org,
                 )
         else
-            error("$(credentials) is not a supported value for credentials")
+            delayederror("$(credentials) is not a supported value for credentials")
         end
         return result
     end
@@ -568,7 +568,6 @@ function new_gitlab_session(
                     exception,
                     )
             else
-                # rethrow(exception)
                 @warn(
                     string(
                         "The push to GitLab failed. Normally, I would throw ",
@@ -687,7 +686,7 @@ function new_gitlab_session(
         elseif task == :delete_gists_older_than_minutes
             return _delete_gists_older_than_minutes
         else
-            error("$(task) is not a valid task")
+            delayederror("$(task) is not a valid task")
         end
     end
 

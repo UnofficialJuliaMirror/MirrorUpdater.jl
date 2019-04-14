@@ -3,7 +3,7 @@ const DO_NOT_TRY_URL_LIST = String[
     "git://gitlab.com/wavexx/Expect.jl.git",
     "git://gitlab.com/wavexx/Polyglot.jl.git",
     "https://github.com/Datseris/DynamicalBilliardsPlotting.jl.git",
-    "https://github.com/JuliaComputing/StringArrays.jl.git",
+    # "https://github.com/JuliaComputing/StringArrays.jl.git",
     "https://github.com/JuliaGizmos/React.jl.git",
     "https://github.com/JuliaGNSS/PhasedArrayTracking.jl.git",
     "https://github.com/JuliaMPC/MichiganAutonomousVehicles.jl.git",
