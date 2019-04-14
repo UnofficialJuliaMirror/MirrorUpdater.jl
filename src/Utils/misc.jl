@@ -334,8 +334,12 @@ function command_ran_successfully!!(
     end
     if !success_bool && last_resort_run
         @debug(string("Attempting the last resort run..."))
-        run(cmd)
-        success_bool = true
+        try
+            run(cmd)
+            success_bool = true
+        catch exception
+            delayederror(string(exception); exception=exception,)
+        end
     end
     if success_bool
         @debug(string("Command ran successfully."),)
