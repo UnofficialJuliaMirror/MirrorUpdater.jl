@@ -505,7 +505,106 @@ function new_gitlab_session(
         return nothing
     end
 
+    function _list_all_repo_protected_branches(
+            params::AbstractDict,
+            )::Vector{String}
+        repo_name::String = params[:repo_name]
+        method_1 = "GET"
+        url_1 = string(
+            "https://gitlab.com/api/v4/",
+            "projects/$(_gitlab_group)%2F$(repo_name)",
+            )
+        headers_1 = Dict(
+            "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
+            )
+        http_request_1 = () -> HTTP.request(
+            method_1,
+            url_1,
+            headers_1,
+            )
+        r_1 = Utils.retry_function_until_success(
+            http_request_1;
+            max_attempts = 10,
+            seconds_to_wait_between_attempts = 180,
+            )
+        r_body_1 = String(r_1.body)
+        parsed_body_1 = JSON.parse(r_body_1)
+        repo_id = parsed_body_1["id"]
+        method_2 = "GET"
+        url_2 = "https://gitlab.com/api/v4/projects/$(repo_id)/protected_branches"
+        headers_2 = Dict(
+            "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
+            )
+        http_request_2 = () -> HTTP.request(
+            method_2,
+            url_2,
+            headers_2,
+            )
+        r_2 = Utils.retry_function_until_success(
+            http_request_2;
+            max_attempts = 10,
+            seconds_to_wait_between_attempts = 180,
+            )
+        r_body_2 = String(r_2.body)
+        parsed_body_2 = JSON.parse(r_body_2)
+        list = String[]
+        for x in parsed_body_2
+            push!(
+                list,
+                strip(x["name"]),
+                )
+        end
+        return list
+    end
+
+    function _unprotect_all_repo_branches(params::AbstractDict)::Nothing
+        repo_name::String = params[:repo_name]
+        list_of_protected_branches = _list_all_repo_protected_branches(
+            params
+            )
+        method_1 = "GET"
+        url_1 = string(
+            "https://gitlab.com/api/v4/",
+            "projects/$(_gitlab_group)%2F$(repo_name)",
+            )
+        headers_1 = Dict(
+            "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
+            )
+        http_request_1 = () -> HTTP.request(
+            method_1,
+            url_1,
+            headers_1,
+            )
+        r_1 = Utils.retry_function_until_success(
+            http_request_1;
+            max_attempts = 10,
+            seconds_to_wait_between_attempts = 180,
+        )
+        r_body_1 = String(r_1.body)
+        parsed_body_1 = JSON.parse(r_body_1)
+        repo_id = parsed_body_1["id"]
+        for branch_name in list_of_protected_branches
+            method_2 = "DELETE"
+            url_2 = "https://gitlab.com/api/v4/projects/$(repo_id)/protected_branches/$(branch_name)"
+            headers_2 = Dict(
+                "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
+                )
+            http_request_2 = () -> HTTP.request(
+                method_2,
+                url_2,
+                headers_2,
+                )
+            r_2 = Utils.retry_function_until_success(
+                http_request_2;
+                max_attempts = 10,
+                seconds_to_wait_between_attempts = 180,
+                )
+        end
+        return nothing
+    end
+
     function _push_mirrored_repo(params::AbstractDict)::Nothing
+        _unprotect_all_repo_branches(params)
         repo_name::String = params[:repo_name]
         repo_directory::String = params[:directory]
         git_path::String = params[:git]
