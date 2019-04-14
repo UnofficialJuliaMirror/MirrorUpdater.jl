@@ -18,20 +18,20 @@ jobs:
       name: make-list
       script: "./ci/travis/script.sh \"make-list\""
       stage: stage-1
-    # -
-    #   name: runtests-compiled-modules-no
-    #   script: "./ci/travis/runtests.sh \"no\""
-    # -
-    #   name: runtests-compiled-modules-yes
-    #   script: "./ci/travis/runtests.sh \"yes\""
-    # -
-    #   name: "dry run [,B)"
-    #   script: "./ci/travis/script.sh \"[,B)\" \"FORCE_DRY_RUN\""
-    #   stage: stage-2
-    # -
-    #   name: "[,B)"
-    #   script: "./ci/travis/script.sh \"[,B)\""
-    #   stage: stage-2
+    -
+      name: runtests-compiled-modules-no
+      script: "./ci/travis/runtests.sh \"no\""
+    -
+      name: runtests-compiled-modules-yes
+      script: "./ci/travis/runtests.sh \"yes\""
+    -
+      name: "dry run [,B)"
+      script: "./ci/travis/script.sh \"[,B)\" \"FORCE_DRY_RUN\""
+      stage: stage-2
+    -
+      name: "[,B)"
+      script: "./ci/travis/script.sh \"[,B)\""
+      stage: stage-2
     # -
     #   name: "[B,C)"
     #   script: "./ci/travis/script.sh \"[B,C)\""
