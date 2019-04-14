@@ -13,6 +13,8 @@ import HTTP
 import Pkg
 import TimeZones
 
+import ..delayederror
+
 function _toml_file_to_package(
         packagetoml_file_filename::String,
         )::Types.Package
