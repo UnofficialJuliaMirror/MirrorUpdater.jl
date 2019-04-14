@@ -19,38 +19,38 @@ Test.@testset "git tests" begin
                     )
             )
 
-    Test.@test_throws(
-            ErrorException,
-            MirrorUpdater.Utils.command_ran_successfully!!(
-                    `$(git) --versionBLAHBLAHBLAH`;
-                    max_attempts = 5,
-                    seconds_to_wait_between_attempts = 5,
-                    error_on_failure = true,
-                    last_resort_run = true,
-                    ),
-            )
+#     Test.@test_throws(
+#             ErrorException,
+#             MirrorUpdater.Utils.command_ran_successfully!!(
+#                     `$(git) --versionBLAHBLAHBLAH`;
+#                     max_attempts = 5,
+#                     seconds_to_wait_between_attempts = 5,
+#                     error_on_failure = true,
+#                     last_resort_run = true,
+#                     ),
+#             )
 
-    Test.@test_throws(
-            ErrorException,
-            MirrorUpdater.Utils.command_ran_successfully!!(
-                    `$(git) --versionBLAHBLAHBLAH`;
-                    max_attempts = 5,
-                    seconds_to_wait_between_attempts = 5,
-                    error_on_failure = true,
-                    last_resort_run = false,
-                    ),
-            )
+#     Test.@test_throws(
+#             ErrorException,
+#             MirrorUpdater.Utils.command_ran_successfully!!(
+#                     `$(git) --versionBLAHBLAHBLAH`;
+#                     max_attempts = 5,
+#                     seconds_to_wait_between_attempts = 5,
+#                     error_on_failure = true,
+#                     last_resort_run = false,
+#                     ),
+#             )
 
-    Test.@test_throws(
-            ErrorException,
-            MirrorUpdater.Utils.command_ran_successfully!!(
-                    `$(git) --versionBLAHBLAHBLAH`;
-                    max_attempts = 5,
-                    seconds_to_wait_between_attempts = 5,
-                    error_on_failure = false,
-                    last_resort_run = true,
-                    ),
-            )
+#     Test.@test_throws(
+#             ErrorException,
+#             MirrorUpdater.Utils.command_ran_successfully!!(
+#                     `$(git) --versionBLAHBLAHBLAH`;
+#                     max_attempts = 5,
+#                     seconds_to_wait_between_attempts = 5,
+#                     error_on_failure = false,
+#                     last_resort_run = true,
+#                     ),
+#             )
 
     Test.@test(
             !(
