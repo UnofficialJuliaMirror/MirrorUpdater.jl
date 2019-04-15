@@ -436,75 +436,6 @@ function new_gitlab_session(
         return result
     end
 
-    function _create_repo(params::AbstractDict)::Nothing
-        repo_name::String = strip(params[:repo_name])
-        repo_name_with_org::String = _repo_name_with_org(
-            ;
-            repo = repo_name,
-            org = _gitlab_group,
-            )
-        repo_name_without_org::String = _repo_name_without_org(
-            ;
-            repo = repo_name,
-            org = _gitlab_group,
-            )
-        repo_destination_url_without_auth = _get_destination_url(
-            ;
-            repo_name = repo_name_without_org,
-            credentials = :without_auth,
-            )
-        # if Utils._url_exists(repo_destination_url_without_auth)
-        if false
-            @info("According to HTTP GET request, the repo exists.")
-        else
-            if _gitlab_repo_exists(; repo_name = repo_name_without_org)
-                @info("According to the GitLab API, the repo exists.")
-            else
-                @info(
-                    string("Creating new repo on GitLab"),
-                    repo_destination_url_without_auth,
-                    )
-                method = "POST"
-                url = "https://gitlab.com/api/v4/projects"
-                headers = Dict(
-                    "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
-                    "content-type" => "application/json",
-                    )
-                params = Dict(
-                    "name" => repo_name_without_org,
-                    "path" => repo_name_without_org,
-                    "namespace_id" => _get_namespace_id_for_my_group(),
-                    "issues_enabled" => false,
-                    "merge_requests_enabled" => false,
-                    "jobs_enabled" => false,
-                    "wiki_enabled" => false,
-                    "snippets_enabled" => false,
-                    "resolve_outdated_diff_discussions" => false,
-                    "container_registry_enabled" => false,
-                    "shared_runners_enabled" => false,
-                    "visibility" => "public",
-                    "public_jobs" => false,
-                    "only_allow_merge_if_pipeline_succeeds" =>
-                        false,
-                    "only_allow_merge_if_all_discussions_are_resolved" =>
-                        false,
-                    "lfs_enabled" => false,
-                    "request_access_enabled" => false,
-                    "printing_merge_request_link_enabled" => false,
-                    "initialize_with_readme" => false,
-                    )
-                body = JSON.json(params)
-                r = HTTP.request(
-                    method,
-                    url,
-                    headers,
-                    body,
-                    )
-            end
-        end
-        return nothing
-    end
-
     function _list_all_repo_protected_branches(
             params::AbstractDict,
             )::Vector{String}
@@ -603,7 +534,120 @@ function new_gitlab_session(
         return nothing
     end
 
+    function _create_repo(params::AbstractDict)::Nothing
+        repo_name::String = strip(params[:repo_name])
+        repo_name_with_org::String = _repo_name_with_org(
+            ;
+            repo = repo_name,
+            org = _gitlab_group,
+            )
+        repo_name_without_org::String = _repo_name_without_org(
+            ;
+            repo = repo_name,
+            org = _gitlab_group,
+            )
+        repo_destination_url_without_auth = _get_destination_url(
+            ;
+            repo_name = repo_name_without_org,
+            credentials = :without_auth,
+            )
+        # if Utils._url_exists(repo_destination_url_without_auth)
+        if false
+            @info("According to HTTP GET request, the repo exists.")
+        else
+            if _gitlab_repo_exists(; repo_name = repo_name_without_org)
+                @info("According to the GitLab API, the repo exists.")
+            else
+                @info(
+                    string("Creating new repo on GitLab"),
+                    repo_destination_url_without_auth,
+                    )
+                method = "POST"
+                url = "https://gitlab.com/api/v4/projects"
+                headers = Dict(
+                    "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
+                    "content-type" => "application/json",
+                    )
+                params = Dict(
+                    "name" => repo_name_without_org,
+                    "path" => repo_name_without_org,
+                    "namespace_id" => _get_namespace_id_for_my_group(),
+                    "issues_enabled" => false,
+                    "merge_requests_enabled" => false,
+                    "jobs_enabled" => false,
+                    "wiki_enabled" => false,
+                    "snippets_enabled" => false,
+                    "resolve_outdated_diff_discussions" => false,
+                    "container_registry_enabled" => false,
+                    "shared_runners_enabled" => false,
+                    "visibility" => "public",
+                    "public_jobs" => false,
+                    "only_allow_merge_if_pipeline_succeeds" =>
+                        false,
+                    "only_allow_merge_if_all_discussions_are_resolved" =>
+                        false,
+                    "lfs_enabled" => false,
+                    "request_access_enabled" => false,
+                    "printing_merge_request_link_enabled" => false,
+                    "initialize_with_readme" => false,
+                    )
+                body = JSON.json(params)
+                r = HTTP.request(
+                    method,
+                    url,
+                    headers,
+                    body,
+                    )
+            end
+        end
+        return nothing
+    end
+
+    function _delete_repo(params::AbstractDict)::Nothing
+        repo_name::String = params[:repo_name]
+        method_1 = "GET"
+        url_1 = string(
+            "https://gitlab.com/api/v4/",
+            "projects/$(_gitlab_group)%2F$(repo_name)",
+            )
+        headers_1 = Dict(
+            "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
+            )
+        http_request_1 = () -> HTTP.request(
+            method_1,
+            url_1,
+            headers_1,
+            )
+        r_1 = Utils.retry_function_until_success(
+            http_request_1;
+            max_attempts = 10,
+            seconds_to_wait_between_attempts = 180,
+            )
+        r_body_1 = String(r_1.body)
+        parsed_body_1 = JSON.parse(r_body_1)
+        repo_id = parsed_body_1["id"]
+        method_2 = "DELETE"
+        url_2 = "https://gitlab.com/api/v4/projects/$(repo_id)"
+        headers_2 = Dict(
+            "PRIVATE-TOKEN" => gitlab_bot_personal_access_token,
+            )
+        http_request_2 = () -> HTTP.request(
+            method_2,
+            url_2,
+            headers_2,
+            )
+        r_2 = Utils.retry_function_until_success(
+            http_request_1;
+            max_attempts = 10,
+            seconds_to_wait_between_attempts = 180,
+            )
+        return nothing
+    end
+
     function _push_mirrored_repo(params::AbstractDict)::Nothing
+        _delete_repo(params)
+        sleep(3)
+        _create_repo(params)
         _unprotect_all_repo_branches(params)
         repo_name::String = params[:repo_name]
         repo_directory::String = params[:directory]

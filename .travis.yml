@@ -28,16 +28,15 @@ jobs:
       name: "dry run [,B)"
       script: "./ci/travis/script.sh \"[,B)\" \"FORCE_DRY_RUN\""
       stage: stage-2
-    -
-      name: "[,B)"
-      script: "./ci/travis/script.sh \"[,B)\""
-      stage: stage-2
+    # -
+    #   name: "[,B)"
+    #   script: "./ci/travis/script.sh \"[,B)\""
     -
       name: "[B,C)"
       script: "./ci/travis/script.sh \"[B,C)\""
-    -
-      name: "[C,Cm)"
-      script: "./ci/travis/script.sh \"[C,Cm)\""
+    # -
+    #   name: "[C,Cm)"
+    #   script: "./ci/travis/script.sh \"[C,Cm)\""
     # -
     #   name: "[Cm,D)"
     #   script: "./ci/travis/script.sh \"[Cm,D)\""
@@ -107,9 +106,9 @@ jobs:
     # -
     #   name: "[Si,Sq)"
     #   script: "./ci/travis/script.sh \"[Si,Sq)\""
-    -
-      name: "[Sq,Sx)"
-      script: "./ci/travis/script.sh \"[Sq,Sx)\""
+    # -
+    #   name: "[Sq,Sx)"
+    #   script: "./ci/travis/script.sh \"[Sq,Sx)\""
     # -
     #   name: "[Sx,T)"
     #   script: "./ci/travis/script.sh \"[Sx,T)\""
