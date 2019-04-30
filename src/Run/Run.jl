@@ -14,6 +14,8 @@ import ..Types
 import ..Utils
 import ..Common
 
+import ..process_delayed_error_list
+
 function run_mirror_updater!!(
         ;
         registry_list::Vector{Types.Registry},
@@ -40,7 +42,7 @@ function run_mirror_updater!!(
     @info("Running MirrorUpdater.Run.run_mirror_updater!!")
 
     if length(git_hosting_providers) == 0
-        error(
+        delayederror(
             string(
                 "You must supply at least one git hosting provider",
                 )
@@ -141,7 +143,7 @@ function run_mirror_updater!!(
                 end
             end
             if length(strip(correct_gist_content_stage2)) == 0
-                error("I could not find the correct gist on any host")
+                delayederror("I could not find the correct gist on any host")
             end
             all_repos_to_mirror_stage2 =
                 Common._string_to_src_dest_pair_list(
@@ -266,6 +268,7 @@ function run_mirror_updater!!(
             )
         )
 
+    process_delayed_error_list()
     return nothing
 end
 

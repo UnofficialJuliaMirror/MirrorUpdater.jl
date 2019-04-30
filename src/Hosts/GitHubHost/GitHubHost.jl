@@ -45,7 +45,7 @@ function new_github_session(
     _github_username::String = _get_github_username(auth)
     if lowercase(strip(_github_username)) !=
             lowercase(strip(_provided_github_bot_username))
-        error(
+        delayederror(
             string(
                 "Provided GitHub username ",
                 "(\"$(_provided_github_bot_username)\") ",
@@ -164,7 +164,7 @@ function new_github_session(
             result = ""
         end
         if length(result) == 0
-            error("Could not find the matching Gist")
+            delayederror("Could not find the matching Gist")
         end
         return result
     end
@@ -309,7 +309,9 @@ function new_github_session(
                 repo_name_without_org,
                 )
         else
-            error("$(credentials) is not a supported value for credentials")
+            delayederror(
+                "$(credentials) is not a supported value for credentials"
+                )
         end
         return result
     end
@@ -439,7 +441,7 @@ function new_github_session(
                     exception,
                     )
             else
-                rethrow(exception)
+                delayederror(string(exception); exception=exception,)
             end
         end
         cd(previous_directory)
@@ -525,7 +527,7 @@ function new_github_session(
         elseif task == :delete_gists_older_than_minutes
             return _delete_gists_older_than_minutes
         else
-            error("$(task) is not a valid task")
+            delayederror("$(task) is not a valid task")
         end
     end
 

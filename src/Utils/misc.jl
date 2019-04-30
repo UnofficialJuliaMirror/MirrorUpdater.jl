@@ -334,14 +334,23 @@ function command_ran_successfully!!(
     end
     if !success_bool && last_resort_run
         @debug(string("Attempting the last resort run..."))
-        run(cmd)
-        success_bool = true
+        try
+            run(cmd)
+            success_bool = true
+        catch exception
+            success_bool = false
+            if error_on_failure
+                delayederror(string(exception); exception = exception,)
+            else
+                @error(string(exception), exception = exception,)
+            end
+        end
     end
     if success_bool
         @debug(string("Command ran successfully."),)
     else
         if error_on_failure
-            error(string("Command did not run successfully."),)
+            delayederror(string("Command did not run successfully."),)
         else
             @warn(string("Command did not run successfully."),)
         end
@@ -393,7 +402,7 @@ function retry_function_until_success(
         @debug(string("Function ran successfully."),)
         return f_result
     else
-        error(string("Function did not run successfully."),)
+        delayederror(string("Function did not run successfully."),)
     end
 end
 

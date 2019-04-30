@@ -15,6 +15,8 @@ import ..Utils
 import ..Common
 import ..Run
 
+import ..process_delayed_error_list
+
 function run_mirror_updater_command_line!!(
         ;
         registry_list::Vector{Types.Registry},
@@ -68,6 +70,7 @@ function run_mirror_updater_command_line!!(
         delete_gists_older_than_minutes =
             delete_gists_older_than_minutes,
         )
+    process_delayed_error_list()
     return nothing
 end
 

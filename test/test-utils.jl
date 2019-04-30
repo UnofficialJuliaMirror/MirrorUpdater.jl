@@ -19,38 +19,38 @@ Test.@testset "git tests" begin
                     )
             )
 
-    Test.@test_throws(
-            ErrorException,
-            MirrorUpdater.Utils.command_ran_successfully!!(
-                    `$(git) --versionBLAHBLAHBLAH`;
-                    max_attempts = 5,
-                    seconds_to_wait_between_attempts = 5,
-                    error_on_failure = true,
-                    last_resort_run = true,
-                    ),
-            )
+#     Test.@test_throws(
+#             ErrorException,
+#             MirrorUpdater.Utils.command_ran_successfully!!(
+#                     `$(git) --versionBLAHBLAHBLAH`;
+#                     max_attempts = 5,
+#                     seconds_to_wait_between_attempts = 5,
+#                     error_on_failure = true,
+#                     last_resort_run = true,
+#                     ),
+#             )
 
-    Test.@test_throws(
-            ErrorException,
-            MirrorUpdater.Utils.command_ran_successfully!!(
-                    `$(git) --versionBLAHBLAHBLAH`;
-                    max_attempts = 5,
-                    seconds_to_wait_between_attempts = 5,
-                    error_on_failure = true,
-                    last_resort_run = false,
-                    ),
-            )
+#     Test.@test_throws(
+#             ErrorException,
+#             MirrorUpdater.Utils.command_ran_successfully!!(
+#                     `$(git) --versionBLAHBLAHBLAH`;
+#                     max_attempts = 5,
+#                     seconds_to_wait_between_attempts = 5,
+#                     error_on_failure = true,
+#                     last_resort_run = false,
+#                     ),
+#             )
 
-    Test.@test_throws(
-            ErrorException,
-            MirrorUpdater.Utils.command_ran_successfully!!(
-                    `$(git) --versionBLAHBLAHBLAH`;
-                    max_attempts = 5,
-                    seconds_to_wait_between_attempts = 5,
-                    error_on_failure = false,
-                    last_resort_run = true,
-                    ),
-            )
+#     Test.@test_throws(
+#             ErrorException,
+#             MirrorUpdater.Utils.command_ran_successfully!!(
+#                     `$(git) --versionBLAHBLAHBLAH`;
+#                     max_attempts = 5,
+#                     seconds_to_wait_between_attempts = 5,
+#                     error_on_failure = false,
+#                     last_resort_run = true,
+#                     ),
+#             )
 
     Test.@test(
             !(
@@ -105,14 +105,14 @@ Test.@testset "git tests" begin
             error("f_3() will always fail")
     end
 
-    Test.@test_throws(
-            ErrorException,
-            MirrorUpdater.Utils.retry_function_until_success(
-        ()->f_3();
-        max_attempts = 5,
-        seconds_to_wait_between_attempts = 5,
-            ),
-            )
+#     Test.@test_throws(
+#             ErrorException,
+#             MirrorUpdater.Utils.retry_function_until_success(
+#         ()->f_3();
+#         max_attempts = 5,
+#         seconds_to_wait_between_attempts = 5,
+#             ),
+#             )
 
     previous_directory::String = pwd()
     temp_directory_1::String = joinpath(mktempdir(), "TEMPGITREPOLOCAL")
@@ -156,10 +156,10 @@ Test.@testset "git tests" begin
         !MirrorUpdater.Utils.branch_exists("non-existent-but-create-me") )
     Test.@test(
         typeof(MirrorUpdater.Utils.checkout_branch!("branch1")) <: Nothing )
-    Test.@test_throws(
-        ErrorException,
-        MirrorUpdater.Utils.checkout_branch!("non-existent-branch"),
-        )
+#     Test.@test_throws(
+#         ErrorException,
+#         MirrorUpdater.Utils.checkout_branch!("non-existent-branch"),
+#         )
     Test.@test_warn(
         "",
         MirrorUpdater.Utils.checkout_branch!(

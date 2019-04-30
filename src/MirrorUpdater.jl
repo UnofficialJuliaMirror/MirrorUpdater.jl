@@ -15,6 +15,8 @@ import Pkg
 import Test
 import TimeZones
 
+include(joinpath("delayederrors.jl"))
+
 include(joinpath("package_directory.jl"))
 include(joinpath("version.jl"))
 include(joinpath("welcome.jl"))

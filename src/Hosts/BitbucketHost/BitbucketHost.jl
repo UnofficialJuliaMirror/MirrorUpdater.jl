@@ -68,7 +68,7 @@ function new_bitbucket_session(
     _bitbucket_username::String = _get_bitbucket_username_from_provided()
     if lowercase(strip(_bitbucket_username)) !=
             lowercase(strip(_provided_bitbucket_bot_username))
-        error(
+        delayederror(
             string(
                 "Provided Bitbucket username ",
                 "(\"$(_provided_bitbucket_bot_username)\") ",
@@ -121,7 +121,7 @@ function new_bitbucket_session(
                 "for the Bitbucket backend.",
                 )
             )
-        error("Could not find the matching Bitbucket snippet")
+        delayederror("Could not find the matching Bitbucket snippet")
     end
 
     function _delete_gists(params::AbstractDict)::Nothing
@@ -243,7 +243,9 @@ function new_bitbucket_session(
                 _bitbucket_slug(repo_name_without_org),
                 )
         else
-            error("$(credentials) is not a supported value for credentials")
+            delayederror(
+                "$(credentials) is not a supported value for credentials"
+                )
         end
         return result
     end
@@ -409,7 +411,7 @@ function new_bitbucket_session(
                     exception,
                     )
             else
-                rethrow(exception)
+                delayederror(string(exception); exception=exception,)
             end
         end
         cd(previous_directory)
@@ -497,7 +499,7 @@ function new_bitbucket_session(
         elseif task == :delete_gists_older_than_minutes
             return _delete_gists_older_than_minutes
         else
-            error("$(task) is not a valid task")
+            delayederror("$(task) is not a valid task")
         end
     end
 
