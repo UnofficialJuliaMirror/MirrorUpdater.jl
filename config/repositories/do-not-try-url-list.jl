@@ -37,4 +37,5 @@ const DO_NOT_TRY_URL_LIST = String[
     "https://github.com/rennis250/SDL.jl.git",
     "https://github.com/rennis250/Sparrow.jl.git",
     "https://github.com/sadit/SimilarReferences.jl.git",
+    "https://github.com/JuliaPy/Pandas.jl",
     ]
