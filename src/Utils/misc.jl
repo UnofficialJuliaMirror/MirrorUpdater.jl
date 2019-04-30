@@ -338,7 +338,12 @@ function command_ran_successfully!!(
             run(cmd)
             success_bool = true
         catch exception
-            delayederror(string(exception); exception=exception,)
+            success_bool = false
+            if error_on_failure
+                delayederror(string(exception); exception=exception,)
+            else
+                @error(string(exception); exception=exception,)
+            end
         end
     end
     if success_bool
