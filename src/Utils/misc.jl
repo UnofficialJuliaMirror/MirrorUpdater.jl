@@ -340,9 +340,9 @@ function command_ran_successfully!!(
         catch exception
             success_bool = false
             if error_on_failure
-                delayederror(string(exception); exception=exception,)
+                delayederror(string(exception); exception = exception,)
             else
-                @error(string(exception); exception=exception,)
+                @error(string(exception), exception = exception,)
             end
         end
     end
