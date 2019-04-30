@@ -689,11 +689,15 @@ function new_gitlab_session(
         try
             Utils.command_ran_successfully!!(
                 mirrorpush_cmd_withauth;
-                error_on_failure = true,
+                error_on_failure = false,
                 last_resort_run = true,
                 )
             @info(
-                string("Successfully pushed repo to GitLab."),
+                string(
+                    "Pushed repo to GitLab. ",
+                    "Maybe it was a success, ",
+                    "or maybe it was a failure.",
+                    ),
                 mirrorpush_cmd_withredactedauth,
                 pwd(),
                 ENV["PATH"],
@@ -714,7 +718,7 @@ function new_gitlab_session(
                 @warn(
                     string(
                         "The push to GitLab failed. Normally, I would throw ",
-                        "an error. But GitLab will randomly reject some refs.",
+                        "an error. But GitLab will often reject some of the refs.",
                         "So I'll assume that's what's going on here.",
                         "And I will ignore the error.",
                         ),
