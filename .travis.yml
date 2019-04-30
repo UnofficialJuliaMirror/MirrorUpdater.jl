@@ -18,12 +18,12 @@ jobs:
       name: make-list
       script: "./ci/travis/script.sh \"make-list\""
       stage: stage-1
-    -
-      name: runtests-compiled-modules-no
-      script: "./ci/travis/runtests.sh \"no\""
-    -
-      name: runtests-compiled-modules-yes
-      script: "./ci/travis/runtests.sh \"yes\""
+    # -
+    #   name: runtests-compiled-modules-no
+    #   script: "./ci/travis/runtests.sh \"no\""
+    # -
+    #   name: runtests-compiled-modules-yes
+    #   script: "./ci/travis/runtests.sh \"yes\""
     -
       name: "dry run [,B)"
       script: "./ci/travis/script.sh \"[,B)\" \"FORCE_DRY_RUN\""
@@ -34,117 +34,120 @@ jobs:
     -
       name: "[B,C)"
       script: "./ci/travis/script.sh \"[B,C)\""
-    -
-      name: "[C,Cm)"
-      script: "./ci/travis/script.sh \"[C,Cm)\""
-    -
-      name: "[Cm,D)"
-      script: "./ci/travis/script.sh \"[Cm,D)\""
-    -
-      name: "[D,Dn)"
-      script: "./ci/travis/script.sh \"[D,Dn)\""
-    -
-      name: "[Dn,E)"
-      script: "./ci/travis/script.sh \"[Dn,E)\""
-    -
-      name: "[E,F)"
-      script: "./ci/travis/script.sh \"[E,F)\""
-    -
-      name: "[F,G)"
-      script: "./ci/travis/script.sh \"[F,G)\""
-    -
-      name: "[G,H)"
-      script: "./ci/travis/script.sh \"[G,H)\""
-    -
-      name: "[H,I)"
-      script: "./ci/travis/script.sh \"[H,I)\""
-    -
-      name: "[I,J)"
-      script: "./ci/travis/script.sh \"[I,J)\""
-    -
-      name: "[J,Ji)"
-      script: "./ci/travis/script.sh \"[J,Ji)\""
-    -
-      name: "[Ji,Jt)"
-      script: "./ci/travis/script.sh \"[Ji,Jt)\""
-    -
-      name: "[Jt,K)"
-      script: "./ci/travis/script.sh \"[Jt,K)\""
-    -
-      name: "[K,L)"
-      script: "./ci/travis/script.sh \"[K,L)\""
-    -
-      name: "[L,M)"
-      script: "./ci/travis/script.sh \"[L,M)\""
-    -
-      name: "[M,Mn)"
-      script: "./ci/travis/script.sh \"[M,Mn)\""
-    -
-      name: "[Mn,N)"
-      script: "./ci/travis/script.sh \"[Mn,N)\""
-    -
-      name: "[N,O)"
-      script: "./ci/travis/script.sh \"[N,O)\""
-    -
-      name: "[O,P)"
-      script: "./ci/travis/script.sh \"[O,P)\""
-    -
-      name: "[P,Pn)"
-      script: "./ci/travis/script.sh \"[P,Pn)\""
-    -
-      name: "[Pn,Q)"
-      script: "./ci/travis/script.sh \"[Pn,Q)\""
-    -
-      name: "[Q,R)"
-      script: "./ci/travis/script.sh \"[Q,R)\""
-    -
-      name: "[R,S)"
-      script: "./ci/travis/script.sh \"[R,S)\""
-    -
-      name: "[S,Si)"
-      script: "./ci/travis/script.sh \"[S,Si)\""
-    -
-      name: "[Si,Sq)"
-      script: "./ci/travis/script.sh \"[Si,Sq)\""
-    -
-      name: "[Sq,Sx)"
-      script: "./ci/travis/script.sh \"[Sq,Sx)\""
-    -
-      name: "[Sx,T)"
-      script: "./ci/travis/script.sh \"[Sx,T)\""
-    -
-      name: "[T,U)"
-      script: "./ci/travis/script.sh \"[T,U)\""
-    -
-      name: "[U,V)"
-      script: "./ci/travis/script.sh \"[U,V)\""
-    -
-      name: "[V,W)"
-      script: "./ci/travis/script.sh \"[V,W)\""
-    -
-      name: "[W,X)"
-      script: "./ci/travis/script.sh \"[W,X)\""
-    -
-      name: "[X,Y)"
-      script: "./ci/travis/script.sh \"[X,Y)\""
-    -
-      name: "[Y,Z)"
-      script: "./ci/travis/script.sh \"[Y,Z)\""
-    -
-      name: "[Z,a)"
-      script: "./ci/travis/script.sh \"[Z,a)\""
-    -
-      name: "[a,g)"
-      script: "./ci/travis/script.sh \"[a,g)\""
-    -
-      name: "[g,n)"
-      script: "./ci/travis/script.sh \"[g,n)\""
-    -
-      name: "[n,t)"
-      script: "./ci/travis/script.sh \"[n,t)\""
-    -
-      name: "[t,)"
-      script: "./ci/travis/script.sh \"[t,)\""
+    # -
+    #   name: "[C,Cm)"
+    #   script: "./ci/travis/script.sh \"[C,Cm)\""
+    # -
+    #   name: "[Cm,D)"
+    #   script: "./ci/travis/script.sh \"[Cm,D)\""
+    # -
+    #   name: "[D,Dn)"
+    #   script: "./ci/travis/script.sh \"[D,Dn)\""
+    # -
+    #   name: "[Dn,E)"
+    #   script: "./ci/travis/script.sh \"[Dn,E)\""
+    # -
+    #   name: "[E,F)"
+    #   script: "./ci/travis/script.sh \"[E,F)\""
+    # -
+    #   name: "[F,G)"
+    #   script: "./ci/travis/script.sh \"[F,G)\""
+    # -
+    #   name: "[G,H)"
+    #   script: "./ci/travis/script.sh \"[G,H)\""
+    # -
+    #   name: "[H,I)"
+    #   script: "./ci/travis/script.sh \"[H,I)\""
+    # -
+    #   name: "[I,J)"
+    #   script: "./ci/travis/script.sh \"[I,J)\""
+    # -
+    #   name: "[J,Ji)"
+    #   script: "./ci/travis/script.sh \"[J,Ji)\""
+    # -
+    #   name: "[Ji,Jt)"
+    #   script: "./ci/travis/script.sh \"[Ji,Jt)\""
+    # -
+    #   name: "[Jt,K)"
+    #   script: "./ci/travis/script.sh \"[Jt,K)\""
+    # -
+    #   name: "[K,L)"
+    #   script: "./ci/travis/script.sh \"[K,L)\""
+    # -
+    #   name: "[L,M)"
+    #   script: "./ci/travis/script.sh \"[L,M)\""
+    # -
+    #   name: "[M,Mj)"
+    #   script: "./ci/travis/script.sh \"[M,Mj)\""
+    # -
+    #   name: "[Mj,Mn)"
+    #   script: "./ci/travis/script.sh \"[Mj,Mn)\""
+    # -
+    #   name: "[Mn,N)"
+    #   script: "./ci/travis/script.sh \"[Mn,N)\""
+    # -
+    #   name: "[N,O)"
+    #   script: "./ci/travis/script.sh \"[N,O)\""
+    # -
+    #   name: "[O,P)"
+    #   script: "./ci/travis/script.sh \"[O,P)\""
+    # -
+    #   name: "[P,Pn)"
+    #   script: "./ci/travis/script.sh \"[P,Pn)\""
+    # -
+    #   name: "[Pn,Q)"
+    #   script: "./ci/travis/script.sh \"[Pn,Q)\""
+    # -
+    #   name: "[Q,R)"
+    #   script: "./ci/travis/script.sh \"[Q,R)\""
+    # -
+    #   name: "[R,S)"
+    #   script: "./ci/travis/script.sh \"[R,S)\""
+    # -
+    #   name: "[S,Si)"
+    #   script: "./ci/travis/script.sh \"[S,Si)\""
+    # -
+    #   name: "[Si,Sq)"
+    #   script: "./ci/travis/script.sh \"[Si,Sq)\""
+    # -
+    #   name: "[Sq,Sx)"
+    #   script: "./ci/travis/script.sh \"[Sq,Sx)\""
+    # -
+    #   name: "[Sx,T)"
+    #   script: "./ci/travis/script.sh \"[Sx,T)\""
+    # -
+    #   name: "[T,U)"
+    #   script: "./ci/travis/script.sh \"[T,U)\""
+    # -
+    #   name: "[U,V)"
+    #   script: "./ci/travis/script.sh \"[U,V)\""
+    # -
+    #   name: "[V,W)"
+    #   script: "./ci/travis/script.sh \"[V,W)\""
+    # -
+    #   name: "[W,X)"
+    #   script: "./ci/travis/script.sh \"[W,X)\""
+    # -
+    #   name: "[X,Y)"
+    #   script: "./ci/travis/script.sh \"[X,Y)\""
+    # -
+    #   name: "[Y,Z)"
+    #   script: "./ci/travis/script.sh \"[Y,Z)\""
+    # -
+    #   name: "[Z,a)"
+    #   script: "./ci/travis/script.sh \"[Z,a)\""
+    # -
+    #   name: "[a,g)"
+    #   script: "./ci/travis/script.sh \"[a,g)\""
+    # -
+    #   name: "[g,n)"
+    #   script: "./ci/travis/script.sh \"[g,n)\""
+    # -
+    #   name: "[n,t)"
+    #   script: "./ci/travis/script.sh \"[n,t)\""
+    # -
+    #   name: "[t,)"
+    #   script: "./ci/travis/script.sh \"[t,)\""
     -
       name: clean-up
       script: "./ci/travis/script.sh \"clean-up\""
