@@ -1,5 +1,5 @@
 include("broken-url-list.jl")
-include("git-lfs-repos.jl")
+include("git-lfs-repos-url-list.jl")
 
 const DO_NOT_TRY_URL_LIST = convert(
     Vector{String},
