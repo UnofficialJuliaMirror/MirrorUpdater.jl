@@ -18,22 +18,22 @@ jobs:
       name: make-list
       script: "./ci/travis/script.sh \"make-list\""
       stage: stage-1
-#     -
-#       name: runtests-compiled-modules-no
-#       script: "./ci/travis/runtests.sh \"no\""
-#     -
-#       name: runtests-compiled-modules-yes
-#       script: "./ci/travis/runtests.sh \"yes\""
-#     -
-#       name: "dry run [,B)"
-#       script: "./ci/travis/script.sh \"[,B)\" \"FORCE_DRY_RUN\""
-#       stage: stage-2
-#     -
-#       name: "[,B)"
-#       script: "./ci/travis/script.sh \"[,B)\""
-#     -
-#       name: "[B,C)"
-#       script: "./ci/travis/script.sh \"[B,C)\""
+    -
+      name: runtests-compiled-modules-no
+      script: "./ci/travis/runtests.sh \"no\""
+    -
+      name: runtests-compiled-modules-yes
+      script: "./ci/travis/runtests.sh \"yes\""
+    -
+      name: "dry run [,B)"
+      script: "./ci/travis/script.sh \"[,B)\" \"FORCE_DRY_RUN\""
+      stage: stage-2
+    -
+      name: "[,B)"
+      script: "./ci/travis/script.sh \"[,B)\""
+    -
+      name: "[B,C)"
+      script: "./ci/travis/script.sh \"[B,C)\""
     # -
     #   name: "[C,Cm)"
     #   script: "./ci/travis/script.sh \"[C,Cm)\""
@@ -148,10 +148,10 @@ jobs:
     # -
     #   name: "[t,)"
     #   script: "./ci/travis/script.sh \"[t,)\""
-#     -
-#       name: clean-up
-#       script: "./ci/travis/script.sh \"clean-up\""
-#       stage: stage-3
+    -
+      name: clean-up
+      script: "./ci/travis/script.sh \"clean-up\""
+      stage: stage-3
 julia:
   - "1.1"
 language: julia
