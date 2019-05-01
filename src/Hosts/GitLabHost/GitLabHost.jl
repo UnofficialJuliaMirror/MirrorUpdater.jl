@@ -645,9 +645,9 @@ function new_gitlab_session(
     end
 
     function _push_mirrored_repo(params::AbstractDict)::Nothing
-        _delete_repo(params)
-        sleep(3)
-        _create_repo(params)
+        # _delete_repo(params)
+        # sleep(3)
+        # _create_repo(params)
         _unprotect_all_repo_branches(params)
         repo_name::String = params[:repo_name]
         repo_directory::String = params[:directory]
