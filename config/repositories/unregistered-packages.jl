@@ -16,6 +16,13 @@ const UNREGISTERED_PACKAGES = MirrorUpdater.Types.SrcDestPair[
     MirrorUpdater.Types.SrcDestPair(
         ;
         source_url =
+            "https://github.com/UnofficialJuliaMirrorSnapshots/RemoveLFS.jl",
+        destination_repo_name =
+            "RemoveLFS.jl-a262596c-dd27-4d54-b019-3619024addbd",
+        ),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
+        source_url =
             "https://github.com/alan-turing-institute/MLJ.jl",
         destination_repo_name =
             "MLJ.jl-add582a8-e3ab-11e8-2d5e-e98b27df1bc7",
