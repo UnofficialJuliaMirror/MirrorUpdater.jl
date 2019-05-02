@@ -10,6 +10,11 @@ echo "COMPILED_MODULES=$COMPILED_MODULES"
 export JULIA_FLAGS="--check-bounds=yes --code-coverage=all --color=yes --compiled-modules=$COMPILED_MODULES --inline=no"
 echo "JULIA_FLAGS=$JULIA_FLAGS"
 
+export INSTALL_GIT="true"
+export INSTALL_GITLFS="true"
+echo "INSTALL_GIT=$INSTALL_GIT"
+echo "INSTALL_GITLFS=$INSTALL_GITLFS"
+
 julia $JULIA_FLAGS -e 'import Pkg; Pkg.build("MirrorUpdater");'
 julia $JULIA_FLAGS -e 'import MirrorUpdater;'
 julia $JULIA_FLAGS -e 'import Pkg; Pkg.test("MirrorUpdater"; coverage=true);'
