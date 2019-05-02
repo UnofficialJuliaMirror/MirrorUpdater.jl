@@ -27,4 +27,11 @@ const UNREGISTERED_PACKAGES = MirrorUpdater.Types.SrcDestPair[
         destination_repo_name =
             "MLJRegistry.jl-a41df0fa-2d8a-11e9-1bfb-8110be68cd3e",
         ),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
+        source_url =
+            "https://github.com/JuliaMath/Libm.jl",
+        destination_repo_name =
+            "JuliaMath-Libm.jl",
+        ),
     ]
