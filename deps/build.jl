@@ -10,6 +10,18 @@ function _default_git_cmd()::String
     return result
 end
 
+function _get_git_version(
+        git::String
+        )::VersionNumber
+    a::String = convert(String,read(`$(git) --version`, String))
+    b::String = convert(String, strip(a))
+    c::Vector{SubString{String}} = split(b, "git version")
+    d::String = convert(String,last(c))
+    e::String = convert(String, strip(d))
+    f::VersionNumber = VersionNumber(e)
+    return f
+end
+
 function _found_default_git()::Bool
     default_git_cmd::String = _default_git_cmd()
     found_default_git::Bool = try
@@ -17,7 +29,16 @@ function _found_default_git()::Bool
     catch
         false
     end
-    return found_default_git
+    git_version_parsed::Bool = try
+        isa(
+            _get_git_version(default_git_cmd),
+            VersionNumber,
+            )
+    catch
+        false
+    end
+    result = found_default_git && git_version_parsed
+    return result
 end
 
 function _install_git()::String
