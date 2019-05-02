@@ -40,6 +40,16 @@ const MISCELLANEOUS_JULIA_RELATED_REPOS = MirrorUpdater.Types.SrcDestPair[
         ),
     MirrorUpdater.Types.SrcDestPair(
         ;
+        source_url = "https://github.com/JuliaStats/Rmath-julia",
+        destination_repo_name = "JuliaStats-Rmath-julia",
+        ),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
+        source_url = "https://github.com/JuliaStats/RmathDist.jl",
+        destination_repo_name = "JuliaStats-RmathDist.jl",
+        ),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
         source_url = "https://github.com/staticfloat/homebrew-julia",
         destination_repo_name = "staticfloat-homebrew-julia",
         ),
