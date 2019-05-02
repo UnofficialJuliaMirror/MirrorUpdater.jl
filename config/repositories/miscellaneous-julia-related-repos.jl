@@ -17,6 +17,14 @@ const MISCELLANEOUS_JULIA_RELATED_REPOS = MirrorUpdater.Types.SrcDestPair[
         destination_repo_name = "JuliaMath-openlibm",),
     MirrorUpdater.Types.SrcDestPair(
         ;
+        source_url = "https://github.com/JuliaMath/OpenlibmBuilder",
+        destination_repo_name = "JuliaMath-OpenlibmBuilder",),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
+        source_url = "https://github.com/JuliaMath/DSFMTBuilder",
+        destination_repo_name = "JuliaMath-DSFMTBuilder",),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
         source_url = "https://github.com/JuliaMath/openspecfun",
         destination_repo_name = "JuliaMath-openspecfun",),
     MirrorUpdater.Types.SrcDestPair(
