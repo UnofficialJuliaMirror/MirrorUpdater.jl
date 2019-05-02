@@ -10,7 +10,7 @@ function _default_git_cmd()::String
     return result
 end
 
-function git_version(
+function _get_git_version(
         git::String
         )::VersionNumber
     a::String = convert(String,read(`$(git) --version`, String))
@@ -31,7 +31,7 @@ function _found_default_git()::Bool
     end
     git_version_parsed::Bool = try
         isa(
-            git_version(default_git_cmd),
+            _get_git_version(default_git_cmd),
             VersionNumber,
             )
     catch
