@@ -380,7 +380,7 @@ In the "Environment Variables" section of the Travis settings page, [add a new e
 
 ### Step 7
 
-In the "Cron Jobs" section of the Travis settings page, [create a new cron job for your fork](https://docs.travis-ci.com/user/cron-jobs/#adding-cron-jobs). For "Branch", select `master`. For "Interval", select `daily`. For "Options", select `Do not run if there has been a build in the last 24h`.
+In the "Cron Jobs" section of the Travis settings page, [create a new cron job for your fork](https://docs.travis-ci.com/user/cron-jobs/#adding-cron-jobs). For "Branch", select `master`. For "Interval", select `weekly`. For "Options", select `Do not run if there has been a build in the last 24h`.
 
 **Congratulations, you have finished this section.**
 
