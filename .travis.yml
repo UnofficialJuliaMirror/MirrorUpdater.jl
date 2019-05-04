@@ -34,24 +34,24 @@ jobs:
     -
       name: "[B,C)"
       script: "./ci/travis/script.sh \"[B,C)\""
-    # -
-    #   name: "[C,Cm)"
-    #   script: "./ci/travis/script.sh \"[C,Cm)\""
-    # -
-    #   name: "[Cm,D)"
-    #   script: "./ci/travis/script.sh \"[Cm,D)\""
-    # -
-    #   name: "[D,Dn)"
-    #   script: "./ci/travis/script.sh \"[D,Dn)\""
-    # -
-    #   name: "[Dn,E)"
-    #   script: "./ci/travis/script.sh \"[Dn,E)\""
-    # -
-    #   name: "[E,F)"
-    #   script: "./ci/travis/script.sh \"[E,F)\""
-    # -
-    #   name: "[F,G)"
-    #   script: "./ci/travis/script.sh \"[F,G)\""
+    -
+      name: "[C,Cm)"
+      script: "./ci/travis/script.sh \"[C,Cm)\""
+    -
+      name: "[Cm,D)"
+      script: "./ci/travis/script.sh \"[Cm,D)\""
+    -
+      name: "[D,Dn)"
+      script: "./ci/travis/script.sh \"[D,Dn)\""
+    -
+      name: "[Dn,E)"
+      script: "./ci/travis/script.sh \"[Dn,E)\""
+    -
+      name: "[E,F)"
+      script: "./ci/travis/script.sh \"[E,F)\""
+    -
+      name: "[F,G)"
+      script: "./ci/travis/script.sh \"[F,G)\""
     # -
     #   name: "[G,H)"
     #   script: "./ci/travis/script.sh \"[G,H)\""
@@ -133,21 +133,21 @@ jobs:
     # -
     #   name: "[Y,Z)"
     #   script: "./ci/travis/script.sh \"[Y,Z)\""
-    # -
-    #   name: "[Z,a)"
-    #   script: "./ci/travis/script.sh \"[Z,a)\""
-    # -
-    #   name: "[a,g)"
-    #   script: "./ci/travis/script.sh \"[a,g)\""
-    # -
-    #   name: "[g,n)"
-    #   script: "./ci/travis/script.sh \"[g,n)\""
-    # -
-    #   name: "[n,t)"
-    #   script: "./ci/travis/script.sh \"[n,t)\""
-    # -
-    #   name: "[t,)"
-    #   script: "./ci/travis/script.sh \"[t,)\""
+    -
+      name: "[Z,a)"
+      script: "./ci/travis/script.sh \"[Z,a)\""
+    -
+      name: "[a,g)"
+      script: "./ci/travis/script.sh \"[a,g)\""
+    -
+      name: "[g,n)"
+      script: "./ci/travis/script.sh \"[g,n)\""
+    -
+      name: "[n,t)"
+      script: "./ci/travis/script.sh \"[n,t)\""
+    -
+      name: "[t,)"
+      script: "./ci/travis/script.sh \"[t,)\""
     -
       name: clean-up
       script: "./ci/travis/script.sh \"clean-up\""
