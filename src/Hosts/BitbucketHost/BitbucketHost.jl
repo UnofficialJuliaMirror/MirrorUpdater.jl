@@ -37,6 +37,11 @@ function new_bitbucket_session(
         else
             result = x_lowercase[1:62]
         end
+        while strip(lowercase(result[end:end])) == "." ||
+                strip(lowercase(result[end:end])) == "_" ||
+                strip(lowercase(result[end:end])) == "-"
+            result = result[1:(end-1)]
+        end
         result_converted = convert(String, result)
         return result_converted
     end
@@ -470,14 +475,24 @@ function new_bitbucket_session(
             )
         body = JSON.json(params)
         @info("Attempting to update repo description on Bitbucket...")
-        r = HTTP.request(
-            method,
-            url,
-            headers,
-            body;
-            basic_authorization = true,
-            )
-        @info("Successfully updated repo description on Bitbucket")
+        try
+            r = HTTP.request(
+                method,
+                url,
+                headers,
+                body;
+                basic_authorization = true,
+                )
+            @info("Successfully updated repo description on Bitbucket")
+        catch ex
+            @error(
+                string(
+                    "ignoring error \"$(ex)\" while updating ",
+                    "Bitbucket repo description."
+                    ),
+                ex=ex,
+                )
+        end
         return nothing
     end
 
