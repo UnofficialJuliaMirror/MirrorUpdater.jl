@@ -156,7 +156,7 @@ julia:
   - "1.1"
 language: julia
 matrix:
-  fast_finish: true
+  fast_finish: false
 notifications:
   email:
     on_failure: always
