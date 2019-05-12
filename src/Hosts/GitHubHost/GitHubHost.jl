@@ -370,6 +370,7 @@ function new_github_session(
                     Dict{String, Any}(
                         "has_issues" => "false",
                         "has_wiki" => "false",
+                        "has_projects" => "false",
                         );
                     auth = auth,
                     )
