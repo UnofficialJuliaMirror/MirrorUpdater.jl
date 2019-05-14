@@ -30,4 +30,14 @@ const JULIALANG_REPOS = MirrorUpdater.Types.SrcDestPair[
         source_url = "https://github.com/JuliaLang/readline",
         destination_repo_name = "JuliaLang-readline",
         ),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
+        source_url = "https://github.com/JuliaRegistries/Registrator.jl",
+        destination_repo_name = "Registrator.jl-4418983a-e44d-11e8-3aec-9789530b3b3e",
+        ),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
+        source_url = "https://github.com/JuliaRegistries/TagBot",
+        destination_repo_name = "JuliaRegistries-TagBot",
+        ),
     ]
