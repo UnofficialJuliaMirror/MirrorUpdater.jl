@@ -54,4 +54,14 @@ const MISCELLANEOUS_ML_RELATED_REPOS = MirrorUpdater.Types.SrcDestPair[
         source_url = "https://github.com/ysimillides/mlj-docker",
         destination_repo_name = "ysimillides-mlj-docker",
         ),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
+        source_url = "https://github.com/DilumAluthge/PredictMD-docker",
+        destination_repo_name = "DilumAluthge-PredictMD-docker",
+        ),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
+        source_url = "https://github.com/DilumAluthge/OfflineRegistry",
+        destination_repo_name = "DilumAluthge-OfflineRegistry",
+        ),
     ]
