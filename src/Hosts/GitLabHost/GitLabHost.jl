@@ -600,6 +600,7 @@ function new_gitlab_session(
                     )
             end
         end
+        @debug("This is the last line before _create_repo returns")
         return nothing
     end
 
@@ -648,7 +649,9 @@ function new_gitlab_session(
         # _delete_repo(params)
         # sleep(3)
         # _create_repo(params)
+        @debug("This is before unprotecting all repo branches")
         _unprotect_all_repo_branches(params)
+        @debug("This is after unprotecting all repo branches")
         repo_name::String = params[:repo_name]
         repo_directory::String = params[:directory]
         git_path::String = params[:git]
@@ -680,6 +683,7 @@ function new_gitlab_session(
             `$(git_path) push --mirror $(repo_dest_url_with_auth)`
         mirrorpush_cmd_withredactedauth =
             `$(git_path) push --mirror $(repo_dest_url_with_redacted_auth)`
+        @debug("This is before I try to push to GitLab")
         @info(
             string("Attempting to push repo to GitLab..."),
             mirrorpush_cmd_withredactedauth,
