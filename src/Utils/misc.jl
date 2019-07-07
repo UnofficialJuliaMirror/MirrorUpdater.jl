@@ -362,6 +362,7 @@ function retry_function_until_success(
         f::Function;
         max_attempts::Integer = 10,
         seconds_to_wait_between_attempts::Real = 30,
+        use_delayed_error::Bool = true,
         )
     success_bool::Bool = false
     f_result = nothing
@@ -401,8 +402,10 @@ function retry_function_until_success(
     if success_bool
         @debug(string("Function ran successfully."),)
         return f_result
-    else
+    elseif use_delayed_error
         delayederror(string("Function did not run successfully."),)
+    else
+        error(string("Function did not run successfully."))
     end
 end
 

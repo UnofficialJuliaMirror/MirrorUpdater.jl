@@ -488,7 +488,8 @@ function new_gitlab_session(
         return list
     end
 
-    function _unprotect_all_repo_branches(params::AbstractDict)::Nothing
+    function _unprotect_all_repo_branches(params::AbstractDict;
+                                          use_delayed_error = false)::Nothing
         repo_name::String = params[:repo_name]
         list_of_protected_branches = _list_all_repo_protected_branches(
             params
@@ -510,6 +511,7 @@ function new_gitlab_session(
             http_request_1;
             max_attempts = 10,
             seconds_to_wait_between_attempts = 180,
+            use_delayed_error = use_delayed_error,
         )
         r_body_1 = String(r_1.body)
         parsed_body_1 = JSON.parse(r_body_1)
@@ -529,6 +531,7 @@ function new_gitlab_session(
                 http_request_2;
                 max_attempts = 10,
                 seconds_to_wait_between_attempts = 180,
+                use_delayed_error = use_delayed_error,
                 )
         end
         return nothing
@@ -650,7 +653,15 @@ function new_gitlab_session(
         # sleep(3)
         # _create_repo(params)
         @debug("This is before unprotecting all repo branches")
-        _unprotect_all_repo_branches(params)
+        try
+            _unprotect_all_repo_branches(params; use_delayed_error = false)
+        catch ex
+            showerror(stderr, ex)
+            Base.show_backtrace(stderr, catch_backtrace())
+            _delete_repo(params)
+            sleep(10)
+            _create_repo(params)
+        end
         @debug("This is after unprotecting all repo branches")
         repo_name::String = params[:repo_name]
         repo_directory::String = params[:directory]
