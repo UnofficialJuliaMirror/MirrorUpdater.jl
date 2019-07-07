@@ -488,7 +488,8 @@ function new_gitlab_session(
         return list
     end
 
-    function _unprotect_all_repo_branches(params::AbstractDict)::Nothing
+    function _unprotect_all_repo_branches(params::AbstractDict;
+                                          use_delayed_error = false)::Nothing
         repo_name::String = params[:repo_name]
         list_of_protected_branches = _list_all_repo_protected_branches(
             params
@@ -510,6 +511,7 @@ function new_gitlab_session(
             http_request_1;
             max_attempts = 10,
             seconds_to_wait_between_attempts = 180,
+            use_delayed_error = use_delayed_error,
         )
         r_body_1 = String(r_1.body)
         parsed_body_1 = JSON.parse(r_body_1)
@@ -529,6 +531,7 @@ function new_gitlab_session(
                 http_request_2;
                 max_attempts = 10,
                 seconds_to_wait_between_attempts = 180,
+                use_delayed_error = use_delayed_error,
                 )
         end
         return nothing
@@ -600,6 +603,7 @@ function new_gitlab_session(
                     )
             end
         end
+        @debug("This is the last line before _create_repo returns")
         return nothing
     end
 
@@ -648,7 +652,17 @@ function new_gitlab_session(
         # _delete_repo(params)
         # sleep(3)
         # _create_repo(params)
-        _unprotect_all_repo_branches(params)
+        @debug("This is before unprotecting all repo branches")
+        try
+            _unprotect_all_repo_branches(params; use_delayed_error = false)
+        catch ex
+            showerror(stderr, ex)
+            Base.show_backtrace(stderr, catch_backtrace())
+            _delete_repo(params)
+            sleep(10)
+            _create_repo(params)
+        end
+        @debug("This is after unprotecting all repo branches")
         repo_name::String = params[:repo_name]
         repo_directory::String = params[:directory]
         git_path::String = params[:git]
@@ -680,6 +694,7 @@ function new_gitlab_session(
             `$(git_path) push --mirror $(repo_dest_url_with_auth)`
         mirrorpush_cmd_withredactedauth =
             `$(git_path) push --mirror $(repo_dest_url_with_redacted_auth)`
+        @debug("This is before I try to push to GitLab")
         @info(
             string("Attempting to push repo to GitLab..."),
             mirrorpush_cmd_withredactedauth,

@@ -94,8 +94,11 @@ jobs:
       name: "[P,Pn)"
       script: "./ci/travis/script.sh \"[P,Pn)\""
     -
-      name: "[Pn,Q)"
-      script: "./ci/travis/script.sh \"[Pn,Q)\""
+      name: "[Pn,Ps)"
+      script: "./ci/travis/script.sh \"[Pn,Ps)\""
+    -
+      name: "[Ps,Q)"
+      script: "./ci/travis/script.sh \"[Ps,Q)\""
     -
       name: "[Q,R)"
       script: "./ci/travis/script.sh \"[Q,R)\""
