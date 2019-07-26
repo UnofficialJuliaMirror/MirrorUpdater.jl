@@ -76,8 +76,11 @@ jobs:
       name: "[L,M)"
       script: "./ci/travis/script.sh \"[L,M)\""
     -
-      name: "[M,Mj)"
-      script: "./ci/travis/script.sh \"[M,Mj)\""
+      name: "[M,Me)"
+      script: "./ci/travis/script.sh \"[M,Me)\""
+    -
+      name: "[Me,Mj)"
+      script: "./ci/travis/script.sh \"[Me,Mj)\""
     -
       name: "[Mj,Mn)"
       script: "./ci/travis/script.sh \"[Mj,Mn)\""
