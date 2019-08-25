@@ -43,6 +43,16 @@ const MISCELLANEOUS_JULIA_RELATED_REPOS = MirrorUpdater.Types.SrcDestPair[
         ),
     MirrorUpdater.Types.SrcDestPair(
         ;
+        source_url = "https://github.com/JuliaPackaging/Jotunheimr",
+        destination_repo_name = "JuliaPackaging-Jotunheimr",
+        ),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
+        source_url = "https://github.com/JuliaPackaging/Yggdrasil",
+        destination_repo_name = "JuliaPackaging-Yggdrasil",
+        ),
+    MirrorUpdater.Types.SrcDestPair(
+        ;
         source_url = "https://github.com/JuliaStats/RmathBuilder",
         destination_repo_name = "JuliaStats-RmathBuilder",
         ),
